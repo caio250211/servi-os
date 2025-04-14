@@ -10,54 +10,46 @@
     body {
       font-family: 'Inter', sans-serif;
       background-color: #f8f9fa;
-      transition: background-color 0.3s, color 0.3s;
-    }
-
-    .dark-mode {
-      background-color: #121212;
-      color: #e1e1e1;
+      transition: background 0.3s ease;
     }
 
     .container {
-      max-width: 1000px;
-      margin: 50px auto;
-      padding: 30px;
+      max-width: 960px;
+      margin: 30px auto;
+      padding: 20px;
       background: white;
       border-radius: 16px;
-      box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
-      transition: background-color 0.3s;
-    }
-
-    .dark-mode .container {
-      background: #1e1e1e;
-    }
-
-    .logo {
-      width: 60px;
-      height: 60px;
-      object-fit: contain;
-      margin-right: 15px;
-      border-radius: 50%;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.08);
+      transition: background 0.3s ease;
     }
 
     .header {
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
       flex-wrap: wrap;
+      text-align: center;
+    }
+
+    .logo {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      margin-right: 15px;
+      border-radius: 50%;
     }
 
     h1 {
       color: #e60014;
       font-weight: 700;
-      text-align: center;
+      margin: 0;
     }
 
     .btn-danger {
       background-color: #ff0015;
       border: none;
-      transition: background-color 0.3s;
+      transition: 0.3s;
     }
 
     .btn-danger:hover {
@@ -69,10 +61,6 @@
       color: white;
     }
 
-    .dark-mode table th {
-      background-color: #b0000f;
-    }
-
     .total {
       text-align: right;
       font-size: 1.2rem;
@@ -80,99 +68,118 @@
       font-weight: 600;
     }
 
-    .dark-mode .total {
-      color: #ff6f6f;
+    .form-control, .form-select {
+      transition: 0.3s ease;
     }
 
-    .search-input {
-      margin-top: 20px;
+    .form-section .form-group {
+      margin-bottom: 15px;
+    }
+
+    .form-section {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
     }
 
     @media (max-width: 768px) {
-      .container {
-        margin: 20px 10px;
-        padding: 20px;
-      }
-
-      .header {
+      .form-section {
         flex-direction: column;
-        text-align: center;
+        align-items: stretch;
       }
 
-      form.row .col-md-2,
-      form.row .col-md-1 {
-        flex: 0 0 100%;
-        max-width: 100%;
+      .form-section .form-group {
+        width: 100%;
+      }
+
+      .btn {
+        width: 100%;
+      }
+
+      .table {
+        font-size: 0.85rem;
       }
 
       .total {
-        text-align: left;
+        text-align: center;
       }
     }
 
-    /* Animação suave */
-    tr {
-      transition: background-color 0.3s;
+    body.dark-mode {
+      background-color: #121212;
+      color: white;
     }
 
-    tr:hover {
-      background-color: rgba(230, 0, 20, 0.1);
+    body.dark-mode .container {
+      background-color: #1e1e1e;
+    }
+
+    body.dark-mode table th {
+      background-color: #333;
+    }
+
+    body.dark-mode .total {
+      color: #ff7676;
+    }
+
+    .form-check {
+      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <div class="d-flex justify-content-end align-items-center gap-2 mb-3">
-      <label for="modoNoturno" class="form-check-label">Modo Noturno</label>
-      <div class="form-check form-switch m-0">
-        <input class="form-check-input" type="checkbox" id="modoNoturno">
-      </div>
-    </div>
-
     <div class="header">
       <img src="logo.png.JPG" alt="Logo Insect Control Tupí" class="logo" />
       <h1>Insect Control Tupí</h1>
     </div>
 
-    <form id="serviceForm" class="row g-3">
-      <div class="col-md-2">
-        <input type="date" id="data" class="form-control" required />
-      </div>
-      <div class="col-md-2">
-        <input type="text" id="nome" class="form-control" placeholder="Nome do Cliente" required />
-      </div>
-      <div class="col-md-2">
-        <input type="text" id="local" class="form-control" placeholder="Local do Serviço" required />
-      </div>
-      <div class="col-md-2">
-        <input type="text" id="contato" class="form-control" placeholder="Contato do Cliente" required />
-      </div>
-      <div class="col-md-2">
-        <select id="tipo" class="form-select" required>
-          <option value="" disabled selected>Tipo de Serviço</option>
-          <option>Baratas</option>
-          <option>Traças</option>
-          <option>Cupins</option>
-          <option>Ratos</option>
-          <option>Lacraias</option>
-          <option>Limpeza de caixa d'agua</option>
-          <option>Impermeabilização</option>
-          <option>Carrapatos</option>
-          <option>Pulgas</option>
-        </select>
-      </div>
-      <div class="col-md-1">
-        <input type="number" id="valor" class="form-control" placeholder="Valor (R$)" step="0.01" required />
-      </div>
-      <div class="col-md-1 d-grid">
-        <button type="submit" class="btn btn-danger">+</button>
+    <div class="form-check form-switch mb-3 text-end">
+      <input class="form-check-input" type="checkbox" id="modoNoturno">
+      <label class="form-check-label" for="modoNoturno">Modo Noturno</label>
+    </div>
+
+    <form id="serviceForm">
+      <div class="form-section">
+        <div class="form-group w-100">
+          <input type="date" id="data" class="form-control" required />
+        </div>
+        <div class="form-group w-100">
+          <input type="text" id="nome" class="form-control" placeholder="Nome do Cliente" required />
+        </div>
+        <div class="form-group w-100">
+          <input type="text" id="local" class="form-control" placeholder="Local do Serviço" required />
+        </div>
+        <div class="form-group w-100">
+          <input type="text" id="contato" class="form-control" placeholder="Contato do Cliente" required />
+        </div>
+        <div class="form-group w-100">
+          <select id="tipo" class="form-select" required>
+            <option value="" disabled selected>Tipo de Serviço</option>
+            <option>Baratas</option>
+            <option>Traças</option>
+            <option>Cupins</option>
+            <option>Ratos</option>
+            <option>Lacraias</option>
+            <option>Limpeza de caixa d'agua</option>
+            <option>Impermeabilização</option>
+            <option>Carrapatos</option>
+            <option>Pulgas</option>
+          </select>
+        </div>
+        <div class="form-group w-100">
+          <input type="number" id="valor" class="form-control" placeholder="Valor (R$)" step="0.01" required />
+        </div>
+        <div class="form-group w-100">
+          <button type="submit" class="btn btn-danger">Adicionar</button>
+        </div>
       </div>
     </form>
 
-    <input type="text" id="search" class="form-control search-input" placeholder="🔍 Buscar por nome, local ou contato...">
+    <input type="text" id="search" class="form-control mt-3" placeholder="🔍 Buscar por nome, local ou contato...">
 
     <div class="table-responsive mt-4">
-      <table class="table table-striped table-hover">
+      <table class="table table-striped text-center align-middle">
         <thead>
           <tr>
             <th>Data</th>
@@ -180,7 +187,7 @@
             <th>Local</th>
             <th>Tipo</th>
             <th>Contato</th>
-            <th>Valor (R$)</th>
+            <th>Valor</th>
             <th>Ações</th>
           </tr>
         </thead>
@@ -202,12 +209,9 @@
 
     let servicos = JSON.parse(localStorage.getItem("servicos")) || [];
 
-    const formatarValor = valor => {
-      return parseFloat(valor).toLocaleString("pt-BR", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
-    };
+    function formatarValor(valor) {
+      return parseFloat(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
 
     function atualizarTabela(filtro = "") {
       tabela.innerHTML = "";
@@ -230,7 +234,7 @@
           <td>${servico.local}</td>
           <td>${servico.tipo}</td>
           <td>${servico.contato}</td>
-          <td>R$ ${formatarValor(servico.valor)}</td>
+          <td>${formatarValor(servico.valor)}</td>
           <td>
             <button class="btn btn-sm btn-outline-danger me-1" onclick="removerServico(${index})">Excluir</button>
             <button class="btn btn-sm btn-outline-primary" onclick="editarServico(${index})">Editar</button>
@@ -257,7 +261,7 @@
         local: prompt("Local do Serviço:", servico.local) || servico.local,
         contato: prompt("Contato do Cliente:", servico.contato) || servico.contato,
         tipo: prompt("Tipo de Serviço:", servico.tipo) || servico.tipo,
-        valor: prompt("Valor (R$):", servico.valor) || servico.valor,
+        valor: prompt("Valor (R$):", servico.valor) || servico.valor
       };
       servicos[index] = novosDados;
       atualizarTabela(searchInput.value.toLowerCase());
@@ -271,9 +275,8 @@
         local: document.getElementById("local").value,
         contato: document.getElementById("contato").value,
         tipo: document.getElementById("tipo").value,
-        valor: document.getElementById("valor").value,
+        valor: document.getElementById("valor").value
       };
-
       servicos.push(novoServico);
       form.reset();
       atualizarTabela(searchInput.value.toLowerCase());
