@@ -166,10 +166,7 @@
       <div class="col-6 col-md-3">
         <input type="number" id="valor" class="form-control" placeholder="Valor (R$)" step="0.01" required />
       </div>
-      <div class="col-6 col-md-4">
-        <input type="file" id="nota" class="form-control" accept=".pdf,.jpg,.jpeg,.png" />
-      </div>
-      <div class="col-6 col-md-2 d-grid">
+      <div class="col-12 col-md-3 d-grid">
         <button type="submit" class="btn btn-danger">Adicionar</button>
       </div>
     </form>
@@ -186,7 +183,6 @@
             <th>Tipo</th>
             <th>Contato</th>
             <th>Valor</th>
-            <th>Nota</th>
             <th>Ações</th>
           </tr>
         </thead>
@@ -235,9 +231,6 @@
           <td>${servico.contato}</td>
           <td>${formatarValor(servico.valor)}</td>
           <td>
-            ${servico.nota ? `<a href="${servico.nota}" target="_blank">Ver</a>` : '-'}
-          </td>
-          <td>
             <button class="btn btn-sm btn-outline-danger me-1" onclick="removerServico(${index})">Excluir</button>
             <button class="btn btn-sm btn-outline-primary" onclick="editarServico(${index})">Editar</button>
           </td>
@@ -263,8 +256,7 @@
         local: prompt("Local do Serviço:", servico.local) || servico.local,
         contato: prompt("Contato do Cliente:", servico.contato) || servico.contato,
         tipo: prompt("Tipo de Serviço:", servico.tipo) || servico.tipo,
-        valor: prompt("Valor (R$):", servico.valor) || servico.valor,
-        nota: servico.nota || null
+        valor: prompt("Valor (R$):", servico.valor) || servico.valor
       };
       servicos[index] = novosDados;
       atualizarTabela(searchInput.value.toLowerCase());
@@ -272,29 +264,17 @@
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
-      const file = document.getElementById("nota").files[0];
-      const reader = new FileReader();
-
-      reader.onload = function () {
-        const novoServico = {
-          data: document.getElementById("data").value,
-          nome: document.getElementById("nome").value,
-          local: document.getElementById("local").value,
-          contato: document.getElementById("contato").value,
-          tipo: document.getElementById("tipo").value,
-          valor: document.getElementById("valor").value,
-          nota: file ? reader.result : null
-        };
-        servicos.push(novoServico);
-        form.reset();
-        atualizarTabela(searchInput.value.toLowerCase());
+      const novoServico = {
+        data: document.getElementById("data").value,
+        nome: document.getElementById("nome").value,
+        local: document.getElementById("local").value,
+        contato: document.getElementById("contato").value,
+        tipo: document.getElementById("tipo").value,
+        valor: document.getElementById("valor").value
       };
-
-      if (file) {
-        reader.readAsDataURL(file);
-      } else {
-        reader.onload();
-      }
+      servicos.push(novoServico);
+      form.reset();
+      atualizarTabela(searchInput.value.toLowerCase());
     });
 
     searchInput.addEventListener("input", () => {
