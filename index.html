@@ -138,40 +138,21 @@
   <div class="total mt-3">Total: R$ <span id="totalValor">0,00</span></div>
 </div>
 
-<!-- Modal Login -->
-<div class="modal show" id="loginModal" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header"><h5 class="modal-title">Login</h5></div>
-      <div class="modal-body">
-        <input type="email" id="email" class="form-control mb-2" placeholder="Email" />
-        <input type="password" id="senha" class="form-control" placeholder="Senha" />
-        <button class="btn btn-primary mt-2" onclick="login()">Entrar</button>
-        <button class="btn btn-secondary mt-2" onclick="showCadastro()">Cadastre-se</button>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="logout()">Sair</button>
-      </div>
-    </div>
-  </div>
+<!-- Modal de Login -->
+<div id="loginModal" style="display: none;">
+  <input type="email" id="email" placeholder="Email" />
+  <input type="password" id="senha" placeholder="Senha" />
+  <button onclick="login()">Login</button>
+  <button onclick="showCadastro()">Cadastrar-se</button>
+  <button onclick="loginGoogle()">Entrar com Google</button>
 </div>
 
-<!-- Modal Cadastro -->
-<div class="modal show" id="cadastroModal" tabindex="-1" style="display: none; background: rgba(0,0,0,0.5);">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content">
-      <div class="modal-header"><h5 class="modal-title">Cadastro</h5></div>
-      <div class="modal-body">
-        <input type="email" id="emailCadastro" class="form-control mb-2" placeholder="Email" />
-        <input type="password" id="senhaCadastro" class="form-control" placeholder="Senha" />
-        <button class="btn btn-primary mt-2" onclick="cadastrar()">Cadastrar</button>
-        <button class="btn btn-secondary mt-2" onclick="showLogin()">Já tem conta? Faça Login</button>
-      </div>
-      <div class="modal-footer">
-        <button class="btn btn-secondary" onclick="logout()">Sair</button>
-      </div>
-    </div>
-  </div>
+<!-- Modal de Cadastro -->
+<div id="cadastroModal" style="display: none;">
+  <input type="email" id="emailCadastro" placeholder="Email" />
+  <input type="password" id="senhaCadastro" placeholder="Senha" />
+  <button onclick="cadastrar()">Cadastrar</button>
+  <button onclick="showLogin()">Já tem uma conta? Entrar</button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -193,12 +174,12 @@
   const db = firebase.firestore();
   let userEmail = null;
 
+  // Verificar se o modo noturno está ativado
   document.getElementById("modoNoturno").addEventListener("change", e => {
     document.body.classList.toggle("dark-mode", e.target.checked);
   });
 
-  const formatarValor = valor => parseFloat(valor).toLocaleString("pt-BR", {minimumFractionDigits: 2});
-
+  // Atualizar tabela
   function atualizarTabela(servicos) {
     const tabela = document.getElementById("tabelaServicos");
     const search = document.getElementById("search").value.toLowerCase();
@@ -227,6 +208,7 @@
     document.getElementById("totalValor").textContent = formatarValor(total);
   }
 
+  // Filtro de busca
   document.getElementById("search").addEventListener("input", carregarServicos);
 
   async function carregarServicos() {
@@ -235,8 +217,15 @@
     atualizarTabela(snap.docs);
   }
 
+  // Adicionar novo serviço
   document.getElementById("serviceForm").addEventListener("submit", async e => {
     e.preventDefault();
+    
+    if (!userEmail) {
+      alert("Por favor, faça login antes de adicionar um serviço.");
+      return;
+    }
+
     const novoServico = {
       data: document.getElementById("data").value,
       nome: document.getElementById("nome").value,
@@ -247,17 +236,24 @@
       usuario: userEmail,
       criado: new Date()
     };
-    await db.collection("servicos").add(novoServico);
-    document.getElementById("serviceForm").reset();
-    carregarServicos();
+
+    try {
+      await db.collection("servicos").add(novoServico);
+      document.getElementById("serviceForm").reset();
+      carregarServicos();
+    } catch (error) {
+      console.error("Erro ao adicionar serviço:", error);
+      alert("Erro ao adicionar serviço. Tente novamente.");
+    }
   });
 
+  // Deletar serviço
   async function deletarServico(id) {
     await db.collection("servicos").doc(id).delete();
     carregarServicos();
   }
 
-  // Função de Login
+  // Função de login com e-mail e senha
   function login() {
     const email = document.getElementById("email").value;
     const senha = document.getElementById("senha").value;
@@ -270,7 +266,7 @@
       .catch(err => alert("Erro no login: " + err.message));
   }
 
-  // Função de Cadastro
+  // Função de cadastro
   function cadastrar() {
     const email = document.getElementById("emailCadastro").value;
     const senha = document.getElementById("senhaCadastro").value;
@@ -294,9 +290,35 @@
     document.getElementById("loginModal").style.display = "block";
   }
 
-  function logout() {
-    auth.signOut().then(() => location.reload());
+  // Login com Google
+  function loginGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider)
+      .then(result => {
+        userEmail = result.user.email;
+        document.getElementById("loginModal").style.display = "none";
+        carregarServicos();
+      })
+      .catch(err => alert("Erro no login com Google: " + err.message));
   }
+
+  // Função de logout
+  function logout() {
+    auth.signOut().then(() => {
+      userEmail = null;
+      carregarServicos();
+    });
+  }
+
+  // Persistência de login
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      userEmail = user.email;
+      carregarServicos();
+    } else {
+      userEmail = null;
+    }
+  });
 </script>
 </body>
 </html>
