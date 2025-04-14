@@ -146,10 +146,29 @@
       <div class="modal-body">
         <input type="email" id="email" class="form-control mb-2" placeholder="Email" />
         <input type="password" id="senha" class="form-control" placeholder="Senha" />
+        <button class="btn btn-primary mt-2" onclick="login()">Entrar</button>
+        <button class="btn btn-secondary mt-2" onclick="showCadastro()">Cadastre-se</button>
       </div>
       <div class="modal-footer">
-        <button class="btn btn-primary" onclick="login()">Entrar</button>
-        <button class="btn btn-danger" onclick="loginWithGoogle()">Entrar com Google</button>
+        <button class="btn btn-secondary" onclick="logout()">Sair</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Cadastro -->
+<div class="modal show" id="cadastroModal" tabindex="-1" style="display: none; background: rgba(0,0,0,0.5);">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header"><h5 class="modal-title">Cadastro</h5></div>
+      <div class="modal-body">
+        <input type="email" id="emailCadastro" class="form-control mb-2" placeholder="Email" />
+        <input type="password" id="senhaCadastro" class="form-control" placeholder="Senha" />
+        <button class="btn btn-primary mt-2" onclick="cadastrar()">Cadastrar</button>
+        <button class="btn btn-secondary mt-2" onclick="showLogin()">Já tem conta? Faça Login</button>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="logout()">Sair</button>
       </div>
     </div>
   </div>
@@ -238,6 +257,7 @@
     carregarServicos();
   }
 
+  // Função de Login
   function login() {
     const email = document.getElementById("email").value;
     const senha = document.getElementById("senha").value;
@@ -250,18 +270,28 @@
       .catch(err => alert("Erro no login: " + err.message));
   }
 
-  function loginWithGoogle() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider)
-      .then((result) => {
-        userEmail = result.user.email;
-        document.getElementById("loginModal").style.display = "none";
+  // Função de Cadastro
+  function cadastrar() {
+    const email = document.getElementById("emailCadastro").value;
+    const senha = document.getElementById("senhaCadastro").value;
+    auth.createUserWithEmailAndPassword(email, senha)
+      .then(user => {
+        userEmail = user.user.email;
+        document.getElementById("cadastroModal").style.display = "none";
         carregarServicos();
       })
-      .catch((error) => {
-        console.error("Erro ao fazer login com o Google: ", error);
-        alert("Erro ao fazer login com o Google: " + error.message);
-      });
+      .catch(err => alert("Erro no cadastro: " + err.message));
+  }
+
+  // Alterna entre Login e Cadastro
+  function showCadastro() {
+    document.getElementById("loginModal").style.display = "none";
+    document.getElementById("cadastroModal").style.display = "block";
+  }
+
+  function showLogin() {
+    document.getElementById("cadastroModal").style.display = "none";
+    document.getElementById("loginModal").style.display = "block";
   }
 
   function logout() {
