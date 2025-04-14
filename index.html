@@ -149,6 +149,7 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-primary" onclick="login()">Entrar</button>
+        <button class="btn btn-danger" onclick="loginWithGoogle()">Entrar com Google</button>
       </div>
     </div>
   </div>
@@ -247,6 +248,20 @@
         carregarServicos();
       })
       .catch(err => alert("Erro no login: " + err.message));
+  }
+
+  function loginWithGoogle() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    auth.signInWithPopup(provider)
+      .then((result) => {
+        userEmail = result.user.email;
+        document.getElementById("loginModal").style.display = "none";
+        carregarServicos();
+      })
+      .catch((error) => {
+        console.error("Erro ao fazer login com o Google: ", error);
+        alert("Erro ao fazer login com o Google: " + error.message);
+      });
   }
 
   function logout() {
