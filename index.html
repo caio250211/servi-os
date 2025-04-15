@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Insect Control Tupí</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     body {
@@ -12,12 +12,10 @@
       background-color: #f8f9fa;
       transition: background-color 0.3s, color 0.3s;
     }
-
     .dark-mode {
       background-color: #121212;
       color: #e1e1e1;
     }
-
     .container {
       max-width: 1000px;
       margin: 50px auto;
@@ -27,11 +25,9 @@
       box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
       transition: background-color 0.3s;
     }
-
     .dark-mode .container {
       background: #1e1e1e;
     }
-
     .header {
       display: flex;
       align-items: center;
@@ -39,7 +35,6 @@
       margin-bottom: 30px;
       flex-wrap: wrap;
     }
-
     .logo {
       width: 60px;
       height: 60px;
@@ -47,42 +42,34 @@
       margin-right: 15px;
       border-radius: 50%;
     }
-
     h1 {
       color: #e60014;
       font-weight: 700;
       text-align: center;
     }
-
     .btn-danger {
       background-color: #ff0015;
       border: none;
     }
-
     .btn-danger:hover {
       background-color: #cc0012;
     }
-
     table th {
       background-color: #e60014;
       color: white;
     }
-
     .dark-mode table th {
       background-color: #b0000f;
     }
-
     .total {
       text-align: right;
       font-size: 1.2rem;
       color: #ff0404;
       font-weight: 600;
     }
-
     .dark-mode .total {
       color: #ff6f6f;
     }
-
     @media (max-width: 768px) {
       .container {
         margin: 20px 10px;
@@ -93,8 +80,6 @@
         text-align: center;
       }
     }
-
-    /* Estilo para os modais */
     .modal {
       display: none;
       position: fixed;
@@ -117,242 +102,217 @@
   </style>
 </head>
 <body>
-<div class="container">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <div>
-      <label for="modoNoturno" class="form-check-label me-2">Modo Noturno</label>
-      <input class="form-check-input" type="checkbox" id="modoNoturno">
+  <div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <label for="modoNoturno" class="form-check-label me-2">Modo Noturno</label>
+        <input class="form-check-input" type="checkbox" id="modoNoturno">
+      </div>
+      <button onclick="logout()" class="btn btn-sm btn-outline-secondary">Sair</button>
     </div>
-    <button onclick="logout()" class="btn btn-sm btn-outline-secondary">Sair</button>
-  </div>
-
-  <div class="header">
-    <img src="logo.png.JPG" alt="Logo Insect Control Tupí" class="logo" />
-    <h1>Insect Control Tupí</h1>
-  </div>
-
-  <form id="serviceForm" class="row g-3" style="display: none;">
-    <div class="col-md-2"><input type="date" id="data" class="form-control" required /></div>
-    <div class="col-md-2"><input type="text" id="nome" class="form-control" placeholder="Nome do Cliente" required /></div>
-    <div class="col-md-2"><input type="text" id="local" class="form-control" placeholder="Local do Serviço" required /></div>
-    <div class="col-md-2"><input type="text" id="contato" class="form-control" placeholder="Contato" required /></div>
-    <div class="col-md-2">
-      <select id="tipo" class="form-select" required>
-        <option value="" disabled selected>Tipo</option>
-        <option>Baratas</option><option>Traças</option><option>Cupins</option>
-        <option>Ratos</option><option>Lacraias</option><option>Caixa d'agua</option>
-        <option>Impermeabilização</option><option>Carrapatos</option><option>Pulgas</option>
-      </select>
+    <div class="header">
+      <img src="logo.png.JPG" alt="Logo Insect Control Tupí" class="logo">
+      <h1>Insect Control Tupí</h1>
     </div>
-    <div class="col-md-1"><input type="number" id="valor" class="form-control" placeholder="R$" step="0.01" required /></div>
-    <div class="col-md-1 d-grid"><button type="submit" class="btn btn-danger">+</button></div>
-  </form>
-
-  <input type="text" id="search" class="form-control mt-3" placeholder="🔍 Buscar por nome, local ou contato">
-
-  <div class="table-responsive mt-4">
-    <table class="table table-striped table-hover">
-      <thead><tr><th>Data</th><th>Nome</th><th>Local</th><th>Tipo</th><th>Contato</th><th>Valor</th><th>Ações</th></tr></thead>
-      <tbody id="tabelaServicos"></tbody>
-    </table>
+    <form id="serviceForm" class="row g-3" style="display: none;">
+      <div class="col-md-2"><input type="date" id="data" class="form-control" required></div>
+      <div class="col-md-2"><input type="text" id="nome" class="form-control" placeholder="Nome do Cliente" required></div>
+      <div class="col-md-2"><input type="text" id="local" class="form-control" placeholder="Local do Serviço" required></div>
+      <div class="col-md-2"><input type="text" id="contato" class="form-control" placeholder="Contato" required></div>
+      <div class="col-md-2">
+        <select id="tipo" class="form-select" required>
+          <option value="" disabled selected>Tipo</option>
+          <option>Baratas</option><option>Traças</option><option>Cupins</option>
+          <option>Ratos</option><option>Lacraias</option><option>Caixa d'agua</option>
+          <option>Impermeabilização</option><option>Carrapatos</option><option>Pulgas</option>
+        </select>
+      </div>
+      <div class="col-md-1"><input type="number" id="valor" class="form-control" placeholder="R$" step="0.01" required></div>
+      <div class="col-md-1 d-grid"><button type="submit" class="btn btn-danger">+</button></div>
+    </form>
+    <input type="text" id="search" class="form-control mt-3" placeholder="🔍 Buscar por nome, local ou contato">
+    <div class="table-responsive mt-4">
+      <table class="table table-striped table-hover">
+        <thead><tr><th>Data</th><th>Nome</th><th>Local</th><th>Tipo</th><th>Contato</th><th>Valor</th><th>Ações</th></tr></thead>
+        <tbody id="tabelaServicos"></tbody>
+      </table>
+    </div>
+    <div class="total mt-3">Total: R$ <span id="totalValor">0,00</span></div>
   </div>
-  <div class="total mt-3">Total: R$ <span id="totalValor">0,00</span></div>
-</div>
-
-<!-- Modal de Login -->
-<div id="loginModal" class="modal">
-  <div class="modal-content">
-    <h4>Login</h4>
-    <input type="email" id="email" placeholder="Email" />
-    <input type="password" id="senha" placeholder="Senha" />
-    <button onclick="login()">Login</button>
-    <button onclick="showCadastro()">Cadastrar-se</button>
-    <button onclick="loginGoogle()">Entrar com Google</button>
+  <div id="loginModal" class="modal">
+    <div class="modal-content">
+      <h4>Login</h4>
+      <input type="email" id="email" placeholder="Email">
+      <input type="password" id="senha" placeholder="Senha">
+      <button onclick="login()">Login</button>
+      <button onclick="showCadastro()">Cadastrar-se</button>
+      <button onclick="loginGoogle()">Entrar com Google</button>
+    </div>
   </div>
-</div>
-
-<!-- Modal de Cadastro -->
-<div id="cadastroModal" class="modal">
-  <div class="modal-content">
-    <h4>Cadastrar-se</h4>
-    <input type="email" id="emailCadastro" placeholder="Email" />
-    <input type="password" id="senhaCadastro" placeholder="Senha" />
-    <button onclick="cadastrar()">Cadastrar</button>
-    <button onclick="showLogin()">Já tem uma conta? Entrar</button>
+  <div id="cadastroModal" class="modal">
+    <div class="modal-content">
+      <h4>Cadastrar-se</h4>
+      <input type="email" id="emailCadastro" placeholder="Email">
+      <input type="password" id="senhaCadastro" placeholder="Senha">
+      <button onclick="cadastrar()">Cadastrar</button>
+      <button onclick="showLogin()">Já tem uma conta? Entrar</button>
+    </div>
   </div>
-</div>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCIU7yiuI1uXfJWv6MoGYTv6ylqhzQhscA",
+      authDomain: "insectcontrol-54785.firebaseapp.com",
+      projectId: "insectcontrol-54785",
+      storageBucket: "insectcontrol-54785.appspot.com",
+      messagingSenderId: "299720867487",
+      appId: "1:299720867487:web:cdcff964efc45755496caa",
+      measurementId: "G-DVQWP5TM9J"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    let userEmail = null;
 
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    document.getElementById("modoNoturno").addEventListener("change", e => {
+      document.body.classList.toggle("dark-mode", e.target.checked);
+    });
 
-<script>
-  const firebaseConfig = {
-    apiKey: "AIzaSyCIU7yiuI1uXfJWv6MoGYTv6ylqhzQhscA",
-    authDomain: "insectcontrol-54785.firebaseapp.com",
-    projectId: "insectcontrol-54785",
-    storageBucket: "insectcontrol-54785.appspot.com",
-    messagingSenderId: "299720867487",
-    appId: "1:299720867487:web:cdcff964efc45755496caa",
-    measurementId: "G-DVQWP5TM9J"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const auth = firebase.auth();
-  const db = firebase.firestore();
-  let userEmail = null;
+    function formatarValor(valor) {
+      return parseFloat(valor).toFixed(2).replace(".", ",");
+    }
 
-  // Verificar se o modo noturno está ativado
-  document.getElementById("modoNoturno").addEventListener("change", e => {
-    document.body.classList.toggle("dark-mode", e.target.checked);
-  });
+    function atualizarTabela(servicos) {
+      const tabela = document.getElementById("tabelaServicos");
+      const search = document.getElementById("search").value.toLowerCase();
+      tabela.innerHTML = "";
+      let total = 0;
+      servicos.forEach(doc => {
+        const serv = doc.data();
+        if (
+          serv.nome.toLowerCase().includes(search) ||
+          serv.local.toLowerCase().includes(search) ||
+          serv.contato.toLowerCase().includes(search)
+        ) {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td>${serv.data}</td><td>${serv.nome}</td><td>${serv.local}</td>
+            <td>${serv.tipo}</td><td>${serv.contato}</td>
+            <td>R$ ${formatarValor(serv.valor)}</td>
+            <td><button class="btn btn-sm btn-danger" onclick="deletarServico('${doc.id}')">Excluir</button></td>
+          `;
+          tabela.appendChild(row);
+          total += parseFloat(serv.valor);
+        }
+      });
+      document.getElementById("totalValor").textContent = formatarValor(total);
+    }
 
-  // Atualizar tabela
-  function atualizarTabela(servicos) {
-    const tabela = document.getElementById("tabelaServicos");
-    const search = document.getElementById("search").value.toLowerCase();
-    tabela.innerHTML = "";
-    let total = 0;
+    document.getElementById("search").addEventListener("input", carregarServicos);
 
-    servicos.forEach(doc => {
-      const serv = doc.data();
-      if (
-        serv.nome.toLowerCase().includes(search) ||
-        serv.local.toLowerCase().includes(search) ||
-        serv.contato.toLowerCase().includes(search)
-      ) {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${serv.data}</td><td>${serv.nome}</td><td>${serv.local}</td>
-          <td>${serv.tipo}</td><td>${serv.contato}</td>
-          <td>R$ ${formatarValor(serv.valor)}</td>
-          <td><button class="btn btn-sm btn-danger" onclick="deletarServico('${doc.id}')">Excluir</button></td>
-        `;
-        tabela.appendChild(row);
-        total += parseFloat(serv.valor);
+    async function carregarServicos() {
+      if (!userEmail) return;
+      const snap = await db.collection("servicos").where("usuario", "==", userEmail).get();
+      atualizarTabela(snap.docs);
+    }
+
+    document.getElementById("serviceForm").addEventListener("submit", async e => {
+      e.preventDefault();
+      if (!userEmail) return alert("Por favor, faça login.");
+      const novoServico = {
+        data: document.getElementById("data").value,
+        nome: document.getElementById("nome").value,
+        local: document.getElementById("local").value,
+        contato: document.getElementById("contato").value,
+        tipo: document.getElementById("tipo").value,
+        valor: document.getElementById("valor").value,
+        usuario: userEmail,
+        criado: new Date()
+      };
+      try {
+        await db.collection("servicos").add(novoServico);
+        document.getElementById("serviceForm").reset();
+        carregarServicos();
+      } catch (error) {
+        alert("Erro ao adicionar serviço");
+        console.error(error);
       }
     });
 
-    document.getElementById("totalValor").textContent = formatarValor(total);
-  }
-
-  // Filtro de busca
-  document.getElementById("search").addEventListener("input", carregarServicos);
-
-  async function carregarServicos() {
-    if (!userEmail) return;
-    const snap = await db.collection("servicos").where("usuario", "==", userEmail).get();
-    atualizarTabela(snap.docs);
-  }
-
-  // Adicionar novo serviço
-  document.getElementById("serviceForm").addEventListener("submit", async e => {
-    e.preventDefault();
-    
-    if (!userEmail) {
-      alert("Por favor, faça login antes de adicionar um serviço.");
-      return;
-    }
-
-    const novoServico = {
-      data: document.getElementById("data").value,
-      nome: document.getElementById("nome").value,
-      local: document.getElementById("local").value,
-      contato: document.getElementById("contato").value,
-      tipo: document.getElementById("tipo").value,
-      valor: document.getElementById("valor").value,
-      usuario: userEmail,
-      criado: new Date()
-    };
-
-    try {
-      await db.collection("servicos").add(novoServico);
-      document.getElementById("serviceForm").reset();
+    async function deletarServico(id) {
+      await db.collection("servicos").doc(id).delete();
       carregarServicos();
-    } catch (error) {
-      console.error("Erro ao adicionar serviço:", error);
-      alert("Erro ao adicionar serviço. Tente novamente.");
     }
-  });
 
-  // Deletar serviço
-  async function deletarServico(id) {
-    await db.collection("servicos").doc(id).delete();
-    carregarServicos();
-  }
+    function login() {
+      const email = document.getElementById("email").value;
+      const senha = document.getElementById("senha").value;
+      auth.signInWithEmailAndPassword(email, senha)
+        .then(user => {
+          userEmail = user.user.email;
+          document.getElementById("loginModal").style.display = "none";
+          document.getElementById("serviceForm").style.display = "block";
+          carregarServicos();
+        })
+        .catch(err => alert("Erro no login: " + err.message));
+    }
 
-  // Função de login com e-mail e senha
-  function login() {
-    const email = document.getElementById("email").value;
-    const senha = document.getElementById("senha").value;
-    auth.signInWithEmailAndPassword(email, senha)
-      .then(user => {
-        userEmail = user.user.email;
-        document.getElementById("loginModal").style.display = "none";
-        document.getElementById("serviceForm").style.display = "block";
-        carregarServicos();
-      })
-      .catch(err => alert("Erro no login: " + err.message));
-  }
+    function cadastrar() {
+      const email = document.getElementById("emailCadastro").value;
+      const senha = document.getElementById("senhaCadastro").value;
+      auth.createUserWithEmailAndPassword(email, senha)
+        .then(user => {
+          userEmail = user.user.email;
+          document.getElementById("cadastroModal").style.display = "none";
+          document.getElementById("serviceForm").style.display = "block";
+          carregarServicos();
+        })
+        .catch(err => alert("Erro no cadastro: " + err.message));
+    }
 
-  // Função de cadastro
-  function cadastrar() {
-    const email = document.getElementById("emailCadastro").value;
-    const senha = document.getElementById("senhaCadastro").value;
-    auth.createUserWithEmailAndPassword(email, senha)
-      .then(user => {
-        userEmail = user.user.email;
-        document.getElementById("cadastroModal").style.display = "none";
-        document.getElementById("serviceForm").style.display = "block";
-        carregarServicos();
-      })
-      .catch(err => alert("Erro no cadastro: " + err.message));
-  }
-
-  // Alterna entre Login e Cadastro
-  function showCadastro() {
-    document.getElementById("loginModal").style.display = "none";
-    document.getElementById("cadastroModal").style.display = "block";
-  }
-
-  function showLogin() {
-    document.getElementById("cadastroModal").style.display = "none";
-    document.getElementById("loginModal").style.display = "block";
-  }
-
-  // Login com Google
-  function loginGoogle() {
-    const provider = new firebase.auth.GoogleAuthProvider();
-    auth.signInWithPopup(provider)
-      .then(result => {
-        userEmail = result.user.email;
-        document.getElementById("loginModal").style.display = "none";
-        document.getElementById("serviceForm").style.display = "block";
-        carregarServicos();
-      })
-      .catch(err => alert("Erro no login com Google: " + err.message));
-  }
-
-  // Função de logout
-  function logout() {
-    auth.signOut().then(() => {
-      userEmail = null;
-      document.getElementById("loginModal").style.display = "flex";
-      document.getElementById("serviceForm").style.display = "none";
-    });
-  }
-
-  // Persistência de login
-  auth.onAuthStateChanged(user => {
-    if (user) {
-      userEmail = user.email;
+    function showCadastro() {
       document.getElementById("loginModal").style.display = "none";
-      document.getElementById("serviceForm").style.display = "block";
-      carregarServicos();
-    } else {
-      document.getElementById("loginModal").style.display = "flex";
-      document.getElementById("serviceForm").style.display = "none";
+      document.getElementById("cadastroModal").style.display = "flex";
     }
-  });
-</script>
+
+    function showLogin() {
+      document.getElementById("cadastroModal").style.display = "none";
+      document.getElementById("loginModal").style.display = "flex";
+    }
+
+    function loginGoogle() {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      auth.signInWithPopup(provider)
+        .then(result => {
+          userEmail = result.user.email;
+          document.getElementById("loginModal").style.display = "none";
+          document.getElementById("serviceForm").style.display = "block";
+          carregarServicos();
+        })
+        .catch(err => alert("Erro no login com Google: " + err.message));
+    }
+
+    function logout() {
+      auth.signOut().then(() => {
+        userEmail = null;
+        document.getElementById("loginModal").style.display = "flex";
+        document.getElementById("serviceForm").style.display = "none";
+      });
+    }
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        userEmail = user.email;
+        document.getElementById("loginModal").style.display = "none";
+        document.getElementById("serviceForm").style.display = "block";
+        carregarServicos();
+      } else {
+        document.getElementById("loginModal").style.display = "flex";
+        document.getElementById("serviceForm").style.display = "none";
+      }
+    });
+  </script>
 </body>
 </html>
