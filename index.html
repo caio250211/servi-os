@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Insect Control Tupí</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -23,7 +23,6 @@
       background: white;
       border-radius: 16px;
       box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
-      transition: background-color 0.3s;
     }
     .dark-mode .container {
       background: #1e1e1e;
@@ -70,23 +69,18 @@
     .dark-mode .total {
       color: #ff6f6f;
     }
-    @media (max-width: 768px) {
-      .container {
-        margin: 20px 10px;
-        padding: 20px;
-      }
-      .header {
-        flex-direction: column;
-        text-align: center;
-      }
+    .last-update {
+      text-align: right;
+      font-size: 0.9rem;
+      margin-top: -10px;
+      margin-bottom: 10px;
+      font-style: italic;
     }
     .modal {
       display: none;
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background-color: rgba(0, 0, 0, 0.5);
       justify-content: center;
       align-items: center;
@@ -106,31 +100,30 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div>
         <label for="modoNoturno" class="form-check-label me-2">Modo Noturno</label>
-        <input class="form-check-input" type="checkbox" id="modoNoturno">
+        <input class="form-check-input" type="checkbox" id="modoNoturno" />
       </div>
       <button onclick="logout()" class="btn btn-sm btn-outline-secondary">Sair</button>
     </div>
+
     <div class="header">
-      <img src="logo.png.JPG" alt="Logo Insect Control Tupí" class="logo">
+      <img src="logo.png.JPG" alt="Logo Insect Control Tupí" class="logo" />
       <h1>Insect Control Tupí</h1>
     </div>
+
     <form id="serviceForm" class="row g-3" style="display: none;">
-      <div class="col-md-2"><input type="date" id="data" class="form-control" required></div>
-      <div class="col-md-2"><input type="text" id="nome" class="form-control" placeholder="Nome do Cliente" required></div>
-      <div class="col-md-2"><input type="text" id="local" class="form-control" placeholder="Local do Serviço" required></div>
-      <div class="col-md-2"><input type="text" id="contato" class="form-control" placeholder="Contato" required></div>
-      <div class="col-md-2">
-        <select id="tipo" class="form-select" required>
-          <option value="" disabled selected>Tipo</option>
-          <option>Baratas</option><option>Traças</option><option>Cupins</option>
-          <option>Ratos</option><option>Lacraias</option><option>Caixa d'agua</option>
-          <option>Impermeabilização</option><option>Carrapatos</option><option>Pulgas</option>
-        </select>
-      </div>
-      <div class="col-md-1"><input type="number" id="valor" class="form-control" placeholder="R$" step="0.01" required></div>
-      <div class="col-md-1 d-grid"><button type="submit" class="btn btn-danger">+</button></div>
+      <input type="hidden" id="servicoId" />
+      <div class="col-md-2"><input type="date" id="data" class="form-control" required /></div>
+      <div class="col-md-2"><input type="text" id="nome" class="form-control" placeholder="Nome do Cliente" required /></div>
+      <div class="col-md-2"><input type="text" id="local" class="form-control" placeholder="Local do Serviço" required /></div>
+      <div class="col-md-2"><input type="text" id="contato" class="form-control" placeholder="Contato" required /></div>
+      <div class="col-md-2"><input type="text" id="tipo" class="form-control" placeholder="Tipo" required /></div>
+      <div class="col-md-1"><input type="number" id="valor" class="form-control" placeholder="R$" step="0.01" required /></div>
+      <div class="col-md-1 d-grid"><button type="submit" class="btn btn-danger">Salvar</button></div>
     </form>
-    <input type="text" id="search" class="form-control mt-3" placeholder="🔍 Buscar por nome, local ou contato">
+
+    <input type="text" id="search" class="form-control mt-3" placeholder="🔍 Buscar por nome, local ou contato" />
+    <div class="last-update">Último serviço adicionado em: <span id="ultimaAlteracao">--</span></div>
+
     <div class="table-responsive mt-4">
       <table class="table table-striped table-hover">
         <thead><tr><th>Data</th><th>Nome</th><th>Local</th><th>Tipo</th><th>Contato</th><th>Valor</th><th>Ações</th></tr></thead>
@@ -139,11 +132,13 @@
     </div>
     <div class="total mt-3">Total: R$ <span id="totalValor">0,00</span></div>
   </div>
+
+  <!-- Modais -->
   <div id="loginModal" class="modal">
     <div class="modal-content">
       <h4>Login</h4>
-      <input type="email" id="email" placeholder="Email">
-      <input type="password" id="senha" placeholder="Senha">
+      <input type="email" id="email" placeholder="Email" />
+      <input type="password" id="senha" placeholder="Senha" />
       <button onclick="login()">Login</button>
       <button onclick="showCadastro()">Cadastrar-se</button>
       <button onclick="loginGoogle()">Entrar com Google</button>
@@ -152,15 +147,18 @@
   <div id="cadastroModal" class="modal">
     <div class="modal-content">
       <h4>Cadastrar-se</h4>
-      <input type="email" id="emailCadastro" placeholder="Email">
-      <input type="password" id="senhaCadastro" placeholder="Senha">
+      <input type="email" id="emailCadastro" placeholder="Email" />
+      <input type="password" id="senhaCadastro" placeholder="Senha" />
       <button onclick="cadastrar()">Cadastrar</button>
       <button onclick="showLogin()">Já tem uma conta? Entrar</button>
     </div>
   </div>
+
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCIU7yiuI1uXfJWv6MoGYTv6ylqhzQhscA",
@@ -169,7 +167,6 @@
       storageBucket: "insectcontrol-54785.appspot.com",
       messagingSenderId: "299720867487",
       appId: "1:299720867487:web:cdcff964efc45755496caa",
-      measurementId: "G-DVQWP5TM9J"
     };
     firebase.initializeApp(firebaseConfig);
     const auth = firebase.auth();
@@ -184,44 +181,56 @@
       return parseFloat(valor).toFixed(2).replace(".", ",");
     }
 
-    function atualizarTabela(servicos) {
+    function formatarDataHora(date) {
+      return new Date(date).toLocaleString("pt-BR");
+    }
+
+    async function carregarServicos() {
+      if (!userEmail) return;
+      const snap = await db.collection("servicos")
+        .where("usuario", "==", userEmail)
+        .orderBy("atualizado", "desc")
+        .get();
       const tabela = document.getElementById("tabelaServicos");
-      const search = document.getElementById("search").value.toLowerCase();
+      const busca = document.getElementById("search").value.toLowerCase();
       tabela.innerHTML = "";
       let total = 0;
-      servicos.forEach(doc => {
+      let primeiraData = null;
+      snap.docs.forEach(doc => {
         const serv = doc.data();
         if (
-          serv.nome.toLowerCase().includes(search) ||
-          serv.local.toLowerCase().includes(search) ||
-          serv.contato.toLowerCase().includes(search)
+          serv.nome.toLowerCase().includes(busca) ||
+          serv.local.toLowerCase().includes(busca) ||
+          serv.contato.toLowerCase().includes(busca)
         ) {
           const row = document.createElement("tr");
-          row.innerHTML = 
+          row.innerHTML = `
             <td>${serv.data}</td><td>${serv.nome}</td><td>${serv.local}</td>
             <td>${serv.tipo}</td><td>${serv.contato}</td>
             <td>R$ ${formatarValor(serv.valor)}</td>
-            <td><button class="btn btn-sm btn-danger" onclick="deletarServico('${doc.id}')">Excluir</button></td>
-          ;
+            <td>
+              <button class="btn btn-sm btn-warning me-1" onclick="editarServico('${doc.id}')">Editar</button>
+              <button class="btn btn-sm btn-danger" onclick="deletarServico('${doc.id}')">Excluir</button>
+            </td>
+          `;
           tabela.appendChild(row);
           total += parseFloat(serv.valor);
+          if (!primeiraData) primeiraData = serv.atualizado?.toDate?.() || serv.criado?.toDate?.();
         }
       });
       document.getElementById("totalValor").textContent = formatarValor(total);
+      document.getElementById("ultimaAlteracao").textContent = primeiraData
+        ? formatarDataHora(primeiraData)
+        : "--";
     }
 
     document.getElementById("search").addEventListener("input", carregarServicos);
 
-    async function carregarServicos() {
-      if (!userEmail) return;
-      const snap = await db.collection("servicos").where("usuario", "==", userEmail).get();
-      atualizarTabela(snap.docs);
-    }
-
     document.getElementById("serviceForm").addEventListener("submit", async e => {
       e.preventDefault();
       if (!userEmail) return alert("Por favor, faça login.");
-      const novoServico = {
+
+      const servico = {
         data: document.getElementById("data").value,
         nome: document.getElementById("nome").value,
         local: document.getElementById("local").value,
@@ -229,21 +238,36 @@
         tipo: document.getElementById("tipo").value,
         valor: document.getElementById("valor").value,
         usuario: userEmail,
-        criado: new Date()
+        atualizado: new Date()
       };
-      try {
-        await db.collection("servicos").add(novoServico);
-        document.getElementById("serviceForm").reset();
-        carregarServicos();
-      } catch (error) {
-        alert("Erro ao adicionar serviço");
-        console.error(error);
+      const id = document.getElementById("servicoId").value;
+      if (id) {
+        await db.collection("servicos").doc(id).update(servico);
+      } else {
+        servico.criado = new Date();
+        await db.collection("servicos").add(servico);
       }
+
+      document.getElementById("serviceForm").reset();
+      document.getElementById("servicoId").value = "";
+      carregarServicos();
     });
 
     async function deletarServico(id) {
       await db.collection("servicos").doc(id).delete();
       carregarServicos();
+    }
+
+    async function editarServico(id) {
+      const doc = await db.collection("servicos").doc(id).get();
+      const serv = doc.data();
+      document.getElementById("servicoId").value = doc.id;
+      document.getElementById("data").value = serv.data;
+      document.getElementById("nome").value = serv.nome;
+      document.getElementById("local").value = serv.local;
+      document.getElementById("contato").value = serv.contato;
+      document.getElementById("tipo").value = serv.tipo;
+      document.getElementById("valor").value = serv.valor;
     }
 
     function login() {
@@ -299,6 +323,7 @@
         userEmail = null;
         document.getElementById("loginModal").style.display = "flex";
         document.getElementById("serviceForm").style.display = "none";
+        document.getElementById("tabelaServicos").innerHTML = "";
       });
     }
 
