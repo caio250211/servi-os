@@ -197,12 +197,12 @@
           serv.contato.toLowerCase().includes(search)
         ) {
           const row = document.createElement("tr");
-          row.innerHTML = 
+          row.innerHTML = `
             <td>${serv.data}</td><td>${serv.nome}</td><td>${serv.local}</td>
             <td>${serv.tipo}</td><td>${serv.contato}</td>
             <td>R$ ${formatarValor(serv.valor)}</td>
             <td><button class="btn btn-sm btn-danger" onclick="deletarServico('${doc.id}')">Excluir</button></td>
-          ;
+          `;
           tabela.appendChild(row);
           total += parseFloat(serv.valor);
         }
