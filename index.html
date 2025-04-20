@@ -90,6 +90,10 @@
       background-color: rgba(0, 0, 0, 0.5);
       justify-content: center;
       align-items: center;
+      z-index: 999;
+    }
+    .modal.show {
+      display: flex;
     }
     .modal-content {
       background: white;
@@ -139,25 +143,29 @@
     </div>
     <div class="total mt-3">Total: R$ <span id="totalValor">0,00</span></div>
   </div>
+
+  <!-- Modais -->
   <div id="loginModal" class="modal">
     <div class="modal-content">
       <h4>Login</h4>
-      <input type="email" id="email" placeholder="Email">
-      <input type="password" id="senha" placeholder="Senha">
-      <button onclick="login()">Login</button>
-      <button onclick="showCadastro()">Cadastrar-se</button>
-      <button onclick="loginGoogle()">Entrar com Google</button>
+      <input type="email" id="email" placeholder="Email" class="form-control mb-2">
+      <input type="password" id="senha" placeholder="Senha" class="form-control mb-2">
+      <button class="btn btn-primary w-100 mb-2" onclick="login()">Login</button>
+      <button class="btn btn-outline-secondary w-100 mb-2" onclick="showCadastro()">Cadastrar-se</button>
+      <button class="btn btn-danger w-100" onclick="loginGoogle()">Entrar com Google</button>
     </div>
   </div>
+
   <div id="cadastroModal" class="modal">
     <div class="modal-content">
       <h4>Cadastrar-se</h4>
-      <input type="email" id="emailCadastro" placeholder="Email">
-      <input type="password" id="senhaCadastro" placeholder="Senha">
-      <button onclick="cadastrar()">Cadastrar</button>
-      <button onclick="showLogin()">Já tem uma conta? Entrar</button>
+      <input type="email" id="emailCadastro" placeholder="Email" class="form-control mb-2">
+      <input type="password" id="senhaCadastro" placeholder="Senha" class="form-control mb-2">
+      <button class="btn btn-success w-100 mb-2" onclick="cadastrar()">Cadastrar</button>
+      <button class="btn btn-outline-secondary w-100" onclick="showLogin()">Já tem uma conta? Entrar</button>
     </div>
   </div>
+
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
@@ -197,12 +205,12 @@
           serv.contato.toLowerCase().includes(search)
         ) {
           const row = document.createElement("tr");
-          row.innerHTML = 
+          row.innerHTML = `
             <td>${serv.data}</td><td>${serv.nome}</td><td>${serv.local}</td>
             <td>${serv.tipo}</td><td>${serv.contato}</td>
             <td>R$ ${formatarValor(serv.valor)}</td>
             <td><button class="btn btn-sm btn-danger" onclick="deletarServico('${doc.id}')">Excluir</button></td>
-          ;
+          `;
           tabela.appendChild(row);
           total += parseFloat(serv.valor);
         }
@@ -252,7 +260,7 @@
       auth.signInWithEmailAndPassword(email, senha)
         .then(user => {
           userEmail = user.user.email;
-          document.getElementById("loginModal").style.display = "none";
+          document.getElementById("loginModal").classList.remove("show");
           document.getElementById("serviceForm").style.display = "block";
           carregarServicos();
         })
@@ -265,7 +273,7 @@
       auth.createUserWithEmailAndPassword(email, senha)
         .then(user => {
           userEmail = user.user.email;
-          document.getElementById("cadastroModal").style.display = "none";
+          document.getElementById("cadastroModal").classList.remove("show");
           document.getElementById("serviceForm").style.display = "block";
           carregarServicos();
         })
@@ -273,13 +281,13 @@
     }
 
     function showCadastro() {
-      document.getElementById("loginModal").style.display = "none";
-      document.getElementById("cadastroModal").style.display = "flex";
+      document.getElementById("loginModal").classList.remove("show");
+      document.getElementById("cadastroModal").classList.add("show");
     }
 
     function showLogin() {
-      document.getElementById("cadastroModal").style.display = "none";
-      document.getElementById("loginModal").style.display = "flex";
+      document.getElementById("cadastroModal").classList.remove("show");
+      document.getElementById("loginModal").classList.add("show");
     }
 
     function loginGoogle() {
@@ -287,7 +295,7 @@
       auth.signInWithPopup(provider)
         .then(result => {
           userEmail = result.user.email;
-          document.getElementById("loginModal").style.display = "none";
+          document.getElementById("loginModal").classList.remove("show");
           document.getElementById("serviceForm").style.display = "block";
           carregarServicos();
         })
@@ -297,19 +305,19 @@
     function logout() {
       auth.signOut().then(() => {
         userEmail = null;
-        document.getElementById("loginModal").style.display = "flex";
         document.getElementById("serviceForm").style.display = "none";
+        document.getElementById("loginModal").classList.add("show");
       });
     }
 
     auth.onAuthStateChanged(user => {
       if (user) {
         userEmail = user.email;
-        document.getElementById("loginModal").style.display = "none";
+        document.getElementById("loginModal").classList.remove("show");
         document.getElementById("serviceForm").style.display = "block";
         carregarServicos();
       } else {
-        document.getElementById("loginModal").style.display = "flex";
+        document.getElementById("loginModal").classList.add("show");
         document.getElementById("serviceForm").style.display = "none";
       }
     });
