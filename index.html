@@ -119,9 +119,11 @@
       <div class="col-md-2"><input type="text" id="nome" class="form-control" placeholder="Nome do Cliente" required></div>
       <div class="col-md-2"><input type="text" id="local" class="form-control" placeholder="Local do Serviço" required></div>
       <div class="col-md-2"><input type="text" id="contato" class="form-control" placeholder="Contato" required></div>
-      <div class="col-md-2"><input type="text" id="tipo" class="form-control" placeholder="Tipo do Serviço" required></div>
+      <div class="col-md-2">
+        <input type="text" id="tipo" class="form-control" placeholder="Tipo de Serviço" required>
+      </div>
       <div class="col-md-1"><input type="number" id="valor" class="form-control" placeholder="R$" step="0.01" required></div>
-      <div class="col-md-1 d-grid"><button type="submit" class="btn btn-danger" id="btnSubmit">+</button></div>
+      <div class="col-md-1 d-grid"><button type="submit" class="btn btn-danger">+</button></div>
     </form>
     <input type="text" id="search" class="form-control mt-3" placeholder="🔍 Buscar por nome, local ou contato">
     <div class="table-responsive mt-4">
@@ -168,7 +170,6 @@
     const auth = firebase.auth();
     const db = firebase.firestore();
     let userEmail = null;
-    let editandoId = null;
 
     document.getElementById("modoNoturno").addEventListener("change", e => {
       document.body.classList.toggle("dark-mode", e.target.checked);
@@ -195,10 +196,7 @@
             <td>${serv.data}</td><td>${serv.nome}</td><td>${serv.local}</td>
             <td>${serv.tipo}</td><td>${serv.contato}</td>
             <td>R$ ${formatarValor(serv.valor)}</td>
-            <td>
-              <button class="btn btn-sm btn-warning me-1" onclick="editarServico('${doc.id}', ${JSON.stringify(serv).replace(/"/g, '&quot;')})">Editar</button>
-              <button class="btn btn-sm btn-danger" onclick="deletarServico('${doc.id}')">Excluir</button>
-            </td>
+            <td><button class="btn btn-sm btn-danger" onclick="deletarServico('${doc.id}')">Excluir</button></td>
           `;
           tabela.appendChild(row);
           total += parseFloat(serv.valor);
@@ -211,14 +209,14 @@
 
     async function carregarServicos() {
       if (!userEmail) return;
-      const snap = await db.collection("servicos").where("usuario", "==", userEmail).orderBy("criado", "desc").get();
+      const snap = await db.collection("servicos").where("usuario", "==", userEmail).get();
       atualizarTabela(snap.docs);
     }
 
     document.getElementById("serviceForm").addEventListener("submit", async e => {
       e.preventDefault();
       if (!userEmail) return alert("Por favor, faça login.");
-      const servico = {
+      const novoServico = {
         data: document.getElementById("data").value,
         nome: document.getElementById("nome").value,
         local: document.getElementById("local").value,
@@ -229,33 +227,14 @@
         criado: new Date()
       };
       try {
-        if (editandoId) {
-          delete servico.criado;
-          await db.collection("servicos").doc(editandoId).update(servico);
-          editandoId = null;
-          document.getElementById("btnSubmit").textContent = "+";
-        } else {
-          await db.collection("servicos").add(servico);
-        }
+        await db.collection("servicos").add(novoServico);
         document.getElementById("serviceForm").reset();
         carregarServicos();
       } catch (error) {
-        alert("Erro ao salvar serviço");
+        alert("Erro ao adicionar serviço");
         console.error(error);
       }
     });
-
-    function editarServico(id, servico) {
-      document.getElementById("data").value = servico.data;
-      document.getElementById("nome").value = servico.nome;
-      document.getElementById("local").value = servico.local;
-      document.getElementById("contato").value = servico.contato;
-      document.getElementById("tipo").value = servico.tipo;
-      document.getElementById("valor").value = servico.valor;
-      editandoId = id;
-      document.getElementById("btnSubmit").textContent = "Salvar";
-      window.scrollTo(0, 0);
-    }
 
     async function deletarServico(id) {
       await db.collection("servicos").doc(id).delete();
