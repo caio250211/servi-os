@@ -138,6 +138,7 @@
       </table>
     </div>
     <div class="total mt-3">Total: R$ <span id="totalValor">0,00</span></div>
+    <div class="total">Serviços cadastrados: <span id="contadorServicos">0</span></div>
   </div>
   <div id="loginModal" class="modal">
     <div class="modal-content">
@@ -189,6 +190,8 @@
       const search = document.getElementById("search").value.toLowerCase();
       tabela.innerHTML = "";
       let total = 0;
+      let contador = 0;
+
       servicos.forEach(doc => {
         const serv = doc.data();
         if (
@@ -205,9 +208,12 @@
           `;
           tabela.appendChild(row);
           total += parseFloat(serv.valor);
+          contador++;
         }
       });
+
       document.getElementById("totalValor").textContent = formatarValor(total);
+      document.getElementById("contadorServicos").textContent = contador;
     }
 
     document.getElementById("search").addEventListener("input", carregarServicos);
