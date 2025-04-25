@@ -9,18 +9,18 @@
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #ffffff;
+      background-color: #f8f9fa;
       transition: background-color 0.3s, color 0.3s;
     }
     .dark-mode {
       background-color: #121212;
-      color: #ffffff;
+      color: #e1e1e1;
     }
     .container {
       max-width: 1000px;
       margin: 50px auto;
       padding: 30px;
-      background: rgb(255, 255, 255);
+      background: white;
       border-radius: 16px;
       box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
       transition: background-color 0.3s;
@@ -56,7 +56,7 @@
     }
     table th {
       background-color: #e60014;
-      color: rgb(255, 0, 0);
+      color: white;
     }
     .dark-mode table th {
       background-color: #b0000f;
@@ -120,7 +120,12 @@
       <div class="col-md-2"><input type="text" id="local" class="form-control" placeholder="Local do Serviço" required></div>
       <div class="col-md-2"><input type="text" id="contato" class="form-control" placeholder="Contato" required></div>
       <div class="col-md-2">
-        <input type="text" id="tipo" class="form-control" placeholder="Tipo de Serviço" required>
+        <select id="tipo" class="form-select" required>
+          <option value="" disabled selected>Tipo</option>
+          <option>Baratas</option><option>Traças</option><option>Cupins</option>
+          <option>Ratos</option><option>Lacraias</option><option>Caixa d'agua</option>
+          <option>Impermeabilização</option><option>Carrapatos</option><option>Pulgas</option>
+        </select>
       </div>
       <div class="col-md-1"><input type="number" id="valor" class="form-control" placeholder="R$" step="0.01" required></div>
       <div class="col-md-1 d-grid"><button type="submit" class="btn btn-danger">+</button></div>
@@ -192,12 +197,12 @@
           serv.contato.toLowerCase().includes(search)
         ) {
           const row = document.createElement("tr");
-          row.innerHTML = 
+          row.innerHTML = `
             <td>${serv.data}</td><td>${serv.nome}</td><td>${serv.local}</td>
             <td>${serv.tipo}</td><td>${serv.contato}</td>
             <td>R$ ${formatarValor(serv.valor)}</td>
             <td><button class="btn btn-sm btn-danger" onclick="deletarServico('${doc.id}')">Excluir</button></td>
-          ;
+          `;
           tabela.appendChild(row);
           total += parseFloat(serv.valor);
         }
