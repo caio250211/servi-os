@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Insect Control Tupí</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet"/>
   <style>
     body {
       font-family: 'Inter', sans-serif;
@@ -20,10 +20,9 @@
       max-width: 1000px;
       margin: 50px auto;
       padding: 30px;
-      background: rgb(255, 255, 255);
+      background: #fff;
       border-radius: 16px;
       box-shadow: 0 0 30px rgba(0, 0, 0, 0.1);
-      transition: background-color 0.3s;
     }
     .dark-mode .container {
       background: #1e1e1e;
@@ -56,7 +55,7 @@
     }
     table th {
       background-color: #e60014;
-      color: rgb(255, 0, 0);
+      color: #fff;
     }
     .dark-mode table th {
       background-color: #b0000f;
@@ -70,6 +69,31 @@
     .dark-mode .total {
       color: #ff6f6f;
     }
+    .contador {
+      text-align: left;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #333;
+    }
+    .dark-mode .contador {
+      color: #ddd;
+    }
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      max-width: 400px;
+      width: 100%;
+    }
     @media (max-width: 768px) {
       .container {
         margin: 20px 10px;
@@ -80,25 +104,6 @@
         text-align: center;
       }
     }
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      justify-content: center;
-      align-items: center;
-    }
-    .modal-content {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
-      max-width: 400px;
-      width: 100%;
-    }
   </style>
 </head>
 <body>
@@ -106,53 +111,58 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
       <div>
         <label for="modoNoturno" class="form-check-label me-2">Modo Noturno</label>
-        <input class="form-check-input" type="checkbox" id="modoNoturno">
+        <input class="form-check-input" type="checkbox" id="modoNoturno"/>
       </div>
       <button onclick="logout()" class="btn btn-sm btn-outline-secondary">Sair</button>
     </div>
     <div class="header">
-      <img src="logo.png.JPG" alt="Logo Insect Control Tupí" class="logo">
+      <img src="logo.png.JPG" alt="Logo Insect Control Tupí" class="logo"/>
       <h1>Insect Control Tupí</h1>
     </div>
     <form id="serviceForm" class="row g-3" style="display: none;">
-      <div class="col-md-2"><input type="date" id="data" class="form-control" required></div>
-      <div class="col-md-2"><input type="text" id="nome" class="form-control" placeholder="Nome do Cliente" required></div>
-      <div class="col-md-2"><input type="text" id="local" class="form-control" placeholder="Local do Serviço" required></div>
-      <div class="col-md-2"><input type="text" id="contato" class="form-control" placeholder="Contato" required></div>
-      <div class="col-md-2">
-        <input type="text" id="tipo" class="form-control" placeholder="Tipo de Serviço" required>
-      </div>
-      <div class="col-md-1"><input type="number" id="valor" class="form-control" placeholder="R$" step="0.01" required></div>
+      <div class="col-md-2"><input type="date" id="data" class="form-control" required/></div>
+      <div class="col-md-2"><input type="text" id="nome" class="form-control" placeholder="Nome do Cliente" required/></div>
+      <div class="col-md-2"><input type="text" id="local" class="form-control" placeholder="Local do Serviço" required/></div>
+      <div class="col-md-2"><input type="text" id="contato" class="form-control" placeholder="Contato" required/></div>
+      <div class="col-md-2"><input type="text" id="tipo" class="form-control" placeholder="Tipo de Serviço" required/></div>
+      <div class="col-md-1"><input type="number" id="valor" class="form-control" placeholder="R$" step="0.01" required/></div>
       <div class="col-md-1 d-grid"><button type="submit" class="btn btn-danger">+</button></div>
     </form>
-    <input type="text" id="search" class="form-control mt-3" placeholder="🔍 Buscar por nome, local ou contato">
+    <input type="text" id="search" class="form-control mt-3" placeholder="🔍 Buscar por nome, local ou contato"/>
     <div class="table-responsive mt-4">
       <table class="table table-striped table-hover">
         <thead><tr><th>Data</th><th>Nome</th><th>Local</th><th>Tipo</th><th>Contato</th><th>Valor</th><th>Ações</th></tr></thead>
         <tbody id="tabelaServicos"></tbody>
       </table>
     </div>
-    <div class="total mt-3">Total: R$ <span id="totalValor">0,00</span></div>
+    <div class="d-flex justify-content-between mt-3">
+      <div class="contador">Serviços cadastrados: <span id="totalServicos">0</span></div>
+      <div class="total">Total: R$ <span id="totalValor">0,00</span></div>
+    </div>
   </div>
+
+  <!-- Modais -->
   <div id="loginModal" class="modal">
     <div class="modal-content">
       <h4>Login</h4>
-      <input type="email" id="email" placeholder="Email">
-      <input type="password" id="senha" placeholder="Senha">
-      <button onclick="login()">Login</button>
-      <button onclick="showCadastro()">Cadastrar-se</button>
-      <button onclick="loginGoogle()">Entrar com Google</button>
+      <input type="email" id="email" placeholder="Email" class="form-control mb-2"/>
+      <input type="password" id="senha" placeholder="Senha" class="form-control mb-2"/>
+      <button onclick="login()" class="btn btn-danger w-100 mb-2">Login</button>
+      <button onclick="showCadastro()" class="btn btn-outline-secondary w-100 mb-2">Cadastrar-se</button>
+      <button onclick="loginGoogle()" class="btn btn-outline-primary w-100">Entrar com Google</button>
     </div>
   </div>
   <div id="cadastroModal" class="modal">
     <div class="modal-content">
       <h4>Cadastrar-se</h4>
-      <input type="email" id="emailCadastro" placeholder="Email">
-      <input type="password" id="senhaCadastro" placeholder="Senha">
-      <button onclick="cadastrar()">Cadastrar</button>
-      <button onclick="showLogin()">Já tem uma conta? Entrar</button>
+      <input type="email" id="emailCadastro" placeholder="Email" class="form-control mb-2"/>
+      <input type="password" id="senhaCadastro" placeholder="Senha" class="form-control mb-2"/>
+      <button onclick="cadastrar()" class="btn btn-danger w-100 mb-2">Cadastrar</button>
+      <button onclick="showLogin()" class="btn btn-outline-secondary w-100">Já tem uma conta? Entrar</button>
     </div>
   </div>
+
+  <!-- Firebase SDK -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
@@ -184,6 +194,7 @@
       const search = document.getElementById("search").value.toLowerCase();
       tabela.innerHTML = "";
       let total = 0;
+      let contador = 0;
       servicos.forEach(doc => {
         const serv = doc.data();
         if (
@@ -200,22 +211,23 @@
           `;
           tabela.appendChild(row);
           total += parseFloat(serv.valor);
+          contador++;
         }
       });
       document.getElementById("totalValor").textContent = formatarValor(total);
+      document.getElementById("totalServicos").textContent = contador;
     }
 
     document.getElementById("search").addEventListener("input", carregarServicos);
 
     async function carregarServicos() {
       if (!userEmail) return;
-      const snap = await db.collection("servicos").where("usuario", "==", userEmail).get();
+      const snap = await db.collection("servicos").where("usuario", "==", userEmail).orderBy("criado", "desc").get();
       atualizarTabela(snap.docs);
     }
 
     document.getElementById("serviceForm").addEventListener("submit", async e => {
       e.preventDefault();
-      if (!userEmail) return alert("Por favor, faça login.");
       const novoServico = {
         data: document.getElementById("data").value,
         nome: document.getElementById("nome").value,
@@ -226,14 +238,9 @@
         usuario: userEmail,
         criado: new Date()
       };
-      try {
-        await db.collection("servicos").add(novoServico);
-        document.getElementById("serviceForm").reset();
-        carregarServicos();
-      } catch (error) {
-        alert("Erro ao adicionar serviço");
-        console.error(error);
-      }
+      await db.collection("servicos").add(novoServico);
+      document.getElementById("serviceForm").reset();
+      carregarServicos();
     });
 
     async function deletarServico(id) {
@@ -267,16 +274,6 @@
         .catch(err => alert("Erro no cadastro: " + err.message));
     }
 
-    function showCadastro() {
-      document.getElementById("loginModal").style.display = "none";
-      document.getElementById("cadastroModal").style.display = "flex";
-    }
-
-    function showLogin() {
-      document.getElementById("cadastroModal").style.display = "none";
-      document.getElementById("loginModal").style.display = "flex";
-    }
-
     function loginGoogle() {
       const provider = new firebase.auth.GoogleAuthProvider();
       auth.signInWithPopup(provider)
@@ -295,6 +292,16 @@
         document.getElementById("loginModal").style.display = "flex";
         document.getElementById("serviceForm").style.display = "none";
       });
+    }
+
+    function showCadastro() {
+      document.getElementById("loginModal").style.display = "none";
+      document.getElementById("cadastroModal").style.display = "flex";
+    }
+
+    function showLogin() {
+      document.getElementById("cadastroModal").style.display = "none";
+      document.getElementById("loginModal").style.display = "flex";
     }
 
     auth.onAuthStateChanged(user => {
