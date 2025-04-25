@@ -29,12 +29,15 @@
       background: #1e1e1e;
     }
     .header {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 30px;
-      flex-wrap: wrap;
-    }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 20px auto;
+  padding: 10px;
+  text-align: center;
+}
     .logo {
       width: 60px;
       height: 60px;
@@ -114,16 +117,14 @@
       <img src="logo.png.JPG" alt="Logo Insect Control Tupí" class="logo">
       <h1>Insect Control Tupí</h1>
     </div>
-    <form id="serviceForm" class="row g-3" style="display: none;">
-      <div class="col-md-2"><input type="date" id="data" class="form-control" required></div>
-      <div class="col-md-2"><input type="text" id="nome" class="form-control" placeholder="Nome do Cliente" required></div>
-      <div class="col-md-2"><input type="text" id="local" class="form-control" placeholder="Local do Serviço" required></div>
-      <div class="col-md-2"><input type="text" id="contato" class="form-control" placeholder="Contato" required></div>
-      <div class="col-md-2">
-        <input type="text" id="tipo" class="form-control" placeholder="Tipo de Serviço" required>
-      </div>
-      <div class="col-md-1"><input type="number" id="valor" class="form-control" placeholder="R$" step="0.01" required></div>
-      <div class="col-md-1 d-grid"><button type="submit" class="btn btn-danger">+</button></div>
+    <form id="formulario">
+      <input type="date" id="data" placeholder="dd/mm/aaaa">
+      <input type="text" id="nome" placeholder="Nome do Cliente">
+      <input type="text" id="local" placeholder="Local do Serviço">
+      <input type="text" id="contato" placeholder="Contato">
+      <input type="text" id="tipo" placeholder="Tipo de Serviço">
+      <input type="number" id="valor" placeholder="R$">
+      <button type="button" onclick="adicionarServico()">+</button>
     </form>
     <input type="text" id="search" class="form-control mt-3" placeholder="🔍 Buscar por nome, local ou contato">
     <div class="table-responsive mt-4">
