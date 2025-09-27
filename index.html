@@ -8,25 +8,37 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>
-        /* INÍCIO DO CSS ULTRA-PROFISSIONAL */
-
+        /* INÍCIO DO CSS ULTRA-PROFISSIONAL (Com Modo Escuro) */
         :root {
-            --primary-color: #ff0000; /* Teal escuro profissional */
-            --primary-light: #ff0404;
-            --secondary-color: #ffb300; /* Âmbar para destaque */
+            --primary-color: #ff0000;
+            --primary-light: #cc0000;
+            --secondary-color: #ffb300;
             --danger-color: #d32f2f; 
             --success-color: #66bb6a;
             --info-color: #29b6f6;
             --text-dark: #263238;
             --text-light: #78909c;
+            
+            /* Cores Padrão (Tema Claro - Para fallback de compatibilidade) */
             --background-body: #eceff1; 
             --card-background: #ffffff;
+            --table-header-bg: #e0e0e0;
             --shadow-light: 0 4px 10px rgba(0, 0, 0, 0.08);
             --shadow-hover: 0 8px 18px rgba(0, 0, 0, 0.15);
             --border-radius: 6px;
         }
-
+        
+        /* Tema Escuro Ativado por padrão (para simular sua imagem) */
         body {
+            --background-body: #1E2125;
+            --card-background: #272B30;
+            --text-dark: #e0e0e0;
+            --text-light: #a0a0a0;
+            --table-header-bg: #222529;
+            --shadow-light: 0 4px 10px rgba(0, 0, 0, 0.4);
+            --shadow-hover: 0 8px 18px rgba(0, 0, 0, 0.6);
+            --sidebar-text: #e0e0e0;
+
             font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 0;
@@ -34,7 +46,7 @@
             color: var(--text-dark);
         }
 
-        /* Layout e Sidebar (Mantido) */
+        /* Layout e Sidebar */
         .dashboard-layout {
             display: grid;
             grid-template-columns: 260px 1fr;
@@ -42,7 +54,7 @@
         }
         .sidebar {
             background-color: var(--primary-color);
-            color: white;
+            color: var(--sidebar-text);
             padding: 30px 20px;
             box-shadow: 4px 0 10px rgba(0, 0, 0, 0.15);
             position: sticky;
@@ -50,7 +62,7 @@
             height: 100vh;
         }
         .logo-box { text-align: center; margin-bottom: 50px; }
-        .logo-box img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 15px; border: 3px solid rgba(255, 255, 255, 0.3); }
+        .logo-box i { font-size: 50px; color: white; margin-bottom: 15px; } /* Ícone como Logo */
         .logo-box h2 { font-size: 24px; font-weight: 500; margin: 0; color: white; letter-spacing: 0.5px; }
         .nav-link {
             display: flex; align-items: center; padding: 14px 15px; margin-bottom: 8px;
@@ -62,7 +74,7 @@
             background-color: var(--primary-light); box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); color: white;
         }
         
-        /* Conteúdo Principal (Mantido) */
+        /* Conteúdo Principal */
         .main-content { padding: 30px 40px; }
         .content-view { display: none; animation: fadeIn 0.4s ease-out; }
         .content-view.active { display: block; }
@@ -76,7 +88,7 @@
         .summary-cards { display: flex; gap: 20px; margin-bottom: 40px; }
         .card {
             background-color: var(--card-background); padding: 25px; border-radius: var(--border-radius);
-            box-shadow: var(--shadow-light); flex: 1; border-bottom: 4px solid var(--primary-light); 
+            box-shadow: var(--shadow-light); flex: 1; border-bottom: 4px solid var(--info-color); /* Usando info-color como na sua imagem */
             transition: all 0.3s;
         }
         .card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
@@ -85,112 +97,89 @@
         
         /* Formulário */
         .form-section { background-color: var(--card-background); padding: 30px; border-radius: var(--border-radius); box-shadow: var(--shadow-light); margin-bottom: 40px; }
-        .form-section h2 { font-size: 22px; font-weight: 500; color: var(--text-dark); border-bottom: 1px solid #e0e0e0; padding-bottom: 15px; margin-bottom: 25px; margin-top: 0; }
-        .form-grid { display: grid; grid-template-columns: repeat(4, 1fr) 140px; gap: 20px; }
+        .form-section h2 { font-size: 22px; font-weight: 500; color: var(--text-dark); border-bottom: 1px solid #444; padding-bottom: 15px; margin-bottom: 25px; margin-top: 0; }
+        
+        /* Corrigido o Grid: 5 colunas para o formulário de serviço */
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 140px; gap: 20px; } 
+
         .input-group input, .input-group select {
-            width: 100%; padding: 12px 15px; border: 1px solid #bdbdbd; border-radius: 4px; font-size: 15px;
-            background-color: #f7f7f7; transition: border-color 0.2s;
+            width: 100%; padding: 12px 15px; border: 1px solid #444; border-radius: 4px; font-size: 15px;
+            background-color: #1a1c1f; /* Fundo input mais escuro para destaque */
+            color: var(--text-dark);
+            transition: border-color 0.2s;
+        }
+        /* Ajuste para input date no Dark Mode */
+        .input-group input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
         }
         .input-group input:focus, .input-group select:focus {
             border-color: var(--secondary-color); outline: none; box-shadow: 0 0 0 2px rgba(255, 179, 0, 0.2);
         }
         .btn-submit {
-            background-color: var(--primary-color); color: white; border: none; border-radius: 4px; font-size: 16px;
+            background-color: #1a6f1a; /* Verde mais escuro para o botão salvar */
+            color: white; border: none; border-radius: 4px; font-size: 16px;
             font-weight: 500; cursor: pointer; transition: background-color 0.2s, transform 0.1s; padding: 10px;
         }
-        .btn-submit:hover { background-color: var(--primary-light); transform: translateY(-1px); }
+        .btn-submit:hover { background-color: #155b15; transform: translateY(-1px); }
         
-        /* Tabela de Dados (Mantido) */
+        /* Tabela de Dados */
         .data-table-container { border-radius: var(--border-radius); box-shadow: var(--shadow-light); overflow: hidden; background-color: var(--card-background); }
         .data-table { width: 100%; border-collapse: collapse; }
         .data-table th, .data-table td { text-align: left; padding: 14px 18px; }
-        .data-table thead { background-color: var(--background-body); }
-        .data-table th { color: var(--text-light); font-weight: 500; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e0e0e0; }
-        .data-table td { border-bottom: 1px solid #f0f0f0; font-size: 14px; }
-        .data-table tbody tr:hover { background-color: rgba(0, 150, 136, 0.05); }
+        .data-table thead { background-color: var(--table-header-bg); }
+        .data-table th { color: var(--text-light); font-weight: 500; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #333; }
+        .data-table td { border-bottom: 1px solid #333; font-size: 14px; }
+        .data-table tbody tr:hover { background-color: #33383f; } /* Hover de linha escura */
         .btn-delete { background-color: var(--danger-color); color: white; padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 12px; transition: background-color 0.2s; }
         .btn-delete:hover { background-color: #c42727; }
 
-        /* Estilos específicos para as NOVAS FUNCIONALIDADES */
+        /* Controles (Filtros e Exportar) */
+        .data-controls { display: flex; gap: 15px; margin-bottom: 25px; align-items: center; }
+        .data-controls input, .data-controls select {
+            padding: 10px 15px; border: 1px solid #444; border-radius: 4px; font-size: 14px;
+            background-color: var(--card-background); color: var(--text-dark);
+        }
+        .data-controls input { flex-grow: 1; }
+
+        /* Status de Pagamento (Dark Mode) */
+        .status-pendente { background-color: #5e4719; color: #ffab40; border: 1px solid #ffab40; }
+        .status-pago { background-color: #385e3a; color: #a5d6a7; border: 1px solid #a5d6a7; }
         
-        /* 1. Status de Pagamento */
-        .status-badge {
-            display: inline-block; padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; transition: background-color 0.2s;
+        /* Modais de Login/Cadastro */
+        .modal {
+            display: flex; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.8); justify-content: center; align-items: center;
+            z-index: 3000;
         }
-        .status-pendente { background-color: #ffe0b2; color: #e65100; border: 1px solid #e65100; }
-        .status-pago { background-color: #c8e6c9; color: var(--success-color); border: 1px solid var(--success-color); }
-        .status-badge:hover { opacity: 0.8; }
-        
-        /* 2. Edição de Tabela (Inline Editing) */
-        .editable { cursor: pointer; transition: background-color 0.1s; }
-        .editable:hover { background-color: #e0f2f1; }
-        .edit-input {
-            border: 1px solid var(--secondary-color); padding: 5px; width: 90%; border-radius: 3px; font-size: 14px;
+        .modal-content {
+            background: var(--card-background); padding: 30px; border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.4); max-width: 400px; width: 100%;
+            display: flex; flex-direction: column; gap: 15px;
         }
-
-        /* 3. Botão de Exportação */
-        .export-btn {
-            background-color: var(--info-color); color: white; padding: 10px 15px; border: none; border-radius: 4px;
-            font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color 0.2s;
+        .modal-content h4 { color: var(--primary-color); margin-bottom: 10px; }
+        .modal-content input {
+            padding: 12px; border: 1px solid #444; border-radius: 4px; font-size: 16px;
+            background-color: #1a1c1f; color: var(--text-dark);
         }
-        .export-btn:hover { background-color: #03a9f4; }
-
-        /* 4. Alerta Flutuante (Toast) */
-        #toastContainer {
-            position: fixed; top: 20px; right: 20px; z-index: 2000;
+        .modal-content button {
+            padding: 12px; background-color: var(--primary-color); color: white; border: none;
+            border-radius: 4px; cursor: pointer; font-weight: 500; transition: background-color 0.2s;
         }
-        .toast {
-            background-color: var(--card-background); color: var(--text-dark); padding: 15px 20px;
-            border-radius: var(--border-radius); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            margin-bottom: 10px; opacity: 0; transition: opacity 0.3s, transform 0.3s;
-            transform: translateX(100%); min-width: 250px; border-left: 5px solid var(--primary-color);
-            display: flex; align-items: center;
-        }
-        .toast.show { opacity: 1; transform: translateX(0); }
-        .toast i { margin-right: 10px; font-size: 18px; }
-        .toast.success { border-left-color: var(--success-color); }
-        .toast.error { border-left-color: var(--danger-color); }
-
-        /* Estilo para Lista de Estatísticas (Mantido) */
-        .stats-list { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .stats-item { background-color: var(--card-background); padding: 20px; border-radius: var(--border-radius); box-shadow: var(--shadow-light); border-left: 5px solid var(--primary-color); }
-        .stats-item h4 { font-size: 14px; color: var(--text-light); margin: 0 0 8px 0; font-weight: 500; text-transform: uppercase; }
-        .stats-item p { font-size: 24px; font-weight: 700; margin: 0; }
-        .stats-item.highlight p { color: var(--secondary-color); }
-
-        /* Responsividade (Mantido) */
-        @media (max-width: 992px) {
-            .dashboard-layout { grid-template-columns: 1fr; }
-            .sidebar { position: relative; height: auto; padding: 15px 20px; display: flex; justify-content: space-around; align-items: center; }
-            .logo-box { display: none; }
-            .nav-link { margin-bottom: 0; }
-            .nav-link span { display: none; }
-            .main-content { padding: 20px; }
-            .summary-cards { flex-direction: column; }
-            .form-grid { grid-template-columns: 1fr; }
-            .form-grid button { grid-column: auto !important; }
-        }
-        @media (max-width: 768px) {
-            .data-table thead { display: none; }
-            .data-table, .data-table tbody, .data-table tr, .data-table td { display: block; width: 100%; }
-            .data-table tr { margin-bottom: 15px; border: 1px solid #ddd; border-radius: var(--border-radius); box-shadow: var(--shadow-light); }
-            .data-table td { text-align: right; padding: 10px; position: relative; border-bottom: none; }
-            .data-table td:before { content: attr(data-label); float: left; font-weight: 500; text-transform: uppercase; color: var(--text-light); font-size: 13px; }
-            .data-controls { flex-direction: column; }
-        }
-
-        /* FIM DO CSS ULTRA-PROFISSIONAL */
+        .modal-content button:hover { background-color: var(--primary-light); }
+        .modal-content .btn-google { background-color: #4285f4; }
+        .modal-content .btn-google:hover { background-color: #357ae8; }
+        /* FIM DO CSS */
     </style>
 </head>
 <body>
 
     <div id="toastContainer"></div>
 
-    <div class="dashboard-layout">
+    <div class="dashboard-layout" id="mainDashboard" style="display: none;">
         
         <div class="sidebar">
             <div class="logo-box">
-                <img src="https://i.imgur.com/pYc14sF.png" alt="Logo">
+                <i class="fas fa-bug"></i>
                 <h2>I.C. Tupi</h2>
             </div>
             
@@ -209,7 +198,7 @@
                 <span>Clientes</span>
             </div>
             
-            <div class="nav-link" style="margin-top: 50px;" onclick="mostrarToast('Saindo...', 'info'); setTimeout(() => window.location.reload(), 500);">
+            <div class="nav-link" style="margin-top: 50px;" onclick="window.logout()">
                 <i class="fas fa-sign-out-alt"></i>
                 <span>Sair</span>
             </div>
@@ -225,7 +214,7 @@
                 </div>
 
                 <div class="summary-cards">
-                    <div class="card">
+                    <div class="card" style="border-bottom-color: var(--info-color);">
                         <h3>TOTAL DE SERVIÇOS</h3>
                         <p id="totalServicos">0</p>
                     </div>
@@ -233,7 +222,7 @@
                         <h3>VALOR TOTAL (R$)</h3>
                         <p id="valorTotal">R$ 0,00</p>
                     </div>
-                    <div class="card">
+                    <div class="card" style="border-bottom-color: var(--info-color);">
                         <h3>SERVIÇOS NO MÊS</h3>
                         <p id="servicosMes">0</p>
                     </div>
@@ -263,11 +252,11 @@
                             
                             <div class="input-group"><input type="number" id="valor" placeholder="Valor (R$)" step="0.01" required></div>
                             
-                            <button type="submit" class="btn-submit" style="grid-column: 5 / 6;"><i class="fas fa-check"></i> Salvar</button>
+                            <button type="submit" class="btn-submit"><i class="fas fa-check"></i> Salvar</button>
 
                             <div class="input-group" style="grid-column: 1 / 4;"><input type="text" id="local" placeholder="Local/Endereço" required></div>
 
-                            <div class="input-group" style="grid-column: 4 / 5;"><input type="text" id="contato" placeholder="Contato" required></div>
+                            <div class="input-group" style="grid-column: 4 / 6;"><input type="text" id="contato" placeholder="Contato" required></div>
                         </div>
                     </form>
                 </div>
@@ -300,7 +289,7 @@
                             </tr>
                         </thead>
                         <tbody id="servicosList">
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -333,7 +322,7 @@
                 <div class="form-section">
                     <h2>Estatísticas Detalhadas</h2>
                     <ul class="stats-list" id="statsList">
-                        <li class="stats-item"><h4>Total de Clientes Cadastrados</h4><p id="statsClientes">0</p></li>
+                        <li class="stats-item"><h4>Total de Clientes Registrados</h4><p id="statsClientes">0</p></li>
                         <li class="stats-item highlight"><h4>Serviço Mais Comum</h4><p id="statsMaisComum">---</p></li>
                         <li class="stats-item"><h4>Valor Máximo de um Serviço</h4><p id="statsValorMax">R$ 0,00</p></li>
                         <li class="stats-item"><h4>Valor Mínimo de um Serviço</h4><p id="statsValorMin">R$ 0,00</p></li>
@@ -367,30 +356,74 @@
                                 <th>Contato</th>
                                 <th>Endereço</th>
                                 <th>Serviços Realizados</th>
-                                <th>Histórico</th>
+                                <th>Ações</th>
                             </tr>
                         </thead>
                         <tbody id="clientesList">
-                            </tbody>
+                        </tbody>
                     </table>
                 </div>
             </div>
 
         </div>
     </div>
+    
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <h4>Login</h4>
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="senha" placeholder="Senha">
+            <button onclick="window.login()">Login</button>
+            <button onclick="window.showCadastro()">Cadastrar-se</button>
+            <button onclick="window.loginGoogle()" class="btn-google">Entrar com Google</button>
+        </div>
+    </div>
+    <div id="cadastroModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <h4>Cadastrar-se</h4>
+            <input type="email" id="emailCadastro" placeholder="Email">
+            <input type="password" id="senhaCadastro" placeholder="Senha">
+            <button onclick="window.cadastrar()">Cadastrar</button>
+            <button onclick="window.showLogin()">Já tem uma conta? Entrar</button>
+        </div>
+    </div>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js"></script>
 
-    <script>
-        // --- VARIÁVEIS DE DADOS ---
-        let servicos = [];
-        let clientes = [];
+    <script type="module">
+        // Importações do Firebase v9 Modular
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js';
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js';
+        import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, query, where, updateDoc } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js';
 
-        // --- FUNÇÕES GERAIS DE UTILIDADE ---
+        // 1. SUA CONFIGURAÇÃO FIREBASE
+        const firebaseConfig = {
+            apiKey: "AIzaSyCIU7yiuI1uXfJWv6MoGYTv6ylqhzQhscA",
+            authDomain: "insectcontrol-54785.firebaseapp.com",
+            projectId: "insectcontrol-54785",
+            storageBucket: "insectcontrol-54785.appspot.com",
+            messagingSenderId: "299720867487",
+            appId: "1:299720867487:web:cdcff964efc45755496caa",
+            measurementId: "G-DVQWP5TM9J"
+        };
+        
+        // Inicialização e referências
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        
+        // Referência às coleções no Firestore
+        const servicosCol = "servicos";
+        const clientesCol = "clientes";
 
-        function formatarMoeda(valor) {
-            return parseFloat(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        }
+        let userEmail = null;
+        let servicos = []; // Array local para armazenar os dados carregados
+        let clientes = []; // Array local para armazenar os clientes carregados
 
-        function mostrarToast(message, type = 'success') {
+        // Funções globais de utilidade
+        window.formatarMoeda = (valor) => parseFloat(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        window.mostrarToast = (message, type = 'success') => {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
             toast.classList.add('toast', type);
@@ -398,43 +431,232 @@
             toast.innerHTML = `<i class="${icon}"></i> <span>${message}</span>`;
             
             container.appendChild(toast);
-            
-            // Força o reflow para a animação
             void toast.offsetWidth; 
             toast.classList.add('show');
 
             setTimeout(() => {
                 toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300); // Remove depois da transição
+                setTimeout(() => toast.remove(), 300);
             }, 3000);
+        };
+        
+        // --- FUNÇÕES FIREBASE (AUTH) ---
+
+        window.login = () => {
+            const email = document.getElementById("email").value;
+            const senha = document.getElementById("senha").value;
+            signInWithEmailAndPassword(auth, email, senha)
+                .then(() => mostrarToast("Login realizado com sucesso!", 'success'))
+                .catch(err => mostrarToast("Erro no login: " + err.message, 'error'));
+        };
+
+        window.cadastrar = () => {
+            const email = document.getElementById("emailCadastro").value;
+            const senha = document.getElementById("senhaCadastro").value;
+            createUserWithEmailAndPassword(auth, email, senha)
+                .then(() => mostrarToast("Cadastro realizado com sucesso! Faça login.", 'success'))
+                .catch(err => mostrarToast("Erro no cadastro: " + err.message, 'error'));
+        };
+        
+        window.loginGoogle = () => {
+            const provider = new GoogleAuthProvider();
+            signInWithPopup(auth, provider)
+                .then(() => mostrarToast("Login com Google realizado com sucesso!", 'success'))
+                .catch(err => mostrarToast("Erro no login com Google: " + err.message, 'error'));
+        };
+
+        window.logout = () => {
+            signOut(auth).then(() => {
+                mostrarToast('Desconectado com sucesso!', 'info');
+            });
+        };
+
+        window.showCadastro = () => {
+            document.getElementById("loginModal").style.display = "none";
+            document.getElementById("cadastroModal").style.display = "flex";
+        };
+
+        window.showLogin = () => {
+            document.getElementById("cadastroModal").style.display = "none";
+            document.getElementById("loginModal").style.display = "flex";
+        };
+        
+        // --- FUNÇÕES FIRESTORE (CRUD) ---
+
+        // Função para carregar serviços do Firestore
+        async function carregarServicos() {
+            if (!userEmail) return;
+            const q = query(collection(db, servicosCol), where("usuario", "==", userEmail));
+            const snap = await getDocs(q);
+            
+            // Mapeia os documentos para o array local de serviços, incluindo o ID do Firestore (para exclusão e edição)
+            servicos = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            
+            // Ordena os serviços por data (mais recente primeiro)
+            servicos.sort((a, b) => new Date(b.data.replace(/-/g, '/')) - new Date(a.data.replace(/-/g, '/')));
+
+            renderizarServicos();
+            renderizarEstatisticas();
+            carregarClientes(); // Garante que a lista de clientes seja atualizada com base nos serviços
+        }
+        
+        // Função para carregar clientes do Firestore
+        async function carregarClientes() {
+            if (!userEmail) return;
+            // Busca a coleção de clientes associada ao usuário
+            const q = query(collection(db, clientesCol), where("usuario", "==", userEmail));
+            const snap = await getDocs(q);
+            
+            clientes = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+            // Filtra e conta os clientes que realmente têm serviços associados (para estatísticas)
+            const clientesUnicosDosServicos = [...new Set(servicos.map(s => s.cliente.toLowerCase()))];
+            
+            // Se você quiser manter apenas a lista de clientes cadastrada explicitamente, use:
+            // renderizarClientes(clientes);
+            
+            // Se você quiser mostrar todos os clientes únicos que aparecem nos serviços (como no código anterior), faça:
+            // const clientesParaRenderizar = clientesUnicosDosServicos.map(nome => ({ nome, isTemporary: true }));
+            
+            renderizarClientes();
+            renderizarEstatisticas(); // Atualiza a contagem de clientes
         }
 
-        // --- FUNÇÕES DE ARMAZENAMENTO (LOCAL STORAGE) ---
-        function carregarDados() {
-            const s = localStorage.getItem('insectControlServicos');
-            const c = localStorage.getItem('insectControlClientes');
-            if (s) servicos = JSON.parse(s);
-            if (c) clientes = JSON.parse(c);
-        }
-        function salvarServicos() {
-            localStorage.setItem('insectControlServicos', JSON.stringify(servicos));
-        }
-        function salvarClientes() {
-            localStorage.setItem('insectControlClientes', JSON.stringify(clientes));
-        }
 
-        // --- FUNCIONALIDADES DE EDIÇÃO INLINE (NOVO) ---
-        function enableInlineEditing(element, field, index) {
+        // Adicionar Serviço (Create)
+        document.getElementById('formServico').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!userEmail) return mostrarToast("Por favor, faça login para adicionar um serviço.", 'error');
+
+            const novoServico = {
+                data: document.getElementById('data').value,
+                cliente: document.getElementById('cliente').value.trim(),
+                local: document.getElementById('local').value.trim(),
+                tipo: document.getElementById('tipo').value,
+                contato: document.getElementById('contato').value.trim(),
+                valor: (parseFloat(document.getElementById('valor').value) || 0).toFixed(2),
+                status: 'Pendente', 
+                usuario: userEmail,
+                criado: new Date().toISOString()
+            };
+
+            try {
+                await addDoc(collection(db, servicosCol), novoServico);
+                document.getElementById('formServico').reset();
+                mostrarToast('Novo Serviço registrado com sucesso!', 'success');
+                carregarServicos();
+            } catch (error) {
+                mostrarToast(`Erro ao salvar serviço: ${error.message}`, 'error');
+            }
+        });
+
+        // Deletar Serviço (Delete)
+        window.deletarServico = async (id) => {
+            const servicoParaDeletar = servicos.find(s => s.id === id);
+            
+            if (confirm(`Tem certeza que deseja excluir o serviço de ${servicoParaDeletar.cliente} em ${servicoParaDeletar.data}?`)) {
+                try {
+                    await deleteDoc(doc(db, servicosCol, id));
+                    mostrarToast('Serviço excluído!', 'error');
+                    carregarServicos();
+                } catch (error) {
+                    mostrarToast(`Erro ao excluir serviço: ${error.message}`, 'error');
+                }
+            }
+        };
+
+        // Adicionar Cliente
+        document.getElementById('formCliente').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!userEmail) return mostrarToast("Faça login para adicionar um cliente.", 'error');
+
+            const nome = document.getElementById('nomeCliente').value.trim();
+            
+            if (clientes.some(c => c.nome.toLowerCase() === nome.toLowerCase())) {
+                return mostrarToast('Cliente já cadastrado!', 'error');
+            }
+
+            const novoCliente = {
+                nome: nome,
+                contato: document.getElementById('contatoCliente').value.trim(),
+                endereco: document.getElementById('enderecoCliente').value.trim(),
+                usuario: userEmail
+            };
+
+            try {
+                await addDoc(collection(db, clientesCol), novoCliente);
+                document.getElementById('formCliente').reset();
+                mostrarToast('Cliente salvo com sucesso!', 'success');
+                carregarClientes();
+            } catch (error) {
+                mostrarToast(`Erro ao salvar cliente: ${error.message}`, 'error');
+            }
+        });
+
+        // Deletar Cliente
+        window.deletarCliente = async (id) => {
+            const clienteParaDeletar = clientes.find(c => c.id === id);
+            const servicosAssociados = servicos.filter(s => s.cliente.toLowerCase() === clienteParaDeletar.nome.toLowerCase()).length;
+
+            if (servicosAssociados > 0) {
+                 return mostrarToast(`Não é possível excluir o cliente. ${servicosAssociados} serviço(s) estão associados.`, 'error');
+            }
+
+            if (confirm(`Tem certeza que deseja excluir o cliente ${clienteParaDeletar.nome}?`)) {
+                try {
+                    await deleteDoc(doc(db, clientesCol, id));
+                    mostrarToast('Cliente excluído com sucesso!', 'success');
+                    carregarClientes();
+                } catch (error) {
+                    mostrarToast(`Erro ao excluir cliente: ${error.message}`, 'error');
+                }
+            }
+        };
+
+
+        // Atualizar Status e Inline Edit (Update)
+        window.toggleStatus = async (id) => {
+            const servicoRef = doc(db, servicosCol, id);
+            const servico = servicos.find(s => s.id === id);
+            const newStatus = (servico.status === 'Pendente') ? 'Pago' : 'Pendente';
+
+            try {
+                await updateDoc(servicoRef, { status: newStatus });
+                mostrarToast(`Status do serviço atualizado para: ${newStatus}`, 'info');
+                carregarServicos();
+            } catch (error) {
+                mostrarToast(`Erro ao atualizar status: ${error.message}`, 'error');
+            }
+        };
+
+        async function updateServicoField(id, field, newValue) {
+            const servicoRef = doc(db, servicosCol, id);
+            try {
+                await updateDoc(servicoRef, { [field]: newValue });
+                mostrarToast('Serviço atualizado com sucesso!', 'success');
+                carregarServicos();
+            } catch (error) {
+                mostrarToast(`Erro ao atualizar serviço: ${error.message}`, 'error');
+            }
+        }
+        
+        // --- RENDERING (MANTIDO E ADAPTADO) ---
+        
+        window.enableInlineEditing = (element, field, id) => {
+            // Lógica adaptada para chamar a função de update do Firebase
             element.classList.add('editable');
-            element.addEventListener('dblclick', function handler() {
-                const oldValue = element.textContent.trim().replace('R$', '').replace('.', '').replace(',', '.');
+            element.ondblclick = function handler() {
+                const servico = servicos.find(s => s.id === id);
+                if (!servico) return;
+
+                const oldValue = element.textContent.trim().replace('R$', '').replace('.', '').replace(',', '.').replace(/\s/g, '');
                 const isValue = field === 'valor';
                 
                 const input = document.createElement('input');
                 input.className = 'edit-input';
                 input.type = isValue ? 'number' : 'text';
                 input.step = isValue ? '0.01' : null;
-                input.value = isValue ? oldValue : element.textContent.trim();
+                input.value = isValue ? (parseFloat(oldValue) || 0) : element.textContent.trim();
                 
                 element.innerHTML = '';
                 element.appendChild(input);
@@ -442,104 +664,25 @@
 
                 const saveChange = () => {
                     const newValue = input.value.trim();
-                    if (newValue === oldValue) {
-                        element.textContent = isValue ? formatarMoeda(oldValue) : oldValue;
+                    if (newValue === oldValue || newValue === (isValue ? parseFloat(oldValue) : oldValue)) {
+                        element.textContent = isValue ? window.formatarMoeda(oldValue) : oldValue;
                         return;
                     }
 
-                    // Atualiza o objeto no array
-                    servicos[index][field] = isValue ? parseFloat(newValue).toFixed(2) : newValue;
-                    salvarServicos();
-                    renderizarServicos();
-                    renderizarEstatisticas();
-                    
-                    mostrarToast('Serviço atualizado com sucesso!', 'success');
+                    // Chama a função de update no Firebase
+                    const finalValue = isValue ? (parseFloat(newValue) || 0).toFixed(2) : newValue;
+                    updateServicoField(id, field, finalValue);
                 };
 
                 input.addEventListener('blur', saveChange);
                 input.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        saveChange();
-                        element.removeEventListener('dblclick', handler);
-                    }
+                    if (e.key === 'Enter') saveChange();
                 });
                 
-                element.removeEventListener('dblclick', handler);
-            });
-        }
+                element.ondblclick = null; // Remove o dblclick temporariamente
+            };
+        };
 
-        // --- FUNÇÕES DE ESTATÍSTICAS E RESUMO (ATUALIZADO) ---
-
-        function calcularEstatisticas() {
-            const totalServicos = servicos.length;
-            const valorTotalSoma = servicos.reduce((soma, servico) => soma + parseFloat(servico.valor), 0);
-            const mediaValor = totalServicos > 0 ? valorTotalSoma / totalServicos : 0;
-            
-            const valorPendenteSoma = servicos.filter(s => s.status !== 'Pago').reduce((soma, servico) => soma + parseFloat(servico.valor), 0);
-            
-            const totalPagos = servicos.filter(s => s.status === 'Pago').length;
-            const taxaPagos = totalServicos > 0 ? ((totalPagos / totalServicos) * 100).toFixed(1) : 0;
-
-            const tipoStats = {};
-            servicos.forEach(servico => {
-                if (!tipoStats[servico.tipo]) tipoStats[servico.tipo] = { count: 0, totalValue: 0 };
-                tipoStats[servico.tipo].count += 1;
-                tipoStats[servico.tipo].totalValue += parseFloat(servico.valor);
-            });
-
-            let maisComum = { tipo: '---', count: 0 };
-            let maisRentavel = { tipo: '---', totalValue: 0 };
-
-            Object.keys(tipoStats).forEach(tipo => {
-                if (tipoStats[tipo].count > maisComum.count) maisComum = { tipo: tipo, count: tipoStats[tipo].count };
-                if (tipoStats[tipo].totalValue > maisRentavel.totalValue) maisRentavel = { tipo: tipo, totalValue: tipoStats[tipo].totalValue };
-            });
-            
-            const valores = servicos.map(s => parseFloat(s.valor));
-            const valorMax = valores.length > 0 ? Math.max(...valores) : 0;
-            const valorMin = valores.length > 0 ? Math.min(...valores) : 0;
-            
-            const dataAtual = new Date();
-            const mesAtual = dataAtual.getMonth();
-            const anoAtual = dataAtual.getFullYear();
-            const servicosMes = servicos.filter(s => new Date(s.data.replace(/-/g, '/')).getMonth() === mesAtual && new Date(s.data.replace(/-/g, '/')).getFullYear() === anoAtual).length;
-
-            return { totalServicos, valorTotalSoma, servicosMes, mediaValor, valorPendenteSoma, totalPagos, taxaPagos, maisComum: maisComum.tipo, maisRentavel: maisRentavel.tipo, valorMax, valorMin };
-        }
-
-        function renderizarEstatisticas() {
-            const stats = calcularEstatisticas();
-
-            // View Serviços KPIs
-            document.getElementById('totalServicos').textContent = stats.totalServicos;
-            document.getElementById('valorTotal').textContent = formatarMoeda(stats.valorTotalSoma);
-            document.getElementById('servicosMes').textContent = stats.servicosMes;
-            document.getElementById('valorPendente').textContent = formatarMoeda(stats.valorPendenteSoma);
-            
-            // View Resumo KPIs
-            document.getElementById('resumoValorTotal').textContent = formatarMoeda(stats.valorTotalSoma);
-            document.getElementById('resumoMediaValor').textContent = formatarMoeda(stats.mediaValor);
-            document.getElementById('resumoMaisRentavel').textContent = stats.maisRentavel;
-            document.getElementById('taxaPagos').textContent = `${stats.taxaPagos}%`;
-            
-            // Estatísticas Detalhadas
-            document.getElementById('statsClientes').textContent = clientes.length;
-            document.getElementById('statsMaisComum').textContent = stats.maisComum;
-            document.getElementById('statsValorMax').textContent = formatarMoeda(stats.valorMax);
-            document.getElementById('statsValorMin').textContent = formatarMoeda(stats.valorMin);
-        }
-
-        // --- FUNÇÕES DA VIEW SERVIÇOS ---
-
-        function toggleStatus(index) {
-            const currentStatus = servicos[index].status;
-            servicos[index].status = (currentStatus === 'Pendente') ? 'Pago' : 'Pendente';
-            salvarServicos();
-            renderizarServicos();
-            renderizarEstatisticas();
-            mostrarToast(`Status do serviço atualizado para: ${servicos[index].status}`, 'info');
-        }
-        
         function renderizarServicos() {
             const list = document.getElementById('servicosList');
             list.innerHTML = '';
@@ -550,7 +693,8 @@
             const listaFiltrada = servicos.filter(servico => {
                 const matchesSearch = termoBusca === '' || 
                                         servico.cliente.toLowerCase().includes(termoBusca) ||
-                                        servico.local.toLowerCase().includes(termoBusca);
+                                        servico.local.toLowerCase().includes(termoBusca) ||
+                                        servico.contato.toLowerCase().includes(termoBusca);
                 const matchesType = tipoFiltro === '' || servico.tipo === tipoFiltro;
                 return matchesSearch && matchesType;
             });
@@ -560,7 +704,7 @@
                 return;
             }
 
-            listaFiltrada.forEach((servico, index) => {
+            listaFiltrada.forEach(servico => {
                 const row = list.insertRow();
                 const statusClass = servico.status === 'Pago' ? 'status-pago' : 'status-pendente';
                 
@@ -570,69 +714,128 @@
                     <td data-label="Local" class="editable" data-field="local">${servico.local}</td>
                     <td data-label="Tipo">${servico.tipo}</td>
                     <td data-label="Contato" class="editable" data-field="contato">${servico.contato}</td>
-                    <td data-label="Valor (R$)" class="editable" data-field="valor" style="font-weight: 600;">${formatarMoeda(servico.valor)}</td>
+                    <td data-label="Valor (R$)" class="editable" data-field="valor" style="font-weight: 600;">${window.formatarMoeda(servico.valor)}</td>
                     <td data-label="Status">
-                        <span class="status-badge ${statusClass}" onclick="toggleStatus(${index})">
+                        <span class="status-badge ${statusClass}" onclick="window.toggleStatus('${servico.id}')">
                             ${servico.status}
                         </span>
                     </td>
                     <td>
-                        <button class="btn-delete" data-index="${index}"><i class="fas fa-trash-alt"></i></button>
+                        <button class="btn-delete" onclick="window.deletarServico('${servico.id}')"><i class="fas fa-trash-alt"></i></button>
                     </td>
                 `;
 
                 // Aplica a Edição Inline nas células marcadas
                 row.querySelectorAll('.editable').forEach(cell => {
-                    enableInlineEditing(cell, cell.dataset.field, index);
+                    window.enableInlineEditing(cell, cell.dataset.field, servico.id);
                 });
             });
         }
         
-        document.getElementById('formServico').addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const novoServico = {
-                data: document.getElementById('data').value,
-                cliente: document.getElementById('cliente').value.trim(),
-                local: document.getElementById('local').value.trim(),
-                tipo: document.getElementById('tipo').value,
-                contato: document.getElementById('contato').value.trim(),
-                valor: parseFloat(document.getElementById('valor').value).toFixed(2),
-                status: 'Pendente' // Status inicial (NOVO)
-            };
+        function renderizarEstatisticas() {
+            // Lógica de cálculo de estatísticas mantida
+            const totalServicos = servicos.length;
+            const valorTotalSoma = servicos.reduce((soma, servico) => soma + (parseFloat(servico.valor) || 0), 0);
+            const mediaValor = totalServicos > 0 ? valorTotalSoma / totalServicos : 0;
+            
+            const valorPendenteSoma = servicos.filter(s => s.status !== 'Pago').reduce((soma, servico) => soma + (parseFloat(servico.valor) || 0), 0);
+            
+            const totalPagos = servicos.filter(s => s.status === 'Pago').length;
+            const taxaPagos = totalServicos > 0 ? ((totalPagos / totalServicos) * 100).toFixed(1) : 0;
 
-            servicos.unshift(novoServico); 
-            
-            salvarServicos();
-            renderizarServicos();
-            renderizarEstatisticas();
-            document.getElementById('formServico').reset();
-            mostrarToast('Novo Serviço registrado com sucesso!', 'success');
-        });
+            const tipoStats = {};
+            servicos.forEach(servico => {
+                if (!tipoStats[servico.tipo]) tipoStats[servico.tipo] = { count: 0, totalValue: 0 };
+                tipoStats[servico.tipo].count += 1;
+                tipoStats[servico.tipo].totalValue += (parseFloat(servico.valor) || 0);
+            });
 
-        document.getElementById('servicosList').addEventListener('click', (e) => {
-            if (e.target.closest('.btn-delete')) {
-                const button = e.target.closest('.btn-delete');
-                const rowIndex = button.closest('tr').rowIndex -1;
-                const servicoParaDeletar = servicos[rowIndex];
-                
-                if (confirm(`Tem certeza que deseja excluir o serviço de ${servicoParaDeletar.cliente}?`)) {
-                    servicos.splice(rowIndex, 1); 
-                    salvarServicos();
-                    renderizarServicos();
-                    renderizarEstatisticas();
-                    renderizarClientes();
-                    mostrarToast('Serviço excluído!', 'error');
-                }
+            let maisComum = { tipo: '---', count: 0 };
+            let maisRentavel = { tipo: '---', totalValue: 0 };
+
+            Object.keys(tipoStats).forEach(tipo => {
+                if (tipoStats[tipo].count > maisComum.count) maisComum = { tipo: tipo, count: tipoStats[tipo].count };
+                if (tipoStats[tipo].totalValue > maisRentavel.totalValue) maisRentavel = { tipo: tipo, totalValue: tipoStats[tipo].totalValue };
+            });
+            
+            const valores = servicos.map(s => parseFloat(s.valor) || 0);
+            const valorMax = valores.length > 0 ? Math.max(...valores) : 0;
+            const valorMin = valores.length > 0 ? Math.min(...valores) : 0;
+            
+            const dataAtual = new Date();
+            const mesAtual = dataAtual.getMonth();
+            const anoAtual = dataAtual.getFullYear();
+            const servicosMes = servicos.filter(s => {
+                const dataServico = new Date(s.data.replace(/-/g, '/'));
+                return dataServico.getMonth() === mesAtual && dataServico.getFullYear() === anoAtual;
+            }).length;
+
+            const stats = { totalServicos, valorTotalSoma, servicosMes, mediaValor, valorPendenteSoma, totalPagos, taxaPagos, maisComum: maisComum.tipo, maisRentavel: maisRentavel.tipo, valorMax, valorMin };
+            
+            // Renderização
+            document.getElementById('totalServicos').textContent = stats.totalServicos;
+            document.getElementById('valorTotal').textContent = window.formatarMoeda(stats.valorTotalSoma);
+            document.getElementById('servicosMes').textContent = stats.servicosMes;
+            document.getElementById('valorPendente').textContent = window.formatarMoeda(stats.valorPendenteSoma);
+            
+            document.getElementById('resumoValorTotal').textContent = window.formatarMoeda(stats.valorTotalSoma);
+            document.getElementById('resumoMediaValor').textContent = window.formatarMoeda(stats.mediaValor);
+            document.getElementById('resumoMaisRentavel').textContent = stats.maisRentavel;
+            document.getElementById('taxaPagos').textContent = `${stats.taxaPagos}%`;
+            
+            document.getElementById('statsClientes').textContent = clientes.length;
+            document.getElementById('statsMaisComum').textContent = stats.maisComum;
+            document.getElementById('statsValorMax').textContent = window.formatarMoeda(stats.valorMax);
+            document.getElementById('statsValorMin').textContent = window.formatarMoeda(stats.valorMin);
+        }
+
+        function renderizarClientes() {
+            const list = document.getElementById('clientesList');
+            list.innerHTML = '';
+            
+            if (clientes.length === 0) {
+                list.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--text-light);">Nenhum cliente cadastrado.</td></tr>`;
+                return;
             }
-        });
+
+            clientes.forEach(cliente => {
+                const totalServicosCliente = servicos.filter(s => s.cliente.toLowerCase() === cliente.nome.toLowerCase()).length;
+
+                const row = list.insertRow();
+                row.innerHTML = `
+                    <td data-label="Nome">${cliente.nome}</td>
+                    <td data-label="Contato">${cliente.contato}</td>
+                    <td data-label="Endereço">${cliente.endereco}</td>
+                    <td data-label="Serviços" style="font-weight: 600;">${totalServicosCliente}</td>
+                    <td>
+                        <button class="export-btn" onclick="window.verHistorico('${cliente.nome}')"><i class="fas fa-history"></i> Ver</button>
+                        <button class="btn-delete" onclick="window.deletarCliente('${cliente.id}')"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                `;
+            });
+        }
+        
+        window.verHistorico = (nomeCliente) => {
+            const historico = servicos.filter(s => s.cliente.toLowerCase() === nomeCliente.toLowerCase());
+            let msg = `Histórico de Serviços para ${nomeCliente}:\n\n`;
+            
+            if (historico.length === 0) {
+                 msg += "Nenhum serviço encontrado.";
+            } else {
+                 historico.forEach(s => {
+                     msg += `- ${s.data}: ${s.tipo} (${window.formatarMoeda(s.valor)}) - Status: ${s.status}\n`;
+                 });
+            }
+            alert(msg);
+        }
 
         // Eventos de Filtro e Busca
         document.getElementById('searchInput').addEventListener('keyup', renderizarServicos);
         document.getElementById('filterType').addEventListener('change', renderizarServicos);
         
-        // --- FUNCIONALIDADE DE EXPORTAÇÃO CSV (NOVO) ---
+        // Exportação CSV
         document.getElementById('exportCsvBtn').addEventListener('click', () => {
+             // Lógica de exportação CSV mantida, mas usando o array 'servicos' carregado
             if (servicos.length === 0) {
                 mostrarToast('Nenhum dado para exportar.', 'info');
                 return;
@@ -656,73 +859,7 @@
             mostrarToast('Dados exportados para CSV!', 'success');
         });
 
-        // --- FUNÇÕES DA VIEW CLIENTES (Aprimorada) ---
-
-        function renderizarClientes() {
-            const list = document.getElementById('clientesList');
-            list.innerHTML = '';
-            
-            if (clientes.length === 0) {
-                list.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--text-light);">Nenhum cliente cadastrado.</td></tr>`;
-                return;
-            }
-
-            clientes.forEach((cliente, index) => {
-                const totalServicosCliente = servicos.filter(s => s.cliente.toLowerCase() === cliente.nome.toLowerCase()).length;
-
-                const row = list.insertRow();
-                row.innerHTML = `
-                    <td data-label="Nome">${cliente.nome}</td>
-                    <td data-label="Contato">${cliente.contato}</td>
-                    <td data-label="Endereço">${cliente.endereco}</td>
-                    <td data-label="Serviços" style="font-weight: 600;">${totalServicosCliente}</td>
-                    <td>
-                        <button class="export-btn" onclick="verHistorico('${cliente.nome}')"><i class="fas fa-history"></i> Ver</button>
-                    </td>
-                `;
-            });
-        }
-        
-        // Função para simular a visualização do histórico
-        window.verHistorico = function(nomeCliente) {
-            const historico = servicos.filter(s => s.cliente.toLowerCase() === nomeCliente.toLowerCase());
-            let msg = `Histórico de Serviços para ${nomeCliente}:\n\n`;
-            
-            if (historico.length === 0) {
-                 msg += "Nenhum serviço encontrado.";
-            } else {
-                 historico.forEach(s => {
-                    msg += `- ${s.data}: ${s.tipo} (${formatarMoeda(s.valor)}) - Status: ${s.status}\n`;
-                 });
-            }
-            alert(msg);
-        }
-
-        document.getElementById('formCliente').addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const nome = document.getElementById('nomeCliente').value.trim();
-            
-            if (clientes.some(c => c.nome.toLowerCase() === nome.toLowerCase())) {
-                 mostrarToast('Cliente já cadastrado!', 'error');
-                 return;
-            }
-
-            const novoCliente = {
-                nome: nome,
-                contato: document.getElementById('contatoCliente').value.trim(),
-                endereco: document.getElementById('enderecoCliente').value.trim(),
-            };
-
-            clientes.unshift(novoCliente); 
-            salvarClientes();
-            renderizarClientes();
-            renderizarEstatisticas();
-            document.getElementById('formCliente').reset();
-            mostrarToast('Cliente salvo com sucesso!', 'success');
-        });
-
-        // --- NAVEGAÇÃO ENTRE VIEWS (SPA) ---
+        // Navegação SPA
         const navLinks = document.querySelectorAll('.nav-link');
         const contentViews = document.querySelectorAll('.content-view');
 
@@ -737,25 +874,39 @@
                 document.getElementById(`view-${targetViewId}`).classList.add('active');
 
                 if (targetViewId === 'servicos') {
-                    renderizarServicos();
-                    renderizarEstatisticas();
+                    carregarServicos();
                 } else if (targetViewId === 'clientes') {
-                    renderizarClientes();
+                    carregarClientes();
                 } else if (targetViewId === 'resumo') {
                     renderizarEstatisticas(); 
                 }
             });
         });
 
-        // --- INICIALIZAÇÃO DO SISTEMA ---
-        function inicializarSistema() {
-            carregarDados();
-            renderizarServicos();
-            renderizarEstatisticas();
-        }
+        // --- INICIALIZAÇÃO E AUTENTICAÇÃO ---
+        onAuthStateChanged(auth, (user) => {
+            const dashboard = document.getElementById('mainDashboard');
+            const loginModal = document.getElementById('loginModal');
+            const cadastroModal = document.getElementById('cadastroModal');
 
-        inicializarSistema();
+            if (user) {
+                // Usuário logado
+                userEmail = user.email;
+                dashboard.style.display = "grid";
+                loginModal.style.display = "none";
+                cadastroModal.style.display = "none";
+                carregarServicos(); // Inicia o carregamento dos dados
+            } else {
+                // Usuário deslogado
+                userEmail = null;
+                dashboard.style.display = "none";
+                loginModal.style.display = "flex";
+                cadastroModal.style.display = "none";
+                servicos = []; // Limpa dados locais
+                clientes = [];
+            }
+        });
+
     </script>
-
 </body>
 </html>
