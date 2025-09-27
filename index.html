@@ -1,831 +1,761 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema de Gestão Empresarial | Insect Control Tupi</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestão Empresarial | Insect Control Tupi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
-    <style>
-        /* INÍCIO DO CSS ULTRA-PROFISSIONAL */
+    <style>
+        /* INÍCIO DO CSS ULTRA-PROFISSIONAL */
 
-        :root {
-            --primary-color: #ff0000; /* Vermelho forte */
-            --primary-light: #cc0000;
-            --secondary-color: #ffb300; /* Âmbar para destaque */
-            --danger-color: #d32f2f; 
-            --success-color: #66bb6a;
-            --info-color: #29b6f6;
-            --text-dark: #263238;
-            --text-light: #78909c;
-            --background-body: #eceff1; 
-            --card-background: #ffffff;
-            --shadow-light: 0 4px 10px rgba(0, 0, 0, 0.08);
-            --shadow-hover: 0 8px 18px rgba(0, 0, 0, 0.15);
-            --border-radius: 6px;
-        }
-
-        body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--background-body);
-            color: var(--text-dark);
-        }
-        /* Adicionado para os botões de controle de dados */
-        .data-controls {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 25px;
-            align-items: center;
+        :root {
+            --primary-color: #ff0000; /* Teal escuro profissional */
+            --primary-light: #ff0404;
+            --secondary-color: #ffb300; /* Âmbar para destaque */
+            --danger-color: #d32f2f; 
+            --success-color: #66bb6a;
+            --info-color: #29b6f6;
+            --text-dark: #263238;
+            --text-light: #78909c;
+            --background-body: #eceff1; 
+            --card-background: #ffffff;
+            --shadow-light: 0 4px 10px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 8px 18px rgba(0, 0, 0, 0.15);
+            --border-radius: 6px;
         }
-        .data-controls input, .data-controls select {
-            padding: 10px 15px;
-            border: 1px solid #bdbdbd;
-            border-radius: 4px;
-            font-size: 14px;
-            background-color: #ffffff;
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--background-body);
+            color: var(--text-dark);
         }
-        .data-controls input {
-            flex-grow: 1;
+
+        /* Layout e Sidebar (Mantido) */
+        .dashboard-layout {
+            display: grid;
+            grid-template-columns: 260px 1fr;
+            min-height: 100vh;
         }
-        /* Layout e Sidebar (Mantido) */
-        .dashboard-layout {
-            display: grid;
-            grid-template-columns: 260px 1fr;
-            min-height: 100vh;
-        }
-        .sidebar {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 30px 20px;
-            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.15);
-            position: sticky;
-            top: 0;
-            height: 100vh;
-        }
-        .logo-box { text-align: center; margin-bottom: 50px; }
-        .logo-box img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 15px; border: 3px solid rgba(255, 255, 255, 0.3); }
-        .logo-box h2 { font-size: 24px; font-weight: 500; margin: 0; color: white; letter-spacing: 0.5px; }
-        .nav-link {
-            display: flex; align-items: center; padding: 14px 15px; margin-bottom: 8px;
-            color: rgba(255, 255, 255, 0.85); border-radius: var(--border-radius);
-            transition: all 0.2s ease-in-out; cursor: pointer; font-weight: 500;
-        }
-        .nav-link i { margin-right: 18px; font-size: 16px; }
-        .nav-link.active, .nav-link:hover {
-            background-color: var(--primary-light); box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); color: white;
-        }
-        
-        /* Conteúdo Principal (Mantido) */
-        .main-content { padding: 30px 40px; }
-        .content-view { display: none; animation: fadeIn 0.4s ease-out; }
-        .content-view.active { display: block; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); }
-        }
-        .page-header h1 { font-size: 36px; font-weight: 700; margin: 0 0 10px 0; color: var(--text-dark); }
-        .page-header p { font-size: 16px; color: var(--text-light); margin-bottom: 30px; }
+        .sidebar {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 30px 20px;
+            box-shadow: 4px 0 10px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+        .logo-box { text-align: center; margin-bottom: 50px; }
+        .logo-box img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 15px; border: 3px solid rgba(255, 255, 255, 0.3); }
+        .logo-box h2 { font-size: 24px; font-weight: 500; margin: 0; color: white; letter-spacing: 0.5px; }
+        .nav-link {
+            display: flex; align-items: center; padding: 14px 15px; margin-bottom: 8px;
+            color: rgba(255, 255, 255, 0.85); border-radius: var(--border-radius);
+            transition: all 0.2s ease-in-out; cursor: pointer; font-weight: 500;
+        }
+        .nav-link i { margin-right: 18px; font-size: 16px; }
+        .nav-link.active, .nav-link:hover {
+            background-color: var(--primary-light); box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); color: white;
+        }
+        
+        /* Conteúdo Principal (Mantido) */
+        .main-content { padding: 30px 40px; }
+        .content-view { display: none; animation: fadeIn 0.4s ease-out; }
+        .content-view.active { display: block; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); }
+        }
+        .page-header h1 { font-size: 36px; font-weight: 700; margin: 0 0 10px 0; color: var(--text-dark); }
+        .page-header p { font-size: 16px; color: var(--text-light); margin-bottom: 30px; }
 
-        /* Cartões de Resumo (KPIs) */
-        .summary-cards { display: flex; gap: 20px; margin-bottom: 40px; }
-        .card {
-            background-color: var(--card-background); padding: 25px; border-radius: var(--border-radius);
-            box-shadow: var(--shadow-light); flex: 1; border-bottom: 4px solid var(--primary-light); 
-            transition: all 0.3s;
-        }
-        .card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
-        .card h3 { font-size: 14px; color: var(--text-light); margin: 0 0 10px 0; text-transform: uppercase; font-weight: 500; }
-        .card p { font-size: 32px; font-weight: 700; margin: 0; color: var(--primary-color); }
-        
-        /* Formulário */
-        .form-section { background-color: var(--card-background); padding: 30px; border-radius: var(--border-radius); box-shadow: var(--shadow-light); margin-bottom: 40px; }
-        .form-section h2 { font-size: 22px; font-weight: 500; color: var(--text-dark); border-bottom: 1px solid #e0e0e0; padding-bottom: 15px; margin-bottom: 25px; margin-top: 0; }
-        .form-grid { display: grid; grid-template-columns: repeat(4, 1fr) 140px; gap: 20px; }
-        .input-group input, .input-group select {
-            width: 100%; padding: 12px 15px; border: 1px solid #bdbdbd; border-radius: 4px; font-size: 15px;
-            background-color: #f7f7f7; transition: border-color 0.2s;
-        }
-        .input-group input:focus, .input-group select:focus {
-            border-color: var(--secondary-color); outline: none; box-shadow: 0 0 0 2px rgba(255, 179, 0, 0.2);
-        }
-        .btn-submit {
-            background-color: var(--primary-color); color: white; border: none; border-radius: 4px; font-size: 16px;
-            font-weight: 500; cursor: pointer; transition: background-color 0.2s, transform 0.1s; padding: 10px;
-        }
-        .btn-submit:hover { background-color: var(--primary-light); transform: translateY(-1px); }
-        
-        /* Tabela de Dados (Mantido) */
-        .data-table-container { border-radius: var(--border-radius); box-shadow: var(--shadow-light); overflow: hidden; background-color: var(--card-background); }
-        .data-table { width: 100%; border-collapse: collapse; }
-        .data-table th, .data-table td { text-align: left; padding: 14px 18px; }
-        .data-table thead { background-color: var(--background-body); }
-        .data-table th { color: var(--text-light); font-weight: 500; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e0e0e0; }
-        .data-table td { border-bottom: 1px solid #f0f0f0; font-size: 14px; }
-        .data-table tbody tr:hover { background-color: rgba(255, 0, 0, 0.05); } /* Cor levemente vermelha no hover */
-        .btn-delete { background-color: var(--danger-color); color: white; padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 12px; transition: background-color 0.2s; }
-        .btn-delete:hover { background-color: #c42727; }
+        /* Cartões de Resumo (KPIs) */
+        .summary-cards { display: flex; gap: 20px; margin-bottom: 40px; }
+        .card {
+            background-color: var(--card-background); padding: 25px; border-radius: var(--border-radius);
+            box-shadow: var(--shadow-light); flex: 1; border-bottom: 4px solid var(--primary-light); 
+            transition: all 0.3s;
+        }
+        .card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
+        .card h3 { font-size: 14px; color: var(--text-light); margin: 0 0 10px 0; text-transform: uppercase; font-weight: 500; }
+        .card p { font-size: 32px; font-weight: 700; margin: 0; color: var(--primary-color); }
+        
+        /* Formulário */
+        .form-section { background-color: var(--card-background); padding: 30px; border-radius: var(--border-radius); box-shadow: var(--shadow-light); margin-bottom: 40px; }
+        .form-section h2 { font-size: 22px; font-weight: 500; color: var(--text-dark); border-bottom: 1px solid #e0e0e0; padding-bottom: 15px; margin-bottom: 25px; margin-top: 0; }
+        .form-grid { display: grid; grid-template-columns: repeat(4, 1fr) 140px; gap: 20px; }
+        .input-group input, .input-group select {
+            width: 100%; padding: 12px 15px; border: 1px solid #bdbdbd; border-radius: 4px; font-size: 15px;
+            background-color: #f7f7f7; transition: border-color 0.2s;
+        }
+        .input-group input:focus, .input-group select:focus {
+            border-color: var(--secondary-color); outline: none; box-shadow: 0 0 0 2px rgba(255, 179, 0, 0.2);
+        }
+        .btn-submit {
+            background-color: var(--primary-color); color: white; border: none; border-radius: 4px; font-size: 16px;
+            font-weight: 500; cursor: pointer; transition: background-color 0.2s, transform 0.1s; padding: 10px;
+        }
+        .btn-submit:hover { background-color: var(--primary-light); transform: translateY(-1px); }
+        
+        /* Tabela de Dados (Mantido) */
+        .data-table-container { border-radius: var(--border-radius); box-shadow: var(--shadow-light); overflow: hidden; background-color: var(--card-background); }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th, .data-table td { text-align: left; padding: 14px 18px; }
+        .data-table thead { background-color: var(--background-body); }
+        .data-table th { color: var(--text-light); font-weight: 500; font-size: 13px; text-transform: uppercase; border-bottom: 2px solid #e0e0e0; }
+        .data-table td { border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+        .data-table tbody tr:hover { background-color: rgba(0, 150, 136, 0.05); }
+        .btn-delete { background-color: var(--danger-color); color: white; padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; font-size: 12px; transition: background-color 0.2s; }
+        .btn-delete:hover { background-color: #c42727; }
 
-        /* Estilos específicos para as NOVAS FUNCIONALIDADES */
-        
-        /* 1. Status de Pagamento */
-        .status-badge {
-            display: inline-block; padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; transition: background-color 0.2s;
-        }
-        .status-pendente { background-color: #ffe0b2; color: #e65100; border: 1px solid #e65100; }
-        .status-pago { background-color: #c8e6c9; color: var(--success-color); border: 1px solid var(--success-color); }
-        .status-badge:hover { opacity: 0.8; }
-        
-        /* 2. Edição de Tabela (Inline Editing) */
-        .editable { cursor: pointer; transition: background-color 0.1s; }
-        .editable:hover { background-color: #fce4ec; } /* Rosa bem claro no hover */
-        .edit-input {
-            border: 1px solid var(--secondary-color); padding: 5px; width: 90%; border-radius: 3px; font-size: 14px;
-        }
+        /* Estilos específicos para as NOVAS FUNCIONALIDADES */
+        
+        /* 1. Status de Pagamento */
+        .status-badge {
+            display: inline-block; padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer; transition: background-color 0.2s;
+        }
+        .status-pendente { background-color: #ffe0b2; color: #e65100; border: 1px solid #e65100; }
+        .status-pago { background-color: #c8e6c9; color: var(--success-color); border: 1px solid var(--success-color); }
+        .status-badge:hover { opacity: 0.8; }
+        
+        /* 2. Edição de Tabela (Inline Editing) */
+        .editable { cursor: pointer; transition: background-color 0.1s; }
+        .editable:hover { background-color: #e0f2f1; }
+        .edit-input {
+            border: 1px solid var(--secondary-color); padding: 5px; width: 90%; border-radius: 3px; font-size: 14px;
+        }
 
-        /* 3. Botão de Exportação */
-        .export-btn {
-            background-color: var(--info-color); color: white; padding: 10px 15px; border: none; border-radius: 4px;
-            font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color 0.2s;
-        }
-        .export-btn:hover { background-color: #03a9f4; }
+        /* 3. Botão de Exportação */
+        .export-btn {
+            background-color: var(--info-color); color: white; padding: 10px 15px; border: none; border-radius: 4px;
+            font-size: 14px; font-weight: 500; cursor: pointer; transition: background-color 0.2s;
+        }
+        .export-btn:hover { background-color: #03a9f4; }
 
-        /* 4. Alerta Flutuante (Toast) */
-        #toastContainer {
-            position: fixed; top: 20px; right: 20px; z-index: 2000;
-        }
-        .toast {
-            background-color: var(--card-background); color: var(--text-dark); padding: 15px 20px;
-            border-radius: var(--border-radius); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-            margin-bottom: 10px; opacity: 0; transition: opacity 0.3s, transform 0.3s;
-            transform: translateX(100%); min-width: 250px; border-left: 5px solid var(--primary-color);
-            display: flex; align-items: center;
-        }
-        .toast.show { opacity: 1; transform: translateX(0); }
-        .toast i { margin-right: 10px; font-size: 18px; }
-        .toast.success { border-left-color: var(--success-color); }
-        .toast.error { border-left-color: var(--danger-color); }
-        .toast.info { border-left-color: var(--info-color); }
+        /* 4. Alerta Flutuante (Toast) */
+        #toastContainer {
+            position: fixed; top: 20px; right: 20px; z-index: 2000;
+        }
+        .toast {
+            background-color: var(--card-background); color: var(--text-dark); padding: 15px 20px;
+            border-radius: var(--border-radius); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            margin-bottom: 10px; opacity: 0; transition: opacity 0.3s, transform 0.3s;
+            transform: translateX(100%); min-width: 250px; border-left: 5px solid var(--primary-color);
+            display: flex; align-items: center;
+        }
+        .toast.show { opacity: 1; transform: translateX(0); }
+        .toast i { margin-right: 10px; font-size: 18px; }
+        .toast.success { border-left-color: var(--success-color); }
+        .toast.error { border-left-color: var(--danger-color); }
 
-        /* Estilo para Lista de Estatísticas (Mantido) */
-        .stats-list { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .stats-item { background-color: var(--card-background); padding: 20px; border-radius: var(--border-radius); box-shadow: var(--shadow-light); border-left: 5px solid var(--primary-color); }
-        .stats-item h4 { font-size: 14px; color: var(--text-light); margin: 0 0 8px 0; font-weight: 500; text-transform: uppercase; }
-        .stats-item p { font-size: 24px; font-weight: 700; margin: 0; }
-        .stats-item.highlight p { color: var(--secondary-color); }
+        /* Estilo para Lista de Estatísticas (Mantido) */
+        .stats-list { list-style: none; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .stats-item { background-color: var(--card-background); padding: 20px; border-radius: var(--border-radius); box-shadow: var(--shadow-light); border-left: 5px solid var(--primary-color); }
+        .stats-item h4 { font-size: 14px; color: var(--text-light); margin: 0 0 8px 0; font-weight: 500; text-transform: uppercase; }
+        .stats-item p { font-size: 24px; font-weight: 700; margin: 0; }
+        .stats-item.highlight p { color: var(--secondary-color); }
 
-        /* Responsividade (Mantido) */
-        @media (max-width: 992px) {
-            .dashboard-layout { grid-template-columns: 1fr; }
-            .sidebar { position: relative; height: auto; padding: 15px 20px; display: flex; justify-content: space-around; align-items: center; }
-            .logo-box { display: none; }
-            .nav-link { margin-bottom: 0; }
-            .nav-link span { display: none; }
-            .main-content { padding: 20px; }
-            .summary-cards { flex-direction: column; }
-            .form-grid { grid-template-columns: 1fr; }
-            .form-grid button { grid-column: auto !important; }
-            .data-controls { flex-direction: column; align-items: stretch; }
-        }
-        @media (max-width: 768px) {
-            .data-table thead { display: none; }
-            .data-table, .data-table tbody, .data-table tr, .data-table td { display: block; width: 100%; }
-            .data-table tr { margin-bottom: 15px; border: 1px solid #ddd; border-radius: var(--border-radius); box-shadow: var(--shadow-light); }
-            .data-table td { text-align: right; padding: 10px; position: relative; border-bottom: none; }
-            .data-table td:before { content: attr(data-label); float: left; font-weight: 500; text-transform: uppercase; color: var(--text-light); font-size: 13px; }
-            .data-controls { flex-direction: column; }
-        }
+        /* Responsividade (Mantido) */
+        @media (max-width: 992px) {
+            .dashboard-layout { grid-template-columns: 1fr; }
+            .sidebar { position: relative; height: auto; padding: 15px 20px; display: flex; justify-content: space-around; align-items: center; }
+            .logo-box { display: none; }
+            .nav-link { margin-bottom: 0; }
+            .nav-link span { display: none; }
+            .main-content { padding: 20px; }
+            .summary-cards { flex-direction: column; }
+            .form-grid { grid-template-columns: 1fr; }
+            .form-grid button { grid-column: auto !important; }
+        }
+        @media (max-width: 768px) {
+            .data-table thead { display: none; }
+            .data-table, .data-table tbody, .data-table tr, .data-table td { display: block; width: 100%; }
+            .data-table tr { margin-bottom: 15px; border: 1px solid #ddd; border-radius: var(--border-radius); box-shadow: var(--shadow-light); }
+            .data-table td { text-align: right; padding: 10px; position: relative; border-bottom: none; }
+            .data-table td:before { content: attr(data-label); float: left; font-weight: 500; text-transform: uppercase; color: var(--text-light); font-size: 13px; }
+            .data-controls { flex-direction: column; }
+        }
 
-        /* FIM DO CSS ULTRA-PROFISSIONAL */
-    </style>
+        /* FIM DO CSS ULTRA-PROFISSIONAL */
+    </style>
 </head>
 <body>
 
-    <div id="toastContainer"></div>
+    <div id="toastContainer"></div>
 
-    <div class="dashboard-layout">
-        
-        <div class="sidebar">
-            <div class="logo-box">
-                <img src="https://i.imgur.com/pYc14sF.png" alt="Logo">
-                <h2>I.C. Tupi</h2>
-            </div>
-            
-            <div class="nav-link active" data-view="servicos">
-                <i class="fas fa-clipboard-list"></i>
-                <span>Serviços</span>
-            </div>
-            
-            <div class="nav-link" data-view="resumo">
-                <i class="fas fa-chart-line"></i>
-                <span>Resumo Financeiro</span>
-            </div>
-
-            <div class="nav-link" data-view="clientes">
-                <i class="fas fa-users"></i>
-                <span>Clientes</span>
-            </div>
-            
-            <div class="nav-link" style="margin-top: 50px;" onclick="logout()">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Sair</span>
-            </div>
-        </div>
-
-        <div class="main-content">
-            
-            <div id="view-servicos" class="content-view active">
-                
-                <div class="page-header">
-                    <h1>Painel de Serviços</h1>
-                    <p>Visão geral, registro e gestão de atendimentos.</p>
-                </div>
-
-                <div class="summary-cards">
-                    <div class="card">
-                        <h3>TOTAL DE SERVIÇOS</h3>
-                        <p id="totalServicos">0</p>
-                    </div>
-                    <div class="card" style="border-bottom-color: var(--success-color);">
-                        <h3>VALOR TOTAL (R$)</h3>
-                        <p id="valorTotal">R$ 0,00</p>
-                    </div>
-                    <div class="card">
-                        <h3>SERVIÇOS NO MÊS</h3>
-                        <p id="servicosMes">0</p>
-                    </div>
-                    <div class="card" style="border-bottom-color: var(--secondary-color);">
-                        <h3>PENDÊNCIAS (R$)</h3>
-                        <p id="valorPendente">R$ 0,00</p>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <h2><i class="fas fa-plus-circle"></i> Registrar Novo Serviço</h2>
-                    <form id="formServico">
-                        <div class="form-grid">
-                            
-                            <div class="input-group"><input type="date" id="data" required></div>
-                            <div class="input-group"><input type="text" id="cliente" placeholder="Nome do Cliente" list="listaClientes" required></div>
-                            <datalist id="listaClientes"></datalist>
-                            <div class="input-group">
-                                <select id="tipo" required>
-                                    <option value="" disabled selected>Tipo de Serviço...</option>
-                                    <option value="Descupinização">Descupinização</option>
-                                    <option value="Dedetização">Dedetização Geral</option>
-                                    <option value="Roedores">Controle de Roedores</option>
-                                    <option value="Limpeza">Limpeza de Caixa d'Água</option>
-                                    <option value="Outro">Outro/Consultoria</option>
-                                </select>
-                            </div>
-                            
-                            <div class="input-group"><input type="number" id="valor" placeholder="Valor (R$)" step="0.01" required></div>
-                            
-                            <button type="submit" class="btn-submit" style="grid-column: 5 / 6;"><i class="fas fa-check"></i> Salvar</button>
-
-                            <div class="input-group" style="grid-column: 1 / 3;"><input type="text" id="local" placeholder="Local/Endereço" required></div>
-
-                            <div class="input-group" style="grid-column: 3 / 5;"><input type="text" id="contato" placeholder="Contato" required></div>
-                        </div>
-                    </form>
-                </div>
-                
-                <div class="data-controls">
-                    <input type="text" id="searchInput" placeholder="Buscar por cliente, local ou contato...">
-                    <select id="filterType">
-                        <option value="">Todos os Tipos</option>
-                        <option value="Descupinização">Descupinização</option>
-                        <option value="Dedetização">Dedetização Geral</option>
-                        <option value="Roedores">Controle de Roedores</option>
-                        <option value="Limpeza">Limpeza de Caixa d'Água</option>
-                        <option value="Outro">Outro</option>
-                    </select>
-                    <button class="export-btn" id="exportCsvBtn"><i class="fas fa-download"></i> Exportar CSV</button>
-                </div>
-
-                <div class="data-table-container">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Data</th>
-                                <th>Cliente</th>
-                                <th>Local</th>
-                                <th>Tipo</th>
-                                <th>Contato</th>
-                                <th>Valor (R$)</th>
-                                <th>Status</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="servicosList">
-                            </tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div id="view-resumo" class="content-view">
-                <div class="page-header">
-                    <h1><i class="fas fa-chart-bar"></i> Análise e Estatísticas</h1>
-                    <p>Indicadores chave de performance (KPIs) e tendências do negócio.</p>
-                </div>
-                
-                <div class="summary-cards">
-                    <div class="card" style="border-bottom-color: var(--success-color);">
-                        <h3>FATURAMENTO TOTAL</h3>
-                        <p id="resumoValorTotal">R$ 0,00</p>
-                    </div>
-                    <div class="card" style="border-bottom-color: var(--secondary-color);">
-                        <h3>TAXA DE SERVIÇOS PAGOS</h3>
-                        <p id="taxaPagos">0%</p>
-                    </div>
-                    <div class="card" style="border-bottom-color: var(--primary-color);">
-                        <h3>MÉDIA DE VALOR/SERVIÇO</h3>
-                        <p id="resumoMediaValor">R$ 0,00</p>
-                    </div>
-                    <div class="card" style="border-bottom-color: var(--info-color);">
-                        <h3>SERVIÇO MAIS RENTÁVEL</h3>
-                        <p id="resumoMaisRentavel">---</p>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <h2>Estatísticas Detalhadas</h2>
-                    <ul class="stats-list" id="statsList">
-                        <li class="stats-item"><h4>Total de Clientes Cadastrados</h4><p id="statsClientes">0</p></li>
-                        <li class="stats-item highlight"><h4>Serviço Mais Comum</h4><p id="statsMaisComum">---</p></li>
-                        <li class="stats-item"><h4>Valor Máximo de um Serviço</h4><p id="statsValorMax">R$ 0,00</p></li>
-                        <li class="stats-item"><h4>Valor Mínimo de um Serviço</h4><p id="statsValorMin">R$ 0,00</p></li>
-                    </ul>
-                </div>
-            </div>
-
-            <div id="view-clientes" class="content-view">
-                <div class="page-header">
-                    <h1>Gerenciamento de Clientes</h1>
-                    <p>Cadastro, histórico e controle de relacionamento com o cliente.</p>
-                </div>
-
-                <div class="form-section">
-                    <h2><i class="fas fa-user-plus"></i> Novo Cadastro de Cliente</h2>
-                    <form id="formCliente">
-                        <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr 140px;">
-                            <div class="input-group"><input type="text" id="nomeCliente" placeholder="Nome Completo" required></div>
-                            <div class="input-group"><input type="text" id="contatoCliente" placeholder="Telefone/Email" required></div>
-                            <div class="input-group"><input type="text" id="enderecoCliente" placeholder="Endereço Principal"></div>
-                            <button type="submit" class="btn-submit"><i class="fas fa-check"></i> Salvar Cliente</button>
-                        </div>
-                    </form>
-                </div>
-                
-                <div class="data-table-container" style="margin-top: 20px;">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>Nome do Cliente</th>
-                                <th>Contato</th>
-                                <th>Endereço</th>
-                                <th>Serviços Realizados</th>
-                                <th>Ações</th>
-                            </tr>
-                        </thead>
-                        <tbody id="clientesList">
-                            </tbody>
-                    </table>
-                </div>
-            </div>
-
-        </div>
-    </div>
-
-    <script>
-        // --- VARIÁVEIS DE DADOS ---
-        let servicos = [];
-        let clientes = [];
-
-        // --- FUNÇÕES GERAIS DE UTILIDADE ---
-
-        function formatarMoeda(valor) {
-            // Garante que o valor é um número de ponto flutuante antes de formatar
-            return parseFloat(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        }
+    <div class="dashboard-layout">
         
-        // Simulação de Logout - na sua versão anterior era a função 'logout()'
-        function logout() {
-            mostrarToast('Saindo do Sistema...', 'info'); 
-            // Na versão com Firebase, você faria firebase.auth().signOut() aqui
-            setTimeout(() => window.location.reload(), 800);
+        <div class="sidebar">
+            <div class="logo-box">
+                <img src="https://i.imgur.com/pYc14sF.png" alt="Logo">
+                <h2>I.C. Tupi</h2>
+            </div>
+            
+            <div class="nav-link active" data-view="servicos">
+                <i class="fas fa-clipboard-list"></i>
+                <span>Serviços</span>
+            </div>
+            
+            <div class="nav-link" data-view="resumo">
+                <i class="fas fa-chart-line"></i>
+                <span>Resumo Financeiro</span>
+            </div>
+
+            <div class="nav-link" data-view="clientes">
+                <i class="fas fa-users"></i>
+                <span>Clientes</span>
+            </div>
+            
+            <div class="nav-link" style="margin-top: 50px;" onclick="mostrarToast('Saindo...', 'info'); setTimeout(() => window.location.reload(), 500);">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Sair</span>
+            </div>
+        </div>
+
+        <div class="main-content">
+            
+            <div id="view-servicos" class="content-view active">
+                
+                <div class="page-header">
+                    <h1>Painel de Serviços</h1>
+                    <p>Visão geral, registro e gestão de atendimentos.</p>
+                </div>
+
+                <div class="summary-cards">
+                    <div class="card">
+                        <h3>TOTAL DE SERVIÇOS</h3>
+                        <p id="totalServicos">0</p>
+                    </div>
+                    <div class="card" style="border-bottom-color: var(--success-color);">
+                        <h3>VALOR TOTAL (R$)</h3>
+                        <p id="valorTotal">R$ 0,00</p>
+                    </div>
+                    <div class="card">
+                        <h3>SERVIÇOS NO MÊS</h3>
+                        <p id="servicosMes">0</p>
+                    </div>
+                    <div class="card" style="border-bottom-color: var(--secondary-color);">
+                        <h3>PENDÊNCIAS (R$)</h3>
+                        <p id="valorPendente">R$ 0,00</p>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2><i class="fas fa-plus-circle"></i> Registrar Novo Serviço</h2>
+                    <form id="formServico">
+                        <div class="form-grid">
+                            
+                            <div class="input-group"><input type="date" id="data" required></div>
+                            <div class="input-group"><input type="text" id="cliente" placeholder="Nome do Cliente" required></div>
+                            <div class="input-group">
+                                <select id="tipo" required>
+                                    <option value="" disabled selected>Tipo de Serviço...</option>
+                                    <option value="Descupinização">Descupinização</option>
+                                    <option value="Dedetização">Dedetização Geral</option>
+                                    <option value="Roedores">Controle de Roedores</option>
+                                    <option value="Limpeza">Limpeza de Caixa d'Água</option>
+                                    <option value="Outro">Outro/Consultoria</option>
+                                </select>
+                            </div>
+                            
+                            <div class="input-group"><input type="number" id="valor" placeholder="Valor (R$)" step="0.01" required></div>
+                            
+                            <button type="submit" class="btn-submit" style="grid-column: 5 / 6;"><i class="fas fa-check"></i> Salvar</button>
+
+                            <div class="input-group" style="grid-column: 1 / 4;"><input type="text" id="local" placeholder="Local/Endereço" required></div>
+
+                            <div class="input-group" style="grid-column: 4 / 5;"><input type="text" id="contato" placeholder="Contato" required></div>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="data-controls">
+                    <input type="text" id="searchInput" placeholder="Buscar por cliente, local ou contato...">
+                    <select id="filterType">
+                        <option value="">Todos os Tipos</option>
+                        <option value="Descupinização">Descupinização</option>
+                        <option value="Dedetização">Dedetização Geral</option>
+                        <option value="Roedores">Controle de Roedores</option>
+                        <option value="Limpeza">Limpeza de Caixa d'Água</option>
+                        <option value="Outro">Outro</option>
+                    </select>
+                    <button class="export-btn" id="exportCsvBtn"><i class="fas fa-download"></i> Exportar CSV</button>
+                </div>
+
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th>Cliente</th>
+                                <th>Local</th>
+                                <th>Tipo</th>
+                                <th>Contato</th>
+                                <th>Valor (R$)</th>
+                                <th>Status</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="servicosList">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="view-resumo" class="content-view">
+                <div class="page-header">
+                    <h1><i class="fas fa-chart-bar"></i> Análise e Estatísticas</h1>
+                    <p>Indicadores chave de performance (KPIs) e tendências do negócio.</p>
+                </div>
+                
+                <div class="summary-cards">
+                    <div class="card" style="border-bottom-color: var(--success-color);">
+                        <h3>FATURAMENTO TOTAL</h3>
+                        <p id="resumoValorTotal">R$ 0,00</p>
+                    </div>
+                    <div class="card" style="border-bottom-color: var(--secondary-color);">
+                        <h3>TAXA DE SERVIÇOS PAGOS</h3>
+                        <p id="taxaPagos">0%</p>
+                    </div>
+                    <div class="card" style="border-bottom-color: var(--primary-color);">
+                        <h3>MÉDIA DE VALOR/SERVIÇO</h3>
+                        <p id="resumoMediaValor">R$ 0,00</p>
+                    </div>
+                    <div class="card" style="border-bottom-color: var(--info-color);">
+                        <h3>SERVIÇO MAIS RENTÁVEL</h3>
+                        <p id="resumoMaisRentavel">---</p>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h2>Estatísticas Detalhadas</h2>
+                    <ul class="stats-list" id="statsList">
+                        <li class="stats-item"><h4>Total de Clientes Cadastrados</h4><p id="statsClientes">0</p></li>
+                        <li class="stats-item highlight"><h4>Serviço Mais Comum</h4><p id="statsMaisComum">---</p></li>
+                        <li class="stats-item"><h4>Valor Máximo de um Serviço</h4><p id="statsValorMax">R$ 0,00</p></li>
+                        <li class="stats-item"><h4>Valor Mínimo de um Serviço</h4><p id="statsValorMin">R$ 0,00</p></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="view-clientes" class="content-view">
+                <div class="page-header">
+                    <h1>Gerenciamento de Clientes</h1>
+                    <p>Cadastro, histórico e controle de relacionamento com o cliente.</p>
+                </div>
+
+                <div class="form-section">
+                    <h2><i class="fas fa-user-plus"></i> Novo Cadastro de Cliente</h2>
+                    <form id="formCliente">
+                        <div class="form-grid" style="grid-template-columns: 1fr 1fr 1fr 140px;">
+                            <div class="input-group"><input type="text" id="nomeCliente" placeholder="Nome Completo" required></div>
+                            <div class="input-group"><input type="text" id="contatoCliente" placeholder="Telefone/Email" required></div>
+                            <div class="input-group"><input type="text" id="enderecoCliente" placeholder="Endereço Principal"></div>
+                            <button type="submit" class="btn-submit"><i class="fas fa-check"></i> Salvar Cliente</button>
+                        </div>
+                    </form>
+                </div>
+                
+                <div class="data-table-container" style="margin-top: 20px;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nome do Cliente</th>
+                                <th>Contato</th>
+                                <th>Endereço</th>
+                                <th>Serviços Realizados</th>
+                                <th>Histórico</th>
+                            </tr>
+                        </thead>
+                        <tbody id="clientesList">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // --- VARIÁVEIS DE DADOS ---
+        let servicos = [];
+        let clientes = [];
+
+        // --- FUNÇÕES GERAIS DE UTILIDADE ---
+
+        function formatarMoeda(valor) {
+            return parseFloat(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
 
-        function mostrarToast(message, type = 'success') {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.classList.add('toast', type);
-            const icon = type === 'success' ? 'fas fa-check-circle' : type === 'error' ? 'fas fa-exclamation-triangle' : 'fas fa-info-circle';
-            toast.innerHTML = `<i class="${icon}"></i> <span>${message}</span>`;
-            
-            container.appendChild(toast);
-            
-            void toast.offsetWidth; 
-            toast.classList.add('show');
+        function mostrarToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.classList.add('toast', type);
+            const icon = type === 'success' ? 'fas fa-check-circle' : type === 'error' ? 'fas fa-exclamation-triangle' : 'fas fa-info-circle';
+            toast.innerHTML = `<i class="${icon}"></i> <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            // Força o reflow para a animação
+            void toast.offsetWidth; 
+            toast.classList.add('show');
 
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300); 
-            }, 3000);
-        }
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300); // Remove depois da transição
+            }, 3000);
+        }
 
-        // --- FUNÇÕES DE ARMAZENAMENTO (LOCAL STORAGE) ---
-        // Se fosse usar o Firebase, essa parte seria substituída pela lógica assíncrona de Firestore.
-        function carregarDados() {
-            const s = localStorage.getItem('insectControlServicos');
-            const c = localStorage.getItem('insectControlClientes');
-            if (s) servicos = JSON.parse(s);
-            if (c) clientes = JSON.parse(c);
-        }
-        function salvarServicos() {
-            localStorage.setItem('insectControlServicos', JSON.stringify(servicos));
-        }
-        function salvarClientes() {
-            localStorage.setItem('insectControlClientes', JSON.stringify(clientes));
-        }
+        // --- FUNÇÕES DE ARMAZENAMENTO (LOCAL STORAGE) ---
+        function carregarDados() {
+            const s = localStorage.getItem('insectControlServicos');
+            const c = localStorage.getItem('insectControlClientes');
+            if (s) servicos = JSON.parse(s);
+            if (c) clientes = JSON.parse(c);
+        }
+        function salvarServicos() {
+            localStorage.setItem('insectControlServicos', JSON.stringify(servicos));
+        }
+        function salvarClientes() {
+            localStorage.setItem('insectControlClientes', JSON.stringify(clientes));
+        }
 
-        // --- FUNCIONALIDADES DE EDIÇÃO INLINE ---
-        function enableInlineEditing(element, field, index) {
-            // Remove handlers antigos para evitar múltiplas execuções
-            element.replaceWith(element.cloneNode(true));
-            element = document.getElementById('servicosList').rows[index].querySelector(`[data-field="${field}"]`);
-            
-            element.classList.add('editable');
-            
-            element.addEventListener('dblclick', function handler() {
-                const oldValue = element.textContent.trim().replace('R$', '').replace('.', '').replace(',', '.').replace(/\s/g, '');
-                const isValue = field === 'valor';
-                
-                const input = document.createElement('input');
-                input.className = 'edit-input';
-                input.type = isValue ? 'number' : 'text';
-                input.step = isValue ? '0.01' : null;
-                input.value = isValue ? (parseFloat(oldValue) || 0) : element.textContent.trim();
-                
-                element.innerHTML = '';
-                element.appendChild(input);
-                input.focus();
+        // --- FUNCIONALIDADES DE EDIÇÃO INLINE (NOVO) ---
+        function enableInlineEditing(element, field, index) {
+            element.classList.add('editable');
+            element.addEventListener('dblclick', function handler() {
+                const oldValue = element.textContent.trim().replace('R$', '').replace('.', '').replace(',', '.');
+                const isValue = field === 'valor';
+                
+                const input = document.createElement('input');
+                input.className = 'edit-input';
+                input.type = isValue ? 'number' : 'text';
+                input.step = isValue ? '0.01' : null;
+                input.value = isValue ? oldValue : element.textContent.trim();
+                
+                element.innerHTML = '';
+                element.appendChild(input);
+                input.focus();
 
-                const saveChange = () => {
-                    const newValue = input.value.trim();
-                    
-                    if (newValue === (isValue ? oldValue : element.textContent.trim())) {
-                        element.textContent = isValue ? formatarMoeda(oldValue) : oldValue;
-                        return;
-                    }
+                const saveChange = () => {
+                    const newValue = input.value.trim();
+                    if (newValue === oldValue) {
+                        element.textContent = isValue ? formatarMoeda(oldValue) : oldValue;
+                        return;
+                    }
 
-                    // Atualiza o objeto no array
-                    servicos[index][field] = isValue ? parseFloat(newValue).toFixed(2) : newValue;
-                    salvarServicos();
-                    renderizarServicos();
-                    renderizarEstatisticas();
-                    
-                    mostrarToast('Serviço atualizado com sucesso!', 'success');
-                };
+                    // Atualiza o objeto no array
+                    servicos[index][field] = isValue ? parseFloat(newValue).toFixed(2) : newValue;
+                    salvarServicos();
+                    renderizarServicos();
+                    renderizarEstatisticas();
+                    
+                    mostrarToast('Serviço atualizado com sucesso!', 'success');
+                };
 
-                input.addEventListener('blur', saveChange);
-                input.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        saveChange();
-                    }
-                });
-            });
-        }
-
-        // --- FUNÇÕES DE ESTATÍSTICAS E RESUMO ---
-
-        function calcularEstatisticas() {
-            const totalServicos = servicos.length;
-            const valorTotalSoma = servicos.reduce((soma, servico) => soma + (parseFloat(servico.valor) || 0), 0);
-            const mediaValor = totalServicos > 0 ? valorTotalSoma / totalServicos : 0;
-            
-            const valorPendenteSoma = servicos.filter(s => s.status !== 'Pago').reduce((soma, servico) => soma + (parseFloat(servico.valor) || 0), 0);
-            
-            const totalPagos = servicos.filter(s => s.status === 'Pago').length;
-            const taxaPagos = totalServicos > 0 ? ((totalPagos / totalServicos) * 100).toFixed(1) : 0;
-
-            const tipoStats = {};
-            servicos.forEach(servico => {
-                if (!tipoStats[servico.tipo]) tipoStats[servico.tipo] = { count: 0, totalValue: 0 };
-                tipoStats[servico.tipo].count += 1;
-                tipoStats[servico.tipo].totalValue += (parseFloat(servico.valor) || 0);
-            });
-
-            let maisComum = { tipo: '---', count: 0 };
-            let maisRentavel = { tipo: '---', totalValue: 0 };
-
-            Object.keys(tipoStats).forEach(tipo => {
-                if (tipoStats[tipo].count > maisComum.count) maisComum = { tipo: tipo, count: tipoStats[tipo].count };
-                if (tipoStats[tipo].totalValue > maisRentavel.totalValue) maisRentavel = { tipo: tipo, totalValue: tipoStats[tipo].totalValue };
-            });
-            
-            const valores = servicos.map(s => parseFloat(s.valor) || 0);
-            const valorMax = valores.length > 0 ? Math.max(...valores) : 0;
-            const valorMin = valores.length > 0 ? Math.min(...valores) : 0;
-            
-            const dataAtual = new Date();
-            const mesAtual = dataAtual.getMonth();
-            const anoAtual = dataAtual.getFullYear();
-            const servicosMes = servicos.filter(s => {
-                const dataServico = new Date(s.data.replace(/-/g, '/'));
-                return dataServico.getMonth() === mesAtual && dataServico.getFullYear() === anoAtual;
-            }).length;
-
-            return { totalServicos, valorTotalSoma, servicosMes, mediaValor, valorPendenteSoma, totalPagos, taxaPagos, maisComum: maisComum.tipo, maisRentavel: maisRentavel.tipo, valorMax, valorMin };
-        }
-
-        function renderizarEstatisticas() {
-            const stats = calcularEstatisticas();
-
-            // View Serviços KPIs
-            document.getElementById('totalServicos').textContent = stats.totalServicos;
-            document.getElementById('valorTotal').textContent = formatarMoeda(stats.valorTotalSoma);
-            document.getElementById('servicosMes').textContent = stats.servicosMes;
-            document.getElementById('valorPendente').textContent = formatarMoeda(stats.valorPendenteSoma);
-            
-            // View Resumo KPIs
-            document.getElementById('resumoValorTotal').textContent = formatarMoeda(stats.valorTotalSoma);
-            document.getElementById('resumoMediaValor').textContent = formatarMoeda(stats.mediaValor);
-            document.getElementById('resumoMaisRentavel').textContent = stats.maisRentavel;
-            document.getElementById('taxaPagos').textContent = `${stats.taxaPagos}%`;
-            
-            // Estatísticas Detalhadas
-            document.getElementById('statsClientes').textContent = clientes.length;
-            document.getElementById('statsMaisComum').textContent = stats.maisComum;
-            document.getElementById('statsValorMax').textContent = formatarMoeda(stats.valorMax);
-            document.getElementById('statsValorMin').textContent = formatarMoeda(stats.valorMin);
-        }
-
-        // --- FUNÇÕES DA VIEW SERVIÇOS ---
-
-        // Função global para ser chamada pelo onclick do HTML
-        window.toggleStatus = function(index) {
-            const currentStatus = servicos[index].status;
-            servicos[index].status = (currentStatus === 'Pendente') ? 'Pago' : 'Pendente';
-            salvarServicos();
-            renderizarServicos();
-            renderizarEstatisticas();
-            mostrarToast(`Status do serviço atualizado para: ${servicos[index].status}`, 'info');
-        }
-        
-        function updateClienteDatalist() {
-            const datalist = document.getElementById('listaClientes');
-            datalist.innerHTML = '';
-            clientes.forEach(cliente => {
-                const option = document.createElement('option');
-                option.value = cliente.nome;
-                datalist.appendChild(option);
+                input.addEventListener('blur', saveChange);
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        saveChange();
+                        element.removeEventListener('dblclick', handler);
+                    }
+                });
+                
+                element.removeEventListener('dblclick', handler);
             });
         }
-        
-        function renderizarServicos() {
-            const list = document.getElementById('servicosList');
-            list.innerHTML = '';
-            
-            const termoBusca = document.getElementById('searchInput').value.toLowerCase();
-            const tipoFiltro = document.getElementById('filterType').value;
 
-            // Ordena os serviços por data (mais recente primeiro)
-            const servicosOrdenados = [...servicos].sort((a, b) => new Date(b.data) - new Date(a.data));
+        // --- FUNÇÕES DE ESTATÍSTICAS E RESUMO (ATUALIZADO) ---
 
-            const listaFiltrada = servicosOrdenados.filter(servico => {
-                const matchesSearch = termoBusca === '' || 
-                                        servico.cliente.toLowerCase().includes(termoBusca) ||
-                                        servico.local.toLowerCase().includes(termoBusca) ||
-                                         servico.contato.toLowerCase().includes(termoBusca);
-                const matchesType = tipoFiltro === '' || servico.tipo === tipoFiltro;
-                return matchesSearch && matchesType;
-            });
+        function calcularEstatisticas() {
+            const totalServicos = servicos.length;
+            const valorTotalSoma = servicos.reduce((soma, servico) => soma + parseFloat(servico.valor), 0);
+            const mediaValor = totalServicos > 0 ? valorTotalSoma / totalServicos : 0;
+            
+            const valorPendenteSoma = servicos.filter(s => s.status !== 'Pago').reduce((soma, servico) => soma + parseFloat(servico.valor), 0);
+            
+            const totalPagos = servicos.filter(s => s.status === 'Pago').length;
+            const taxaPagos = totalServicos > 0 ? ((totalPagos / totalServicos) * 100).toFixed(1) : 0;
 
-            // Mapeia a lista filtrada de volta para os índices originais no array 'servicos'
-            const indicesFiltrados = listaFiltrada.map(filteredService => 
-                servicos.findIndex(originalService => originalService === filteredService)
-            );
+            const tipoStats = {};
+            servicos.forEach(servico => {
+                if (!tipoStats[servico.tipo]) tipoStats[servico.tipo] = { count: 0, totalValue: 0 };
+                tipoStats[servico.tipo].count += 1;
+                tipoStats[servico.tipo].totalValue += parseFloat(servico.valor);
+            });
 
-            if (listaFiltrada.length === 0) {
-                list.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 20px; color: var(--text-light);">Nenhum serviço encontrado.</td></tr>`;
-                return;
-            }
+            let maisComum = { tipo: '---', count: 0 };
+            let maisRentavel = { tipo: '---', totalValue: 0 };
 
-            listaFiltrada.forEach((servico, i) => {
-                const originalIndex = indicesFiltrados[i]; // O índice correto no array 'servicos'
-                const row = list.insertRow();
-                const statusClass = servico.status === 'Pago' ? 'status-pago' : 'status-pendente';
-                
-                row.innerHTML = `
-                    <td data-label="Data">${servico.data}</td>
-                    <td data-label="Cliente" class="editable" data-field="cliente">${servico.cliente}</td>
-                    <td data-label="Local" class="editable" data-field="local">${servico.local}</td>
-                    <td data-label="Tipo">${servico.tipo}</td>
-                    <td data-label="Contato" class="editable" data-field="contato">${servico.contato}</td>
-                    <td data-label="Valor (R$)" class="editable" data-field="valor" style="font-weight: 600;">${formatarMoeda(servico.valor)}</td>
-                    <td data-label="Status">
-                        <span class="status-badge ${statusClass}" onclick="toggleStatus(${originalIndex})">
-                            ${servico.status}
-                        </span>
-                    </td>
-                    <td>
-                        <button class="btn-delete" data-index="${originalIndex}" onclick="deletarServico(${originalIndex})"><i class="fas fa-trash-alt"></i></button>
-                    </td>
-                `;
+            Object.keys(tipoStats).forEach(tipo => {
+                if (tipoStats[tipo].count > maisComum.count) maisComum = { tipo: tipo, count: tipoStats[tipo].count };
+                if (tipoStats[tipo].totalValue > maisRentavel.totalValue) maisRentavel = { tipo: tipo, totalValue: tipoStats[tipo].totalValue };
+            });
+            
+            const valores = servicos.map(s => parseFloat(s.valor));
+            const valorMax = valores.length > 0 ? Math.max(...valores) : 0;
+            const valorMin = valores.length > 0 ? Math.min(...valores) : 0;
+            
+            const dataAtual = new Date();
+            const mesAtual = dataAtual.getMonth();
+            const anoAtual = dataAtual.getFullYear();
+            const servicosMes = servicos.filter(s => new Date(s.data.replace(/-/g, '/')).getMonth() === mesAtual && new Date(s.data.replace(/-/g, '/')).getFullYear() === anoAtual).length;
 
-                // Aplica a Edição Inline nas células marcadas usando o índice original
-                row.querySelectorAll('.editable').forEach(cell => {
-                    enableInlineEditing(cell, cell.dataset.field, originalIndex);
-                });
-            });
-        }
-        
-        window.deletarServico = function(index) {
-            const servicoParaDeletar = servicos[index];
-            if (confirm(`Tem certeza que deseja excluir o serviço de ${servicoParaDeletar.cliente} em ${servicoParaDeletar.data}?`)) {
-                servicos.splice(index, 1); 
-                salvarServicos();
-                renderizarServicos();
-                renderizarEstatisticas();
-                renderizarClientes();
-                mostrarToast('Serviço excluído!', 'error');
-            }
-        };
-
-        document.getElementById('formServico').addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const novoServico = {
-                data: document.getElementById('data').value,
-                cliente: document.getElementById('cliente').value.trim(),
-                local: document.getElementById('local').value.trim(),
-                tipo: document.getElementById('tipo').value,
-                contato: document.getElementById('contato').value.trim(),
-                valor: (parseFloat(document.getElementById('valor').value) || 0).toFixed(2),
-                status: 'Pendente' 
-            };
-
-            servicos.push(novoServico); // Adicionando no final para melhor compatibilidade com Local Storage.
-            
-            salvarServicos();
-            renderizarServicos();
-            renderizarEstatisticas();
-            document.getElementById('formServico').reset();
-            mostrarToast('Novo Serviço registrado com sucesso!', 'success');
-        });
-
-        // Eventos de Filtro e Busca
-        document.getElementById('searchInput').addEventListener('keyup', renderizarServicos);
-        document.getElementById('filterType').addEventListener('change', renderizarServicos);
-        
-        // --- FUNCIONALIDADE DE EXPORTAÇÃO CSV ---
-        document.getElementById('exportCsvBtn').addEventListener('click', () => {
-            if (servicos.length === 0) {
-                mostrarToast('Nenhum dado para exportar.', 'info');
-                return;
-            }
-
-            const headers = ['Data', 'Cliente', 'Local', 'Tipo', 'Contato', 'Valor', 'Status'];
-            const data = servicos.map(s => [
-                s.data, s.cliente, s.local, s.tipo, s.contato, s.valor.replace('.', ','), s.status
-            ]);
-
-            let csvContent = headers.join(';') + '\n';
-            data.forEach(row => {
-                csvContent += row.join(';') + '\n';
-            });
-
-            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.setAttribute('download', 'servicos_insect_control.csv');
-            link.click();
-            mostrarToast('Dados exportados para CSV!', 'success');
-        });
-
-        // --- FUNÇÕES DA VIEW CLIENTES ---
-
-        function renderizarClientes() {
-            const list = document.getElementById('clientesList');
-            list.innerHTML = '';
-            updateClienteDatalist(); // Atualiza a lista de clientes para o formulário de serviço
-            
-            if (clientes.length === 0) {
-                list.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--text-light);">Nenhum cliente cadastrado.</td></tr>`;
-                return;
-            }
-
-            clientes.forEach((cliente, index) => {
-                const totalServicosCliente = servicos.filter(s => s.cliente.toLowerCase() === cliente.nome.toLowerCase()).length;
-
-                const row = list.insertRow();
-                row.innerHTML = `
-                    <td data-label="Nome">${cliente.nome}</td>
-                    <td data-label="Contato">${cliente.contato}</td>
-                    <td data-label="Endereço">${cliente.endereco}</td>
-                    <td data-label="Serviços" style="font-weight: 600;">${totalServicosCliente}</td>
-                    <td>
-                        <button class="export-btn" onclick="verHistorico('${cliente.nome}')"><i class="fas fa-history"></i> Ver</button>
-                        <button class="btn-delete" onclick="deletarCliente(${index})"><i class="fas fa-trash-alt"></i></button>
-                    </td>
-                `;
-            });
-        }
-        
-        window.deletarCliente = function(index) {
-             const clienteParaDeletar = clientes[index];
-             const servicosAssociados = servicos.filter(s => s.cliente.toLowerCase() === clienteParaDeletar.nome.toLowerCase()).length;
-
-             if (servicosAssociados > 0) {
-                 mostrarToast(`Não é possível excluir o cliente. ${servicosAssociados} serviço(s) estão associados.`, 'error');
-                 return;
-             }
-
-             if (confirm(`Tem certeza que deseja excluir o cliente ${clienteParaDeletar.nome}?`)) {
-                 clientes.splice(index, 1);
-                 salvarClientes();
-                 renderizarClientes();
-                 renderizarEstatisticas();
-                 mostrarToast('Cliente excluído com sucesso!', 'success');
-             }
+            return { totalServicos, valorTotalSoma, servicosMes, mediaValor, valorPendenteSoma, totalPagos, taxaPagos, maisComum: maisComum.tipo, maisRentavel: maisRentavel.tipo, valorMax, valorMin };
         }
 
-        // Função para visualizar o histórico (usando alert para simplicidade)
-        window.verHistorico = function(nomeCliente) {
-            const historico = servicos.filter(s => s.cliente.toLowerCase() === nomeCliente.toLowerCase());
-            let msg = `Histórico de Serviços para ${nomeCliente}:\n\n`;
-            
-            if (historico.length === 0) {
-                 msg += "Nenhum serviço encontrado.";
-            } else {
-                 historico.forEach(s => {
-                    msg += `- ${s.data}: ${s.tipo} (${formatarMoeda(s.valor)}) - Status: ${s.status}\n`;
-                 });
-            }
-            alert(msg);
-        }
+        function renderizarEstatisticas() {
+            const stats = calcularEstatisticas();
 
-        document.getElementById('formCliente').addEventListener('submit', (e) => {
-            e.preventDefault();
-            
-            const nome = document.getElementById('nomeCliente').value.trim();
-            
-            if (clientes.some(c => c.nome.toLowerCase() === nome.toLowerCase())) {
-                 mostrarToast('Cliente já cadastrado!', 'error');
-                 return;
-            }
+            // View Serviços KPIs
+            document.getElementById('totalServicos').textContent = stats.totalServicos;
+            document.getElementById('valorTotal').textContent = formatarMoeda(stats.valorTotalSoma);
+            document.getElementById('servicosMes').textContent = stats.servicosMes;
+            document.getElementById('valorPendente').textContent = formatarMoeda(stats.valorPendenteSoma);
+            
+            // View Resumo KPIs
+            document.getElementById('resumoValorTotal').textContent = formatarMoeda(stats.valorTotalSoma);
+            document.getElementById('resumoMediaValor').textContent = formatarMoeda(stats.mediaValor);
+            document.getElementById('resumoMaisRentavel').textContent = stats.maisRentavel;
+            document.getElementById('taxaPagos').textContent = `${stats.taxaPagos}%`;
+            
+            // Estatísticas Detalhadas
+            document.getElementById('statsClientes').textContent = clientes.length;
+            document.getElementById('statsMaisComum').textContent = stats.maisComum;
+            document.getElementById('statsValorMax').textContent = formatarMoeda(stats.valorMax);
+            document.getElementById('statsValorMin').textContent = formatarMoeda(stats.valorMin);
+        }
 
-            const novoCliente = {
-                nome: nome,
-                contato: document.getElementById('contatoCliente').value.trim(),
-                endereco: document.getElementById('enderecoCliente').value.trim(),
-            };
+        // --- FUNÇÕES DA VIEW SERVIÇOS ---
 
-            clientes.push(novoCliente); 
-            salvarClientes();
-            renderizarClientes();
-            renderizarEstatisticas();
-            document.getElementById('formCliente').reset();
-            mostrarToast('Cliente salvo com sucesso!', 'success');
-        });
+        function toggleStatus(index) {
+            const currentStatus = servicos[index].status;
+            servicos[index].status = (currentStatus === 'Pendente') ? 'Pago' : 'Pendente';
+            salvarServicos();
+            renderizarServicos();
+            renderizarEstatisticas();
+            mostrarToast(`Status do serviço atualizado para: ${servicos[index].status}`, 'info');
+        }
+        
+        function renderizarServicos() {
+            const list = document.getElementById('servicosList');
+            list.innerHTML = '';
+            
+            const termoBusca = document.getElementById('searchInput').value.toLowerCase();
+            const tipoFiltro = document.getElementById('filterType').value;
 
-        // --- NAVEGAÇÃO ENTRE VIEWS (SPA) ---
-        const navLinks = document.querySelectorAll('.nav-link');
-        const contentViews = document.querySelectorAll('.content-view');
+            const listaFiltrada = servicos.filter(servico => {
+                const matchesSearch = termoBusca === '' || 
+                                        servico.cliente.toLowerCase().includes(termoBusca) ||
+                                        servico.local.toLowerCase().includes(termoBusca);
+                const matchesType = tipoFiltro === '' || servico.tipo === tipoFiltro;
+                return matchesSearch && matchesType;
+            });
 
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                const targetViewId = link.getAttribute('data-view');
-                
-                navLinks.forEach(l => l.classList.remove('active'));
-                contentViews.forEach(v => v.classList.remove('active'));
-                
-                link.classList.add('active');
-                document.getElementById(`view-${targetViewId}`).classList.add('active');
+            if (listaFiltrada.length === 0) {
+                list.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 20px; color: var(--text-light);">Nenhum serviço encontrado.</td></tr>`;
+                return;
+            }
 
-                if (targetViewId === 'servicos') {
-                    renderizarServicos();
-                    renderizarEstatisticas();
-                } else if (targetViewId === 'clientes') {
-                    renderizarClientes();
-                } else if (targetViewId === 'resumo') {
-                    renderizarEstatisticas(); 
-                }
-            });
-        });
+            listaFiltrada.forEach((servico, index) => {
+                const row = list.insertRow();
+                const statusClass = servico.status === 'Pago' ? 'status-pago' : 'status-pendente';
+                
+                row.innerHTML = `
+                    <td data-label="Data">${servico.data}</td>
+                    <td data-label="Cliente" class="editable" data-field="cliente">${servico.cliente}</td>
+                    <td data-label="Local" class="editable" data-field="local">${servico.local}</td>
+                    <td data-label="Tipo">${servico.tipo}</td>
+                    <td data-label="Contato" class="editable" data-field="contato">${servico.contato}</td>
+                    <td data-label="Valor (R$)" class="editable" data-field="valor" style="font-weight: 600;">${formatarMoeda(servico.valor)}</td>
+                    <td data-label="Status">
+                        <span class="status-badge ${statusClass}" onclick="toggleStatus(${index})">
+                            ${servico.status}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn-delete" data-index="${index}"><i class="fas fa-trash-alt"></i></button>
+                    </td>
+                `;
 
-        // --- INICIALIZAÇÃO DO SISTEMA ---
-        function inicializarSistema() {
-            carregarDados();
-            renderizarServicos();
-            renderizarEstatisticas();
-            updateClienteDatalist();
-        }
+                // Aplica a Edição Inline nas células marcadas
+                row.querySelectorAll('.editable').forEach(cell => {
+                    enableInlineEditing(cell, cell.dataset.field, index);
+                });
+            });
+        }
+        
+        document.getElementById('formServico').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const novoServico = {
+                data: document.getElementById('data').value,
+                cliente: document.getElementById('cliente').value.trim(),
+                local: document.getElementById('local').value.trim(),
+                tipo: document.getElementById('tipo').value,
+                contato: document.getElementById('contato').value.trim(),
+                valor: parseFloat(document.getElementById('valor').value).toFixed(2),
+                status: 'Pendente' // Status inicial (NOVO)
+            };
 
-        inicializarSistema();
-    </script>
+            servicos.unshift(novoServico); 
+            
+            salvarServicos();
+            renderizarServicos();
+            renderizarEstatisticas();
+            document.getElementById('formServico').reset();
+            mostrarToast('Novo Serviço registrado com sucesso!', 'success');
+        });
+
+        document.getElementById('servicosList').addEventListener('click', (e) => {
+            if (e.target.closest('.btn-delete')) {
+                const button = e.target.closest('.btn-delete');
+                const rowIndex = button.closest('tr').rowIndex -1;
+                const servicoParaDeletar = servicos[rowIndex];
+                
+                if (confirm(`Tem certeza que deseja excluir o serviço de ${servicoParaDeletar.cliente}?`)) {
+                    servicos.splice(rowIndex, 1); 
+                    salvarServicos();
+                    renderizarServicos();
+                    renderizarEstatisticas();
+                    renderizarClientes();
+                    mostrarToast('Serviço excluído!', 'error');
+                }
+            }
+        });
+
+        // Eventos de Filtro e Busca
+        document.getElementById('searchInput').addEventListener('keyup', renderizarServicos);
+        document.getElementById('filterType').addEventListener('change', renderizarServicos);
+        
+        // --- FUNCIONALIDADE DE EXPORTAÇÃO CSV (NOVO) ---
+        document.getElementById('exportCsvBtn').addEventListener('click', () => {
+            if (servicos.length === 0) {
+                mostrarToast('Nenhum dado para exportar.', 'info');
+                return;
+            }
+
+            const headers = ['Data', 'Cliente', 'Local', 'Tipo', 'Contato', 'Valor', 'Status'];
+            const data = servicos.map(s => [
+                s.data, s.cliente, s.local, s.tipo, s.contato, s.valor.replace('.', ','), s.status
+            ]);
+
+            let csvContent = headers.join(';') + '\n';
+            data.forEach(row => {
+                csvContent += row.join(';') + '\n';
+            });
+
+            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.setAttribute('download', 'servicos_insect_control.csv');
+            link.click();
+            mostrarToast('Dados exportados para CSV!', 'success');
+        });
+
+        // --- FUNÇÕES DA VIEW CLIENTES (Aprimorada) ---
+
+        function renderizarClientes() {
+            const list = document.getElementById('clientesList');
+            list.innerHTML = '';
+            
+            if (clientes.length === 0) {
+                list.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px; color: var(--text-light);">Nenhum cliente cadastrado.</td></tr>`;
+                return;
+            }
+
+            clientes.forEach((cliente, index) => {
+                const totalServicosCliente = servicos.filter(s => s.cliente.toLowerCase() === cliente.nome.toLowerCase()).length;
+
+                const row = list.insertRow();
+                row.innerHTML = `
+                    <td data-label="Nome">${cliente.nome}</td>
+                    <td data-label="Contato">${cliente.contato}</td>
+                    <td data-label="Endereço">${cliente.endereco}</td>
+                    <td data-label="Serviços" style="font-weight: 600;">${totalServicosCliente}</td>
+                    <td>
+                        <button class="export-btn" onclick="verHistorico('${cliente.nome}')"><i class="fas fa-history"></i> Ver</button>
+                    </td>
+                `;
+            });
+        }
+        
+        // Função para simular a visualização do histórico
+        window.verHistorico = function(nomeCliente) {
+            const historico = servicos.filter(s => s.cliente.toLowerCase() === nomeCliente.toLowerCase());
+            let msg = `Histórico de Serviços para ${nomeCliente}:\n\n`;
+            
+            if (historico.length === 0) {
+                 msg += "Nenhum serviço encontrado.";
+            } else {
+                 historico.forEach(s => {
+                    msg += `- ${s.data}: ${s.tipo} (${formatarMoeda(s.valor)}) - Status: ${s.status}\n`;
+                 });
+            }
+            alert(msg);
+        }
+
+        document.getElementById('formCliente').addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const nome = document.getElementById('nomeCliente').value.trim();
+            
+            if (clientes.some(c => c.nome.toLowerCase() === nome.toLowerCase())) {
+                 mostrarToast('Cliente já cadastrado!', 'error');
+                 return;
+            }
+
+            const novoCliente = {
+                nome: nome,
+                contato: document.getElementById('contatoCliente').value.trim(),
+                endereco: document.getElementById('enderecoCliente').value.trim(),
+            };
+
+            clientes.unshift(novoCliente); 
+            salvarClientes();
+            renderizarClientes();
+            renderizarEstatisticas();
+            document.getElementById('formCliente').reset();
+            mostrarToast('Cliente salvo com sucesso!', 'success');
+        });
+
+        // --- NAVEGAÇÃO ENTRE VIEWS (SPA) ---
+        const navLinks = document.querySelectorAll('.nav-link');
+        const contentViews = document.querySelectorAll('.content-view');
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                const targetViewId = link.getAttribute('data-view');
+                
+                navLinks.forEach(l => l.classList.remove('active'));
+                contentViews.forEach(v => v.classList.remove('active'));
+                
+                link.classList.add('active');
+                document.getElementById(`view-${targetViewId}`).classList.add('active');
+
+                if (targetViewId === 'servicos') {
+                    renderizarServicos();
+                    renderizarEstatisticas();
+                } else if (targetViewId === 'clientes') {
+                    renderizarClientes();
+                } else if (targetViewId === 'resumo') {
+                    renderizarEstatisticas(); 
+                }
+            });
+        });
+
+        // --- INICIALIZAÇÃO DO SISTEMA ---
+        function inicializarSistema() {
+            carregarDados();
+            renderizarServicos();
+            renderizarEstatisticas();
+        }
+
+        inicializarSistema();
+    </script>
 
 </body>
 </html>
