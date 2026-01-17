@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>Painel de Serviços</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 :root{
@@ -44,11 +45,10 @@ body{
     display:flex;
     align-items:center;
     gap:10px;
-    transition:.2s;
 }
 
-.nav-link:hover,
-.nav-link.active{
+.nav-link.active,
+.nav-link:hover{
     background:rgba(0,0,0,.35);
 }
 
@@ -66,7 +66,7 @@ body{
     display:flex;
     justify-content:space-between;
     align-items:center;
-    margin-bottom:20px;
+    margin-bottom:15px;
 }
 
 /* FILTERS */
@@ -80,7 +80,6 @@ body{
     padding:8px 10px;
     border-radius:6px;
     border:none;
-    outline:none;
 }
 
 /* CARDS */
@@ -97,35 +96,18 @@ body{
     width:220px;
 }
 
-.card h3{
-    margin:0;
-    font-size:14px;
-    opacity:.8;
-}
-
-.card p{
-    font-size:22px;
-    margin-top:8px;
-}
-
 /* TABLE */
 .data-table{
     width:100%;
     border-collapse:collapse;
     background:var(--card);
     border-radius:12px;
-    overflow:hidden;
 }
 
 .data-table th,
 .data-table td{
     padding:14px;
     border-bottom:1px solid var(--line);
-}
-
-.data-table th{
-    background:#20242a;
-    text-align:left;
 }
 
 /* STATUS */
@@ -144,6 +126,14 @@ body{
     padding:30px;
     opacity:.6;
 }
+
+/* CHART */
+.chart-box{
+    background:var(--card);
+    padding:20px;
+    border-radius:12px;
+    margin-bottom:30px;
+}
 </style>
 </head>
 
@@ -160,127 +150,174 @@ body{
     <div class="nav-link" data-view="2026">
         <i class="fas fa-calendar-plus"></i> Serviços 2026
     </div>
+
+    <div class="nav-link" data-view="graficos">
+        <i class="fas fa-chart-line"></i> Gráficos
+    </div>
 </div>
 
 <!-- MAIN -->
 <div class="main">
 
-    <!-- VIEW -->
-    <div id="view" class="content-view active">
-
-        <div class="page-header">
-            <h1 id="titulo"></h1>
-
-            <div class="filters">
-                <input type="text" id="busca" placeholder="Buscar cliente ou tipo">
-                <select id="statusFiltro">
-                    <option value="">Todos</option>
-                    <option value="Pago">Pago</option>
-                    <option value="Pendente">Pendente</option>
-                </select>
-            </div>
+<!-- ================= 2025 ================= -->
+<div id="view-2025" class="content-view active">
+    <div class="page-header">
+        <h1>Serviços 2025</h1>
+        <div class="filters">
+            <input id="busca2025" placeholder="Buscar cliente ou tipo">
+            <select id="status2025">
+                <option value="">Todos</option>
+                <option>Pago</option>
+                <option>Pendente</option>
+            </select>
         </div>
-
-        <div class="summary-cards">
-            <div class="card">
-                <h3>Total de Serviços</h3>
-                <p id="total"></p>
-            </div>
-            <div class="card">
-                <h3>Valor Total</h3>
-                <p id="valor"></p>
-            </div>
-        </div>
-
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>Data</th>
-                    <th>Cliente</th>
-                    <th>Tipo</th>
-                    <th>Valor</th>
-                    <th>Status</th>
-                </tr>
-            </thead>
-            <tbody id="lista"></tbody>
-        </table>
-
     </div>
+
+    <div class="summary-cards">
+        <div class="card"><h3>Total</h3><p id="total2025"></p></div>
+        <div class="card"><h3>Valor</h3><p id="valor2025"></p></div>
+    </div>
+
+    <table class="data-table">
+        <thead>
+            <tr><th>Data</th><th>Cliente</th><th>Tipo</th><th>Valor</th><th>Status</th></tr>
+        </thead>
+        <tbody id="lista2025"></tbody>
+    </table>
+</div>
+
+<!-- ================= 2026 ================= -->
+<div id="view-2026" class="content-view">
+    <div class="page-header">
+        <h1>Serviços 2026</h1>
+        <div class="filters">
+            <input id="busca2026" placeholder="Buscar cliente ou tipo">
+            <select id="status2026">
+                <option value="">Todos</option>
+                <option>Pago</option>
+                <option>Pendente</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="summary-cards">
+        <div class="card"><h3>Total</h3><p id="total2026"></p></div>
+        <div class="card"><h3>Valor</h3><p id="valor2026"></p></div>
+    </div>
+
+    <table class="data-table">
+        <thead>
+            <tr><th>Data</th><th>Cliente</th><th>Tipo</th><th>Valor</th><th>Status</th></tr>
+        </thead>
+        <tbody id="lista2026"></tbody>
+    </table>
+</div>
+
+<!-- ================= GRÁFICOS ================= -->
+<div id="view-graficos" class="content-view">
+    <h1>Gráficos Financeiros</h1>
+
+    <div class="chart-box">
+        <h3>Faturamento Mensal 2025</h3>
+        <canvas id="grafico2025"></canvas>
+    </div>
+
+    <div class="chart-box">
+        <h3>Faturamento Mensal 2026</h3>
+        <canvas id="grafico2026"></canvas>
+    </div>
+</div>
 
 </div>
 
 <script>
-// ===== DADOS =====
 const servicos = [
-    { data:"2025-03-10", cliente:"João", tipo:"Dedetização", valor:300, status:"Pago" },
-    { data:"2025-07-22", cliente:"Maria", tipo:"Descupinização", valor:450, status:"Pendente" },
-    { data:"2026-01-15", cliente:"Carlos", tipo:"Dedetização", valor:380, status:"Pago" },
-    { data:"2026-04-02", cliente:"Ana", tipo:"Limpeza", valor:250, status:"Pendente" }
+ {data:"2025-03-10",cliente:"João",tipo:"Dedetização",valor:300,status:"Pago"},
+ {data:"2025-07-22",cliente:"Maria",tipo:"Descupinização",valor:450,status:"Pendente"},
+ {data:"2026-01-15",cliente:"Carlos",tipo:"Dedetização",valor:380,status:"Pago"},
+ {data:"2026-04-02",cliente:"Ana",tipo:"Limpeza",valor:250,status:"Pendente"}
 ];
-
-let anoAtual = "2025";
-
-const lista = document.getElementById("lista");
-const total = document.getElementById("total");
-const valor = document.getElementById("valor");
 
 function moeda(v){
     return v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
 }
 
-function render(){
-    const busca = document.getElementById("busca").value.toLowerCase();
-    const statusFiltro = document.getElementById("statusFiltro").value;
+function renderAno(ano){
+    const busca = document.getElementById("busca"+ano).value.toLowerCase();
+    const status = document.getElementById("status"+ano).value;
+    const lista = document.getElementById("lista"+ano);
+    const total = document.getElementById("total"+ano);
+    const valor = document.getElementById("valor"+ano);
 
     let dados = servicos
-        .filter(s => s.data.startsWith(anoAtual))
-        .filter(s => 
-            s.cliente.toLowerCase().includes(busca) ||
-            s.tipo.toLowerCase().includes(busca)
-        )
-        .filter(s => !statusFiltro || s.status === statusFiltro)
-        .sort((a,b) => b.data.localeCompare(a.data));
+        .filter(s=>s.data.startsWith(ano))
+        .filter(s=>s.cliente.toLowerCase().includes(busca)||s.tipo.toLowerCase().includes(busca))
+        .filter(s=>!status||s.status===status);
 
-    lista.innerHTML = "";
-    let soma = 0;
+    lista.innerHTML="";
+    let soma=0;
 
     if(!dados.length){
-        lista.innerHTML = `<tr><td colspan="5" class="empty">Nenhum serviço encontrado</td></tr>`;
+        lista.innerHTML=`<tr><td colspan="5" class="empty">Nenhum serviço encontrado</td></tr>`;
     }
 
-    dados.forEach(s => {
-        soma += s.valor;
-        lista.innerHTML += `
-            <tr>
-                <td>${s.data}</td>
-                <td>${s.cliente}</td>
-                <td>${s.tipo}</td>
-                <td>${moeda(s.valor)}</td>
-                <td><span class="status ${s.status==="Pago"?"pago":"pendente"}">${s.status}</span></td>
-            </tr>
-        `;
+    dados.forEach(s=>{
+        soma+=s.valor;
+        lista.innerHTML+=`
+        <tr>
+            <td>${s.data}</td>
+            <td>${s.cliente}</td>
+            <td>${s.tipo}</td>
+            <td>${moeda(s.valor)}</td>
+            <td><span class="status ${s.status==="Pago"?"pago":"pendente"}">${s.status}</span></td>
+        </tr>`;
     });
 
-    total.textContent = dados.length;
-    valor.textContent = moeda(soma);
-    document.getElementById("titulo").textContent = `Painel de Serviços ${anoAtual}`;
+    total.textContent=dados.length;
+    valor.textContent=moeda(soma);
 }
 
-// NAVEGAÇÃO
+function gerarGrafico(ano, canvasId){
+    const meses = Array(12).fill(0);
+    servicos
+        .filter(s=>s.data.startsWith(ano))
+        .forEach(s=>{
+            const mes = parseInt(s.data.split("-")[1]) - 1;
+            meses[mes]+=s.valor;
+        });
+
+    new Chart(document.getElementById(canvasId),{
+        type:"bar",
+        data:{
+            labels:["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"],
+            datasets:[{
+                label:"R$",
+                data:meses,
+                backgroundColor:"#c40000"
+            }]
+        }
+    });
+}
+
+// INIT
+["2025","2026"].forEach(a=>{
+    document.getElementById("busca"+a).oninput=()=>renderAno(a);
+    document.getElementById("status"+a).onchange=()=>renderAno(a);
+    renderAno(a);
+});
+
+gerarGrafico("2025","grafico2025");
+gerarGrafico("2026","grafico2026");
+
+// NAV
 document.querySelectorAll(".nav-link").forEach(btn=>{
     btn.onclick=()=>{
         document.querySelectorAll(".nav-link").forEach(b=>b.classList.remove("active"));
+        document.querySelectorAll(".content-view").forEach(v=>v.classList.remove("active"));
         btn.classList.add("active");
-        anoAtual = btn.dataset.view;
-        render();
+        document.getElementById("view-"+btn.dataset.view).classList.add("active");
     }
 });
-
-document.getElementById("busca").oninput = render;
-document.getElementById("statusFiltro").onchange = render;
-
-// INICIAL
-render();
 </script>
 
 </body>
