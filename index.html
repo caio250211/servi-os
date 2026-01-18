@@ -31,7 +31,7 @@
         /* Sidebar */
         .sidebar { background-color: var(--primary-color); color: white; padding: 30px 20px; position: sticky; top: 0; height: 100vh; box-shadow: 4px 0 15px rgba(0,0,0,0.3); }
         .logo-box { text-align: center; margin-bottom: 40px; }
-        .logo-box img { width: 90px; height: 90px; border-radius: 50%; background: white; padding: 5px; border: 3px solid rgba(255,255,255,0.3); }
+        .logo-box img { width: 90px; height: 90px; border-radius: 50%; background: white; padding: 5px; border: 3px solid rgba(255,255,255,0.3); object-fit: cover; }
         
         .nav-link {
             display: flex; align-items: center; padding: 12px 15px; margin-bottom: 8px;
@@ -60,6 +60,10 @@
         .data-table td { padding: 15px; border-bottom: 1px solid #333; font-size: 14px; }
         .data-table tr:hover { background: #2c3035; }
 
+        /* Botão de Delete */
+        .btn-delete { background: transparent; color: #ff5252; border: 1px solid #ff5252; padding: 5px 8px; border-radius: 4px; cursor: pointer; transition: 0.3s; }
+        .btn-delete:hover { background: #ff5252; color: white; }
+
         /* Formulário */
         .form-section { background: var(--card-background); padding: 25px; border-radius: 10px; margin-bottom: 30px; border: 1px solid #333; }
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
@@ -87,6 +91,9 @@
         .modal-content { background: var(--card-background); padding: 40px; border-radius: 15px; width: 100%; max-width: 350px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .modal-content input { width: 100%; padding: 15px; margin-bottom: 15px; background: #1a1c1f; border: 1px solid #444; color: white; border-radius: 8px; box-sizing: border-box; }
         .modal-content button { width: 100%; padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 10px; font-size: 16px; }
+
+        .btn-google { background: white !important; color: #444 !important; display: flex; align-items: center; justify-content: center; gap: 10px; border: 1px solid #ddd !important; }
+        .btn-google:hover { background: #f1f1f1 !important; }
 
         @media (max-width: 768px) {
             .dashboard-layout { grid-template-columns: 1fr; }
@@ -160,58 +167,58 @@
                 
                 <div class="stats-grid">
                     <div class="stats-box">
-                        <h2><i class="fas fa-crown"></i> Melhores Clientes (Faturamento)</h2>
+                        <h2><i class="fas fa-crown"></i> Melhores Clientes</h2>
                         <div id="topClientesList"></div>
                     </div>
 
                     <div class="stats-box">
                         <h2><i class="fas fa-hand-holding-usd"></i> Saúde Financeira</h2>
-                        <p style="font-size: 14px; color: var(--text-light);">Percentual de pagamentos recebidos:</p>
                         <div class="progress-container"><div id="statsBarra" class="progress-bar"></div></div>
                         <div style="display: flex; justify-content: space-between; font-weight: bold;">
                             <span id="statsPercent">0%</span>
                             <span id="statsTotalGeral">Total: R$ 0,00</span>
                         </div>
                         <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #444;">
-                            <p style="color: var(--text-light); font-size: 13px;">TICKET MÉDIO (Valor médio por serviço)</p>
+                            <p style="color: var(--text-light); font-size: 13px;">TICKET MÉDIO</p>
                             <p id="statsTicket" style="font-size: 22px; color: white; margin-top: 5px;">R$ 0,00</p>
                         </div>
                     </div>
-
-                    <div class="stats-box" style="grid-column: span 2;">
-                        <h2><i class="fas fa-bug"></i> Tipos de Serviços mais Realizados</h2>
-                        <div id="topServicosList" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;"></div>
-                    </div>
                 </div>
             </div>
-
         </div>
     </div>
 
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <h2 style="color:white; margin-top: 0;">Insect Tupí Control</h2>
-            <p style="color: var(--text-light); font-size: 14px; margin-bottom: 25px;">Entre com suas credenciais</p>
-            <input type="email" id="email" placeholder="Email de acesso">
-            <input type="password" id="senha" placeholder="Sua Senha">
-            <button onclick="window.login()" style="background: var(--primary-color); color:white">ENTRAR NO SISTEMA</button>
-            <button onclick="window.showCadastro()" style="background: transparent; color: #888; border: 1px solid #444;">Criar Nova Conta</button>
+            <p style="color: var(--text-light); font-size: 14px; margin-bottom: 25px;">Faça login para continuar</p>
+            
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="senha" placeholder="Senha">
+            
+            <button onclick="window.login()" style="background: var(--primary-color); color:white">ENTRAR</button>
+            
+            <button onclick="window.loginGoogle()" class="btn-google">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20"> Entrar com Google
+            </button>
+
+            <button onclick="window.showCadastro()" style="background: transparent; color: #888; border: 1px solid #444;">Criar Conta</button>
         </div>
     </div>
 
     <div id="cadastroModal" class="modal" style="display: none;">
         <div class="modal-content">
             <h2 style="color:white">Nova Conta</h2>
-            <input type="email" id="emailCadastro" placeholder="Escolha um Email">
-            <input type="password" id="senhaCadastro" placeholder="Crie uma Senha">
-            <button onclick="window.cadastrar()" style="background: var(--success-color); color:white">FINALIZAR CADASTRO</button>
+            <input type="email" id="emailCadastro" placeholder="Email">
+            <input type="password" id="senhaCadastro" placeholder="Senha">
+            <button onclick="window.cadastrar()" style="background: var(--success-color); color:white">CADASTRAR</button>
             <button onclick="window.showLogin()" style="background: transparent; color: #888;">Voltar</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js';
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js';
         import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, query, where, updateDoc } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js';
 
         const firebaseConfig = {
@@ -226,37 +233,19 @@
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
+        const provider = new GoogleAuthProvider();
         const colName = "servicos";
 
         let userEmail = null;
         let servicos = [];
         let abaAtiva = "2026";
 
-        // --- NAVEGAÇÃO ---
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', () => {
-                const target = link.dataset.target;
-                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                document.querySelectorAll('.content-view').forEach(v => v.classList.remove('active'));
-                
-                link.classList.add('active');
-                if(target === 'stats') {
-                    document.getElementById('view-stats').classList.add('active');
-                    gerarEstatisticas();
-                } else {
-                    abaAtiva = target;
-                    document.getElementById('view-ano').classList.add('active');
-                    document.getElementById('tituloAno').innerText = `Serviços ${abaAtiva}`;
-                    renderizar();
-                }
-            });
-        });
-
-        // --- AUTH ---
+        // --- AUTH LOGIC ---
         onAuthStateChanged(auth, (user) => {
             if (user) {
                 userEmail = user.email;
                 document.getElementById('loginModal').style.display = 'none';
+                document.getElementById('cadastroModal').style.display = 'none';
                 document.getElementById('mainDashboard').style.display = 'grid';
                 carregarDados();
             } else {
@@ -271,6 +260,10 @@
             signInWithEmailAndPassword(auth, e, s).catch(err => alert("Email ou senha incorretos."));
         };
 
+        window.loginGoogle = () => {
+            signInWithPopup(auth, provider).catch(err => alert("Erro ao entrar com Google: " + err.message));
+        };
+
         window.cadastrar = () => {
             const e = document.getElementById('emailCadastro').value;
             const s = document.getElementById('senhaCadastro').value;
@@ -281,7 +274,7 @@
         window.showCadastro = () => { document.getElementById('loginModal').style.display='none'; document.getElementById('cadastroModal').style.display='flex'; };
         window.showLogin = () => { document.getElementById('cadastroModal').style.display='none'; document.getElementById('loginModal').style.display='flex'; };
 
-        // --- DADOS ---
+        // --- DATA LOGIC ---
         async function carregarDados() {
             if(!userEmail) return;
             const q = query(collection(db, colName), where("usuario", "==", userEmail));
@@ -313,17 +306,16 @@
         };
 
         window.deletarServico = async (id) => {
-            if(confirm("Deseja remover este serviço permanentemente?")) {
+            if(confirm("Deseja remover este serviço?")) {
                 await deleteDoc(doc(db, colName, id));
                 carregarDados();
             }
         };
 
-        // --- RENDERIZAÇÃO ABAS ---
+        // --- UI LOGIC ---
         function renderizar() {
             const tbody = document.getElementById('listaServicos');
             tbody.innerHTML = '';
-            
             let faturamento = 0, pendente = 0, qtd = 0;
 
             const filtrados = servicos
@@ -336,16 +328,15 @@
                 if(s.status === 'Pago') faturamento += v;
                 else pendente += v;
 
-                const row = `<tr>
+                tbody.innerHTML += `<tr>
                     <td>${s.data.split('-').reverse().join('/')}</td>
                     <td><b>${s.cliente}</b></td>
                     <td>${s.local}</td>
                     <td>${s.tipo}</td>
                     <td>R$ ${v.toFixed(2)}</td>
                     <td><span class="status-badge ${s.status === 'Pago' ? 'status-pago' : 'status-pendente'}" onclick="window.toggleStatus('${s.id}')">${s.status}</span></td>
-                    <td><button class="btn-delete" onclick="window.deletarServico('${s.id}')"><i class="fas fa-trash-alt"></i></button></td>
+                    <td><button class="btn-delete" onclick="window.deletarServico('${s.id}')"><i class="fas fa-trash"></i></button></td>
                 </tr>`;
-                tbody.innerHTML += row;
             });
 
             document.getElementById('cardQtd').innerText = qtd;
@@ -353,51 +344,49 @@
             document.getElementById('cardPendente').innerText = `R$ ${pendente.toFixed(2)}`;
         }
 
-        // --- LÓGICA DE ESTATÍSTICAS ---
         function gerarEstatisticas() {
             const topC = document.getElementById('topClientesList');
-            const topS = document.getElementById('topServicosList');
-            topC.innerHTML = ''; topS.innerHTML = '';
-
+            topC.innerHTML = '';
             let faturamentoGeral = 0, recebidoGeral = 0;
-            const mapaClientes = {}, mapaServicos = {};
+            const mapaClientes = {};
 
             servicos.forEach(s => {
                 const v = parseFloat(s.valor) || 0;
                 faturamentoGeral += v;
                 if(s.status === 'Pago') recebidoGeral += v;
-
-                // Agrupar por Cliente
                 mapaClientes[s.cliente] = (mapaClientes[s.cliente] || 0) + v;
-                // Agrupar por Tipo de Serviço
-                mapaServicos[s.tipo] = (mapaServicos[s.tipo] || 0) + 1;
             });
 
-            // Renderizar Clientes
-            Object.entries(mapaClientes)
-                .sort((a,b) => b[1] - a[1])
-                .slice(0, 5)
-                .forEach(([nome, valor]) => {
-                    topC.innerHTML += `<div class="stat-item"><span>${nome}</span><span>R$ ${valor.toFixed(2)}</span></div>`;
-                });
+            Object.entries(mapaClientes).sort((a,b) => b[1] - a[1]).slice(0, 5).forEach(([n, v]) => {
+                topC.innerHTML += `<div class="stat-item"><span>${n}</span><span>R$ ${v.toFixed(2)}</span></div>`;
+            });
 
-            // Renderizar Serviços Frequentes
-            Object.entries(mapaServicos)
-                .sort((a,b) => b[1] - a[1])
-                .slice(0, 6)
-                .forEach(([tipo, total]) => {
-                    topS.innerHTML += `<div class="stat-item" style="border: 1px solid #444; padding: 10px; border-radius: 5px; margin: 2px;"><span>${tipo}</span><span style="color:var(--info-color)">${total}x</span></div>`;
-                });
-
-            // Saúde Financeira
             const percent = faturamentoGeral > 0 ? (recebidoGeral / faturamentoGeral) * 100 : 0;
             document.getElementById('statsBarra').style.width = percent + '%';
             document.getElementById('statsPercent').innerText = percent.toFixed(1) + '%';
-            document.getElementById('statsTotalGeral').innerText = `Previsão Total: R$ ${faturamentoGeral.toFixed(2)}`;
-            
-            const ticket = servicos.length > 0 ? faturamentoGeral / servicos.length : 0;
-            document.getElementById('statsTicket').innerText = `R$ ${ticket.toFixed(2)}`;
+            document.getElementById('statsTotalGeral').innerText = `R$ ${faturamentoGeral.toFixed(2)}`;
+            document.getElementById('statsTicket').innerText = `R$ ${(faturamentoGeral / (servicos.length || 1)).toFixed(2)}`;
         }
+
+        // --- NAVIGATION ---
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                const target = link.dataset.target;
+                if(!target) return;
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                document.querySelectorAll('.content-view').forEach(v => v.classList.remove('active'));
+                link.classList.add('active');
+                if(target === 'stats') {
+                    document.getElementById('view-stats').classList.add('active');
+                    gerarEstatisticas();
+                } else {
+                    abaAtiva = target;
+                    document.getElementById('view-ano').classList.add('active');
+                    document.getElementById('tituloAno').innerText = `Serviços ${abaAtiva}`;
+                    renderizar();
+                }
+            });
+        });
     </script>
 </body>
 </html>
