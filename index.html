@@ -242,6 +242,11 @@
             const snap = await getDocs(q);
             servicos = snap.docs.map(d => ({id: d.id, ...d.data()}));
             renderizar();
+            
+            // Se estiver na aba de estatísticas, atualiza ela também
+            if(document.getElementById('view-stats').classList.contains('active')) {
+                gerarEstatisticas(document.getElementById('statYearFilter').value);
+            }
         }
 
         document.getElementById('formServico').addEventListener('submit', async (e) => {
@@ -273,23 +278,34 @@
             }
         };
 
+        // FUNÇÃO DE RENDERIZAÇÃO MELHORADA
         function renderizar() {
             const tbody = document.getElementById('listaServicos');
             tbody.innerHTML = '';
             let faturamento = 0, pendente = 0, qtd = 0;
 
             const filtrados = servicos.filter(s => {
-                const anoExtraido = s.data.includes('-') ? s.data.split('-')[0] : s.data.split('/')[2];
+                // Captura o ano de forma segura: procura por 4 números seguidos
+                const match = s.data.match(/\d{4}/);
+                const anoExtraido = match ? match[0] : "";
                 return anoExtraido === anoAtivo;
-            }).sort((a,b) => new Date(b.data) - new Date(a.data));
+            }).sort((a,b) => {
+                // Ordenação por data (ajusta formato se necessário)
+                const d1 = a.data.includes('/') ? a.data.split('/').reverse().join('-') : a.data;
+                const d2 = b.data.includes('/') ? b.data.split('/').reverse().join('-') : b.data;
+                return new Date(d2) - new Date(d1);
+            });
 
             filtrados.forEach(s => {
                 const v = parseFloat(s.valor) || 0;
                 qtd++;
                 if(s.status === 'Pago') faturamento += v; else pendente += v;
 
+                // Formata data para exibição
+                const dataExibicao = s.data.includes('-') ? s.data.split('-').reverse().join('/') : s.data;
+
                 tbody.innerHTML += `<tr>
-                    <td>${s.data.split('-').reverse().join('/')}</td>
+                    <td>${dataExibicao}</td>
                     <td><b>${s.cliente.toUpperCase()}</b></td>
                     <td>${s.local}</td>
                     <td>${s.tipo}</td>
@@ -324,13 +340,15 @@
 
         document.getElementById('statYearFilter').addEventListener('change', (e) => gerarEstatisticas(e.target.value));
 
+        // FUNÇÃO DE ESTATÍSTICAS MELHORADA
         function gerarEstatisticas(ano) {
             const topC = document.getElementById('topClientesList');
             document.getElementById('txtAnoStat').innerText = ano;
             topC.innerHTML = '';
 
             const servicosAno = servicos.filter(s => {
-                const anoExtraido = s.data.includes('-') ? s.data.split('-')[0] : s.data.split('/')[2];
+                const match = s.data.match(/\d{4}/);
+                const anoExtraido = match ? match[0] : "";
                 return anoExtraido === ano;
             });
             
@@ -341,12 +359,19 @@
                 const v = parseFloat(s.valor) || 0;
                 fatTotal += v;
                 if(s.status === 'Pago') recTotal += v;
-                mapaC[s.cliente] = (mapaC[s.cliente] || 0) + v;
+                const nome = s.cliente.toUpperCase().trim();
+                mapaC[nome] = (mapaC[nome] || 0) + v;
             });
 
-            Object.entries(mapaC).sort((a,b) => b[1] - a[1]).slice(0, 5).forEach(([n, v]) => {
-                topC.innerHTML += `<div class="stat-item"><span>${n}</span><span>R$ ${v.toFixed(2)}</span></div>`;
-            });
+            const ranking = Object.entries(mapaC).sort((a,b) => b[1] - a[1]).slice(0, 5);
+            
+            if(ranking.length === 0) {
+                topC.innerHTML = "<p style='color:gray'>Nenhum dado encontrado para este ano.</p>";
+            } else {
+                ranking.forEach(([n, v]) => {
+                    topC.innerHTML += `<div class="stat-item"><span>${n}</span><span>R$ ${v.toFixed(2)}</span></div>`;
+                });
+            }
 
             const percent = fatTotal > 0 ? (recTotal / fatTotal) * 100 : 0;
             document.getElementById('statsBarra').style.width = percent + '%';
