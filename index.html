@@ -8,20 +8,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
     <style>
-        /* ========================================= */
-        /* VARIÁVEIS DE TEMA E CORES AJUSTADAS */
-        /* Sidebar em vermelho, corpo em Dark Mode original */
-        /* ========================================= */
         :root {
-            /* Cores Destacadas */
-            --primary-color: #CC0000; /* Vermelho Tupy (Sidebar) */
-            --primary-light: #AA0000; /* Vermelho Hover */
-            --secondary-color: #ffb300; /* Amarelo (Original) */
+            --primary-color: #CC0000; 
+            --primary-light: #AA0000; 
+            --secondary-color: #ffb300; 
             --danger-color: #d32f2f; 
             --success-color: #66bb6a;
             --info-color: #29b6f6;
-            
-            /* Cores Escuras do Tema (Original) */
             --background-body: #1E2125;
             --card-background: #272B30;
             --text-dark: #e0e0e0;
@@ -33,187 +26,77 @@
             --sidebar-width: 260px;
         }
         
-        body {
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: var(--background-body);
-            color: var(--text-dark);
-        }
+        body { font-family: 'Roboto', sans-serif; margin: 0; background-color: var(--background-body); color: var(--text-dark); }
 
-        /* LAYOUT E NAVEGAÇÃO */
-        .dashboard-layout {
-            display: grid;
-            grid-template-columns: var(--sidebar-width) 1fr;
-            min-height: 100vh;
-            transition: grid-template-columns 0.3s ease;
-        }
+        .dashboard-layout { display: grid; grid-template-columns: var(--sidebar-width) 1fr; min-height: 100vh; }
+        
         .sidebar {
             background-color: var(--primary-color);
-            color: white; /* Texto branco no painel vermelho */
-            padding: 30px 20px;
+            color: white; padding: 30px 20px;
             box-shadow: 4px 0 10px rgba(0, 0, 0, 0.4);
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            overflow-y: auto;
+            position: sticky; top: 0; height: 100vh; overflow-y: auto;
         }
+
         .logo-box { text-align: center; margin-bottom: 50px; }
-        .logo-box img { 
-            width: 150px;
-            height: 150px;
-            max-width: 100%;
-            margin-bottom: 15px; 
-            border-radius: 50%;
-            background-color: white; 
-            padding: 5px;
-            object-fit: contain; 
-            border: 3px solid white; /* Borda branca no painel vermelho */
-        }
-        .logo-box h2 { font-size: 24px; font-weight: 500; margin: 0; color: white; letter-spacing: 0.5px; } /* Cor do título branca */
+        .logo-box img { width: 120px; height: 120px; border-radius: 50%; background-color: white; padding: 5px; object-fit: contain; border: 3px solid white; }
+        .logo-box h2 { font-size: 22px; margin: 10px 0 0 0; color: white; }
         
         .nav-link {
             display: flex; align-items: center; padding: 14px 15px; margin-bottom: 8px;
             color: rgba(255, 255, 255, 0.85); border-radius: var(--border-radius);
-            transition: all 0.2s ease-in-out; cursor: pointer; font-weight: 500;
+            transition: all 0.2s; cursor: pointer; font-weight: 500;
         }
-        .nav-link i { margin-right: 18px; font-size: 16px; }
-        .nav-link.active, .nav-link:hover {
-            background-color: var(--primary-light); box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); color: white;
-        }
+        .nav-link i { margin-right: 15px; width: 20px; text-align: center; }
+        .nav-link.active, .nav-link:hover { background-color: var(--primary-light); color: white; }
 
         .main-content { padding: 30px 40px; }
         .content-view { display: none; animation: fadeIn 0.4s ease-out; }
         .content-view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* COMPONENTES DE TEMA ESCURO (ORIGINAL) */
-        .page-header h1 { color: var(--text-dark); }
-        .page-header p { color: var(--text-light); }
-
-        /* Cartões KPI */
         .summary-cards { display: flex; gap: 20px; margin-bottom: 40px; }
         .card { 
-            background-color: var(--card-background); padding: 25px; border-radius: var(--border-radius); 
+            background-color: var(--card-background); padding: 20px; border-radius: var(--border-radius); 
             box-shadow: var(--shadow-light); flex: 1; border-bottom: 4px solid var(--info-color); 
-            transition: all 0.3s; 
         }
-        .card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
-        .card h3 { color: var(--text-light); font-size: 14px; margin-top: 0; }
-        .card p { color: var(--primary-color); font-size: 28px; font-weight: 700; margin: 5px 0 0 0; }
+        .card h3 { color: var(--text-light); font-size: 12px; margin: 0; text-transform: uppercase; }
+        .card p { color: var(--primary-color); font-size: 24px; font-weight: 700; margin: 10px 0 0 0; }
 
-        /* Formulário e Inputs */
-        .form-section { background-color: var(--card-background); padding: 30px; border-radius: var(--border-radius); box-shadow: var(--shadow-light); margin-bottom: 40px; }
-        .form-section h2 { color: var(--text-dark); border-bottom: 1px solid #444; padding-bottom: 15px; margin-top: 0; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr 140px; gap: 20px; } 
-        .input-group input, .input-group select { 
-            width: 100%; box-sizing: border-box; background-color: #1a1c1f; color: var(--text-dark); 
-            border: 1px solid #444; padding: 12px 15px; border-radius: 4px; 
-        }
-        .input-group input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(1); }
-        .btn-submit { background-color: var(--success-color); color: white; border: none; cursor: pointer; padding: 12px 15px; border-radius: 4px; font-weight: 500; transition: background-color 0.2s; }
-        .btn-submit:hover { background-color: #5cb85c; }
-
-        /* Tabela */
-        .data-controls { display: flex; gap: 15px; margin-bottom: 25px; align-items: center; }
-        .data-controls input, .data-controls select { background-color: var(--card-background); color: var(--text-dark); border-color: #444; padding: 10px 15px; }
-        .data-controls input { flex-grow: 1; } /* Faz o input de busca ocupar espaço */
-
-        .export-btn { 
-            background-color: var(--info-color); color: white; border: none; 
-            padding: 10px 15px; border-radius: 4px; font-weight: 500; cursor: pointer; transition: background-color 0.2s;
-        }
-        .export-btn:hover { background-color: #00a0e0; }
-
-        .data-table-container { background-color: var(--card-background); box-shadow: var(--shadow-light); overflow: hidden; }
-        .data-table { width: 100%; border-collapse: collapse; }
-        .data-table th, .data-table td { padding: 15px; text-align: left; }
-        .data-table thead { background-color: var(--table-header-bg); }
-        .data-table th { color: var(--text-light); border-bottom: 2px solid #333; }
-        .data-table td { border-bottom: 1px solid #333; }
-        .data-table tbody tr:hover { background-color: #33383f; }
-
-        /* Status Badges */
-        .status-badge { display: inline-block; padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s ease-in-out; text-align: center; }
-        .status-pendente { background-color: #5e4719; color: #ffab40; border: 1px solid #ffab40; }
-        .status-pago { background-color: #385e3a; color: #a5d6a7; border: 1px solid #a5d6a7; }
-
-        /* Edição Inline */
-        .editable:hover { cursor: pointer; background-color: #33383f; }
-        .edit-input { border: 1px solid var(--secondary-color); padding: 5px; width: 90%; border-radius: 3px; font-size: 14px; background-color: #1a1c1f; color: var(--text-dark); }
-        .btn-delete { background: var(--danger-color); color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; transition: background 0.2s; }
-        .btn-delete:hover { background: #B71C1C; }
-
-        /* Modais (Login) */
-        .modal { 
-            display: flex; justify-content: center; align-items: center; 
-            position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.85); 
-        }
-        .modal-content { 
-            background: var(--card-background); padding: 30px; border-radius: var(--border-radius); 
-            box-shadow: var(--shadow-hover); width: 100%; max-width: 400px; text-align: center;
-        }
-        .modal-content input { 
-            background-color: #1a1c1f; color: var(--text-dark); border: 1px solid #444; 
-            padding: 12px; margin-bottom: 15px; width: calc(100% - 24px); border-radius: 4px;
-        }
-        .modal-content button { 
-            padding: 10px 20px; margin-top: 10px; border: none; border-radius: 4px;
-            font-weight: 500; cursor: pointer; background: var(--primary-color); color: white;
-            transition: background 0.2s; width: 100%;
-        }
-        .modal-content button:hover { background: var(--primary-light); }
-        .modal-content .btn-google { background: #4285F4; margin-top: 20px; }
-        .modal-content .btn-google:hover { background: #3c77e0; }
+        .form-section { background-color: var(--card-background); padding: 25px; border-radius: var(--border-radius); margin-bottom: 30px; }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
+        .input-group input { width: 100%; box-sizing: border-box; background-color: #1a1c1f; color: white; border: 1px solid #444; padding: 10px; border-radius: 4px; }
         
-        /* Estatísticas detalhadas */
-        .stats-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .stats-item { background-color: #1a1c1f; padding: 20px; border-radius: var(--border-radius); box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); border-left: 4px solid var(--info-color); }
-        .stats-item h4 { color: var(--text-light); margin-top: 0; }
-        .stats-item p { color: var(--secondary-color); font-size: 20px; font-weight: 700; }
+        .btn-submit { background-color: var(--success-color); color: white; border: none; padding: 10px; border-radius: 4px; cursor: pointer; font-weight: bold; grid-column: span 1; }
 
-        /* Toast Notifications */
-        #toastContainer { position: fixed; bottom: 20px; right: 20px; z-index: 10000; }
-        .toast {
-            background-color: var(--success-color); color: white; padding: 15px 20px; border-radius: 4px;
-            margin-top: 10px; box-shadow: var(--shadow-light); opacity: 0; transform: translateX(100%);
-            transition: opacity 0.3s ease-out, transform 0.3s ease-out; display: flex; align-items: center;
-        }
-        .toast.show { opacity: 1; transform: translateX(0); }
-        .toast.error { background-color: var(--danger-color); }
-        .toast.info { background-color: var(--info-color); }
-        .toast i { margin-right: 10px; }
+        .data-controls { display: flex; gap: 15px; margin-bottom: 20px; }
+        .data-controls input { flex-grow: 1; background-color: var(--card-background); color: white; border: 1px solid #444; padding: 10px; border-radius: 4px; }
 
-        /* RESPONSIVIDADE (MOBILE) */
+        .data-table-container { background-color: var(--card-background); border-radius: 8px; overflow: hidden; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table th { background-color: var(--table-header-bg); color: var(--text-light); padding: 15px; text-align: left; font-size: 13px; }
+        .data-table td { padding: 15px; border-bottom: 1px solid #333; font-size: 14px; }
+        .data-table tr:hover { background-color: #33383f; }
+
+        .status-badge { padding: 5px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; cursor: pointer; }
+        .status-pendente { background: #5e4719; color: #ffab40; }
+        .status-pago { background: #385e3a; color: #a5d6a7; }
+
+        .btn-delete { background: var(--danger-color); color: white; border: none; padding: 8px; border-radius: 4px; cursor: pointer; }
+
+        /* Modais */
+        .modal { display: flex; justify-content: center; align-items: center; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }
+        .modal-content { background: var(--card-background); padding: 30px; border-radius: 8px; width: 100%; max-width: 350px; text-align: center; }
+        .modal-content input { width: 100%; padding: 12px; margin-bottom: 15px; box-sizing: border-box; background: #1a1c1f; border: 1px solid #444; color: white; border-radius: 4px; }
+        .modal-content button { width: 100%; padding: 12px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; margin-bottom: 10px; }
+        
+        #toastContainer { position: fixed; bottom: 20px; right: 20px; z-index: 9999; }
+        .toast { background: var(--success-color); color: white; padding: 15px 25px; border-radius: 4px; margin-top: 10px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); transform: translateX(120%); transition: 0.3s; }
+        .toast.show { transform: translateX(0); }
+
         @media (max-width: 992px) {
             .dashboard-layout { grid-template-columns: 1fr; }
-            .main-content { padding: 20px; }
-            .sidebar { 
-                position: sticky; top: 0; height: auto; padding: 15px 10px; 
-                display: flex; flex-direction: row; justify-content: flex-start;
-                overflow-x: auto; white-space: nowrap; z-index: 1000;
-            }
-            .logo-box { display: flex; align-items: center; margin-right: 20px; margin-bottom: 0; min-width: 150px; }
-            .logo-box img { width: 40px; height: 40px; margin-right: 10px; margin-bottom: 0; }
-            .logo-box h2 { font-size: 18px; color: white; }
-            
-            .nav-link { margin-bottom: 0; padding: 10px 15px; }
-            .nav-link i { margin-right: 8px; }
-            
-            .summary-cards { flex-direction: column; }
-            .form-grid { grid-template-columns: 1fr; gap: 15px; }
-            .form-grid > div, .form-grid button { grid-column: 1 / -1 !important; }
-            .data-controls { flex-direction: column; align-items: stretch; }
-        }
-
-        /* Tabela Responsiva (Mobile) */
-        @media (max-width: 768px) {
-            .data-table thead { display: none; }
-            .data-table, .data-table tbody, .data-table tr, .data-table td { display: block; width: 100%; }
-            .data-table tr { margin-bottom: 15px; border: 1px solid #444; border-radius: var(--border-radius); box-shadow: var(--shadow-light); background-color: var(--card-background); }
-            .data-table td { text-align: right; padding: 10px; position: relative; border-bottom: none; }
-            .data-table td:before { content: attr(data-label); float: left; font-weight: 500; text-transform: uppercase; color: var(--text-light); font-size: 13px; }
+            .sidebar { height: auto; position: relative; display: flex; flex-wrap: wrap; gap: 10px; }
+            .logo-box { width: 100%; margin-bottom: 20px; }
         }
     </style>
 </head>
@@ -225,590 +108,264 @@
         
         <div class="sidebar">
             <div class="logo-box">
-                <img src="logo.png.JPG" alt="Insect Control Tupy Logo">
+                <img src="logo.png.JPG" alt="Logo">
                 <h2>Insect Tupí</h2>
             </div>
             
-            <div class="nav-link active" data-view="servicos">
-                <i class="fas fa-clipboard-list"></i>
-                <span>Serviços</span>
+            <div class="nav-link active" data-view="2026">
+                <i class="fas fa-calendar-alt"></i><span>Serviços 2026</span>
+            </div>
+            
+            <div class="nav-link" data-view="2025">
+                <i class="fas fa-history"></i><span>Serviços 2025</span>
             </div>
             
             <div class="nav-link" data-view="resumo">
-                <i class="fas fa-chart-line"></i>
-                <span>Resumo Financeiro</span>
+                <i class="fas fa-chart-pie"></i><span>Resumo Financeiro</span>
             </div>
             
-            <div class="nav-link" style="margin-top: 50px;" onclick="window.logout()">
-                <i class="fas fa-sign-out-alt"></i>
-                <span>Sair</span>
+            <div class="nav-link" style="margin-top: 40px;" onclick="window.logout()">
+                <i class="fas fa-sign-out-alt"></i><span>Sair</span>
             </div>
         </div>
 
         <div class="main-content">
             
-            <div id="view-servicos" class="content-view active">
-                
-                <div class="page-header">
-                    <h1>Painel de Serviços</h1>
-                    <p>Visão geral, registro e gestão de atendimentos.</p>
-                </div>
+            <div class="summary-cards">
+                <div class="card"><h3>Total Geral</h3><p id="totalServicos">0</p></div>
+                <div class="card" style="border-bottom-color: var(--success-color);"><h3>Faturamento</h3><p id="valorTotal">R$ 0,00</p></div>
+                <div class="card" style="border-bottom-color: var(--secondary-color);"><h3>Pendentes</h3><p id="valorPendente">R$ 0,00</p></div>
+            </div>
 
-                <div class="summary-cards">
-                    <div class="card" style="border-bottom-color: var(--info-color);">
-                        <h3>TOTAL DE SERVIÇOS</h3>
-                        <p id="totalServicos">0</p>
+            <div class="form-section">
+                <h2 style="margin-top:0; font-size: 18px;"><i class="fas fa-plus-circle"></i> Novo Registro</h2>
+                <form id="formServico">
+                    <div class="form-grid">
+                        <div class="input-group"><input type="date" id="data" required></div>
+                        <div class="input-group"><input type="text" id="cliente" placeholder="Cliente" required></div>
+                        <div class="input-group"><input type="text" id="local" placeholder="Endereço" required></div>
+                        <div class="input-group"><input type="text" id="tipo" placeholder="Serviço" required></div>
+                        <div class="input-group"><input type="text" id="contato" placeholder="Contato"></div>
+                        <div class="input-group"><input type="number" id="valor" placeholder="Valor R$" step="0.01" required></div>
+                        <button type="submit" class="btn-submit">SALVAR</button>
                     </div>
-                    <div class="card" style="border-bottom-color: var(--success-color);">
-                        <h3>VALOR TOTAL (R$)</h3>
-                        <p id="valorTotal">R$ 0,00</p>
-                    </div>
-                    <div class="card" style="border-bottom-color: var(--info-color);">
-                        <h3>SERVIÇOS NO MÊS</h3>
-                        <p id="servicosMes">0</p>
-                    </div>
-                    <div class="card" style="border-bottom-color: var(--secondary-color);">
-                        <h3>PENDÊNCIAS (R$)</h3>
-                        <p id="valorPendente">R$ 0,00</p>
-                    </div>
-                </div>
+                </form>
+            </div>
 
-                <div class="form-section">
-                    <h2><i class="fas fa-plus-circle"></i> Registrar Novo Serviço</h2>
-                    <form id="formServico">
-                        <div class="form-grid">
-                            
-                            <div class="input-group"><input type="date" id="data" required></div>
-                            <div class="input-group"><input type="text" id="cliente" placeholder="Nome do Cliente" required></div>
-                            <div class="input-group">
-                                <input type="text" id="tipo" placeholder="Descreva o Serviço (ex: Dedetização Geral)" required>
-                            </div>
-                            
-                            <div class="input-group"><input type="number" id="valor" placeholder="Valor (R$)" step="0.01" required></div>
-                            
-                            <button type="submit" class="btn-submit"><i class="fas fa-check"></i> Salvar</button>
+            <div class="data-controls">
+                <input type="text" id="searchInput" placeholder="Filtrar nesta lista...">
+            </div>
 
-                            <div class="input-group"><input type="text" id="local" placeholder="Local/Endereço" required></div>
-
-                            <div class="input-group"><input type="text" id="contato" placeholder="Contato" required></div>
-                        </div>
-                    </form>
-                </div>
-                
-                <div class="data-controls">
-                    <input type="text" id="searchInput" placeholder="Buscar por cliente, local, tipo ou contato...">
-                    <button class="export-btn" id="exportCsvBtn"><i class="fas fa-download"></i> Exportar CSV</button>
-                </div>
-
+            <div id="view-2026" class="content-view active">
                 <div class="data-table-container">
                     <table class="data-table">
                         <thead>
-                            <tr>
-                                <th>Data</th>
-                                <th>Cliente</th>
-                                <th>Local</th>
-                                <th>Tipo</th>
-                                <th>Contato</th>
-                                <th>Valor (R$)</th>
-                                <th>Status</th>
-                                <th>Ações</th>
-                            </tr>
+                            <tr><th>Data</th><th>Cliente</th><th>Serviço</th><th>Valor</th><th>Status</th><th>Ações</th></tr>
                         </thead>
-                        <tbody id="servicosList">
-                        </tbody>
+                        <tbody id="list2026"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="view-2025" class="content-view">
+                <div class="data-table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr><th>Data</th><th>Cliente</th><th>Serviço</th><th>Valor</th><th>Status</th><th>Ações</th></tr>
+                        </thead>
+                        <tbody id="list2025"></tbody>
                     </table>
                 </div>
             </div>
 
             <div id="view-resumo" class="content-view">
-                <div class="page-header">
-                    <h1><i class="fas fa-chart-bar"></i> Análise e Estatísticas</h1>
-                    <p>Indicadores chave de performance (KPIs) e tendências do negócio.</p>
+                <div class="card" style="max-width: 400px; margin-bottom: 20px;">
+                    <h3>Taxa de Recebimento</h3>
+                    <p id="taxaPagos">0%</p>
                 </div>
-                
-                <div class="summary-cards">
-                    <div class="card" style="border-bottom-color: var(--success-color);">
-                        <h3>FATURAMENTO TOTAL PAGO</h3>
-                        <p id="resumoValorTotalPago">R$ 0,00</p>
-                    </div>
-                    <div class="card" style="border-bottom-color: var(--info-color);">
-                        <h3>TICKET MÉDIO PAGO</h3>
-                        <p id="ticketMedioPago">R$ 0,00</p>
-                    </div>
-                    <div class="card" style="border-bottom-color: var(--secondary-color);">
-                        <h3>TAXA DE SERVIÇOS PAGOS</h3>
-                        <p id="taxaPagos">0%</p>
-                    </div>
-                    <div class="card" style="border-bottom-color: var(--primary-color);">
-                        <h3>MELHOR MÊS (FAT.)</h3>
-                        <p id="resumoMelhorMes">---</p>
-                    </div>
-                </div>
-
                 <div class="form-section">
-                    <h2>Estatísticas Detalhadas</h2>
-                    <ul class="stats-list" id="statsList">
-                        <li class="stats-item"><h4>Serviço Mais Comum</h4><p id="statsMaisComum">---</p></li>
-                        <li class="stats-item"><h4>Melhor Cliente (Valor Total)</h4><p id="statsMelhorCliente">---</p></li>
-                        <li class="stats-item"><h4>Valor Máximo de um Serviço</h4><p id="statsValorMax">R$ 0,00</p></li>
-                        <li class="stats-item"><h4>Valor Mínimo de um Serviço</h4><p id="statsValorMin">R$ 0,00</p></li>
-                    </ul>
+                    <h3>Performance por Cliente</h3>
+                    <div id="melhorCliente" style="font-size: 20px; color: var(--secondary-color); font-weight: bold;">---</div>
                 </div>
             </div>
 
         </div>
     </div>
-    
+
     <div id="loginModal" class="modal">
         <div class="modal-content">
-            <h4>Login</h4>
+            <h2 style="color:white">Insect Control</h2>
             <input type="email" id="email" placeholder="Email">
             <input type="password" id="senha" placeholder="Senha">
-            <button onclick="window.login()">Login</button>
-            <button onclick="window.showCadastro()">Cadastrar-se</button>
-            <button onclick="window.loginGoogle()" class="btn-google">Entrar com Google</button>
+            <button onclick="window.login()" style="background: var(--primary-color); color:white">ENTRAR</button>
+            <button onclick="window.showCadastro()">Criar Conta</button>
         </div>
     </div>
+
     <div id="cadastroModal" class="modal" style="display: none;">
         <div class="modal-content">
-            <h4>Cadastrar-se</h4>
+            <h2>Cadastrar</h2>
             <input type="email" id="emailCadastro" placeholder="Email">
             <input type="password" id="senhaCadastro" placeholder="Senha">
-            <button onclick="window.cadastrar()">Cadastrar</button>
-            <button onclick="window.showLogin()">Já tem uma conta? Entrar</button>
+            <button onclick="window.cadastrar()" style="background: var(--success-color); color:white">CADASTRAR</button>
+            <button onclick="window.showLogin()">Voltar</button>
         </div>
     </div>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js"></script>
 
     <script type="module">
-        // Importações do Firebase v9 Modular
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js';
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js';
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-auth.js';
         import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, query, where, updateDoc } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js';
 
-        // 1. SUA CONFIGURAÇÃO FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyCIU7yiuI1uXfJWv6MoGYTv6ylqhzQhscA",
             authDomain: "insectcontrol-54785.firebaseapp.com",
             projectId: "insectcontrol-54785",
             storageBucket: "insectcontrol-54785.appspot.com",
             messagingSenderId: "299720867487",
-            appId: "1:299720867487:web:cdcff964efc45755496caa",
-            measurementId: "G-DVQWP5TM9J"
+            appId: "1:299720867487:web:cdcff964efc45755496caa"
         };
-        
-        // Inicialização e referências
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
-        
-        const servicosCol = "servicos";
+        const colName = "servicos";
 
         let userEmail = null;
-        let servicos = []; 
+        let servicos = [];
 
-        // Funções globais de utilidade
-        window.formatarMoeda = (valor) => parseFloat(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        window.mostrarToast = (message, type = 'success') => {
-            const container = document.getElementById('toastContainer');
-            const toast = document.createElement('div');
-            toast.classList.add('toast', type);
-            const icon = type === 'success' ? 'fas fa-check-circle' : type === 'error' ? 'fas fa-exclamation-triangle' : 'fas fa-info-circle';
-            toast.innerHTML = `<i class="${icon}"></i> <span>${message}</span>`;
-            
-            container.appendChild(toast);
-            void toast.offsetWidth; 
-            toast.classList.add('show');
+        // --- NAVEGAÇÃO ---
+        document.querySelectorAll('.nav-link[data-view]').forEach(link => {
+            link.addEventListener('click', () => {
+                const target = link.dataset.view;
+                document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                document.querySelectorAll('.content-view').forEach(v => v.classList.remove('active'));
+                link.classList.add('active');
+                document.getElementById('view-' + target).classList.add('active');
+            });
+        });
 
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        };
-        
-        // --- FUNÇÕES FIREBASE (AUTH) ---
+        // --- AUTH ---
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                userEmail = user.email;
+                document.getElementById('loginModal').style.display = 'none';
+                document.getElementById('mainDashboard').style.display = 'grid';
+                carregarDados();
+            } else {
+                document.getElementById('mainDashboard').style.display = 'none';
+                document.getElementById('loginModal').style.display = 'flex';
+            }
+        });
 
         window.login = () => {
-            const email = document.getElementById("email").value;
-            const senha = document.getElementById("senha").value;
-            signInWithEmailAndPassword(auth, email, senha)
-                .then(() => mostrarToast("Login realizado com sucesso!", 'success'))
-                .catch(err => mostrarToast("Erro no login: " + err.message, 'error'));
+            const e = document.getElementById('email').value;
+            const s = document.getElementById('senha').value;
+            signInWithEmailAndPassword(auth, e, s).catch(err => alert("Erro: " + err.message));
         };
 
         window.cadastrar = () => {
-            const email = document.getElementById("emailCadastro").value;
-            const senha = document.getElementById("senhaCadastro").value;
-            createUserWithEmailAndPassword(auth, email, senha)
-                .then(() => mostrarToast("Cadastro realizado com sucesso! Faça login.", 'success'))
-                .catch(err => mostrarToast("Erro no cadastro: " + err.message, 'error'));
-        };
-        
-        window.loginGoogle = () => {
-            const provider = new GoogleAuthProvider();
-            signInWithPopup(auth, provider)
-                .then(() => mostrarToast("Login com Google realizado com sucesso!", 'success'))
-                .catch(err => mostrarToast("Erro no login com Google: " + err.message, 'error'));
+            const e = document.getElementById('emailCadastro').value;
+            const s = document.getElementById('senhaCadastro').value;
+            createUserWithEmailAndPassword(auth, e, s).then(() => window.showLogin());
         };
 
-        window.logout = () => {
-            signOut(auth).then(() => {
-                mostrarToast('Desconectado com sucesso!', 'info');
-            });
-        };
+        window.logout = () => signOut(auth);
+        window.showCadastro = () => { document.getElementById('loginModal').style.display='none'; document.getElementById('cadastroModal').style.display='flex'; };
+        window.showLogin = () => { document.getElementById('cadastroModal').style.display='none'; document.getElementById('loginModal').style.display='flex'; };
 
-        window.showCadastro = () => {
-            document.getElementById("loginModal").style.display = "none";
-            document.getElementById("cadastroModal").style.display = "flex";
-        };
-
-        window.showLogin = () => {
-            document.getElementById("cadastroModal").style.display = "none";
-            document.getElementById("loginModal").style.display = "flex";
-        };
-        
-        // --- FUNÇÕES FIRESTORE (CRUD) ---
-
-        async function carregarServicos() {
-            if (!userEmail) return;
-            const q = query(collection(db, servicosCol), where("usuario", "==", userEmail));
+        // --- CRUD ---
+        async function carregarDados() {
+            if(!userEmail) return;
+            const q = query(collection(db, colName), where("usuario", "==", userEmail));
             const snap = await getDocs(q);
-            
-            servicos = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            // Ordenar por data mais recente primeiro
-            servicos.sort((a, b) => new Date(b.data.replace(/-/g, '/')) - new Date(a.data.replace(/-/g, '/')));
-
-            renderizarServicos();
-            renderizarEstatisticas();
+            servicos = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            renderizar();
         }
-        
+
         document.getElementById('formServico').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!userEmail) return mostrarToast("Por favor, faça login para adicionar um serviço.", 'error');
-
-            const novoServico = {
+            const novo = {
                 data: document.getElementById('data').value,
-                cliente: document.getElementById('cliente').value.trim(),
-                local: document.getElementById('local').value.trim(),
-                tipo: document.getElementById('tipo').value.trim(),
-                contato: document.getElementById('contato').value.trim(),
-                valor: (parseFloat(document.getElementById('valor').value) || 0).toFixed(2),
-                status: 'Pendente', 
-                usuario: userEmail,
-                criado: new Date().toISOString()
+                cliente: document.getElementById('cliente').value,
+                local: document.getElementById('local').value,
+                tipo: document.getElementById('tipo').value,
+                contato: document.getElementById('contato').value,
+                valor: document.getElementById('valor').value,
+                status: 'Pendente',
+                usuario: userEmail
             };
-
-            try {
-                await addDoc(collection(db, servicosCol), novoServico);
-                document.getElementById('formServico').reset();
-                mostrarToast('Novo Serviço registrado com sucesso!', 'success');
-                carregarServicos();
-            } catch (error) {
-                mostrarToast(`Erro ao salvar serviço: ${error.message}`, 'error');
-            }
+            await addDoc(collection(db, colName), novo);
+            document.getElementById('formServico').reset();
+            toast("Serviço salvo!");
+            carregarDados();
         });
-
-        window.deletarServico = async (id) => {
-            const servicoParaDeletar = servicos.find(s => s.id === id);
-            
-            if (confirm(`Tem certeza que deseja excluir o serviço de ${servicoParaDeletar.cliente} em ${servicoParaDeletar.data}?`)) {
-                try {
-                    await deleteDoc(doc(db, servicosCol, id));
-                    mostrarToast('Serviço excluído!', 'error');
-                    carregarServicos();
-                } catch (error) {
-                    mostrarToast(`Erro ao excluir serviço: ${error.message}`, 'error');
-                }
-            }
-        };
 
         window.toggleStatus = async (id) => {
-            const servicoRef = doc(db, servicosCol, id);
-            const servico = servicos.find(s => s.id === id);
-            const newStatus = (servico.status === 'Pendente') ? 'Pago' : 'Pendente';
+            const s = servicos.find(x => x.id === id);
+            await updateDoc(doc(db, colName, id), { status: s.status === 'Pago' ? 'Pendente' : 'Pago' });
+            carregarDados();
+        };
 
-            try {
-                await updateDoc(servicoRef, { status: newStatus });
-                mostrarToast(`Status do serviço atualizado para: ${newStatus}`, 'info');
-                carregarServicos();
-            } catch (error) {
-                mostrarToast(`Erro ao atualizar status: ${error.message}`, 'error');
+        window.deletarServico = async (id) => {
+            if(confirm("Excluir registro?")) {
+                await deleteDoc(doc(db, colName, id));
+                carregarDados();
             }
         };
 
-        async function updateServicoField(id, field, newValue) {
-            const servicoRef = doc(db, servicosCol, id);
-            try {
-                await updateDoc(servicoRef, { [field]: newValue });
-                mostrarToast('Serviço atualizado com sucesso!', 'success');
-                carregarServicos();
-            } catch (error) {
-                mostrarToast(`Erro ao atualizar serviço: ${error.message}`, 'error');
-            }
-        }
-        
-        // --- RENDERING ---
-        
-        window.enableInlineEditing = (element, field, id) => {
-            element.classList.add('editable');
-            element.ondblclick = null; 
+        // --- RENDERIZAÇÃO ---
+        function renderizar() {
+            const t2025 = document.getElementById('list2025');
+            const t2026 = document.getElementById('list2026');
+            const busca = document.getElementById('searchInput').value.toLowerCase();
             
-            element.ondblclick = function handler() {
-                const servico = servicos.find(s => s.id === id);
-                if (!servico) return;
+            t2025.innerHTML = ''; t2026.innerHTML = '';
+            let total = 0, faturamento = 0, pendente = 0, pagosCount = 0;
 
-                const oldValueText = element.textContent.trim();
-                const isValue = field === 'valor';
-                
-                const oldValue = isValue 
-                    ? (parseFloat(oldValueText.replace('R$', '').replace('.', '').replace(',', '.').replace(/\s/g, '')) || 0)
-                    : oldValueText;
-
-                const input = document.createElement('input');
-                input.className = 'edit-input';
-                input.type = isValue ? 'number' : 'text';
-                input.step = isValue ? '0.01' : null;
-                input.value = isValue ? oldValue.toFixed(2) : oldValue; 
-                
-                element.innerHTML = '';
-                element.appendChild(input);
-                input.focus();
-
-                const saveChange = () => {
-                    const newValue = input.value.trim();
-                    
-                    if (newValue === (isValue ? oldValue.toFixed(2) : oldValue)) {
-                        element.textContent = isValue ? window.formatarMoeda(oldValue) : oldValueText;
-                        return;
-                    }
-
-                    const finalValue = isValue ? (parseFloat(newValue) || 0).toFixed(2) : newValue;
-                    updateServicoField(id, field, finalValue);
-                };
-
-                input.addEventListener('blur', saveChange);
-                input.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') saveChange();
-                });
-                
-                input.addEventListener('blur', () => {
-                    element.ondblclick = handler;
-                });
-                element.ondblclick = null; 
-            };
-        };
-
-        function renderizarServicos() {
-            const list = document.getElementById('servicosList');
-            list.innerHTML = '';
-            
-            const termoBusca = document.getElementById('searchInput').value.toLowerCase();
-
-            const listaFiltrada = servicos.filter(servico => {
-                const matchesSearch = termoBusca === '' || 
-                                        servico.cliente.toLowerCase().includes(termoBusca) ||
-                                        servico.local.toLowerCase().includes(termoBusca) ||
-                                        servico.tipo.toLowerCase().includes(termoBusca) ||
-                                        servico.contato.toLowerCase().includes(termoBusca);
-                return matchesSearch;
-            });
-
-            if (listaFiltrada.length === 0) {
-                list.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 20px; color: var(--text-light);">Nenhum serviço encontrado.</td></tr>`;
-                return;
-            }
-
-            listaFiltrada.forEach(servico => {
-                const row = list.insertRow();
-                const statusClass = servico.status === 'Pago' ? 'status-pago' : 'status-pendente';
-                
-                row.innerHTML = `
-                    <td data-label="Data">${servico.data}</td>
-                    <td data-label="Cliente" class="editable" data-field="cliente">${servico.cliente}</td>
-                    <td data-label="Local" class="editable" data-field="local">${servico.local}</td>
-                    <td data-label="Tipo" class="editable" data-field="tipo">${servico.tipo}</td>
-                    <td data-label="Contato" class="editable" data-field="contato">${servico.contato}</td>
-                    <td data-label="Valor (R$)" class="editable" data-field="valor" style="font-weight: 600;">${window.formatarMoeda(servico.valor)}</td>
-                    <td data-label="Status">
-                        <span class="status-badge ${statusClass}" onclick="window.toggleStatus('${servico.id}')">
-                            ${servico.status}
-                        </span>
-                    </td>
-                    <td>
-                        <button class="btn-delete" onclick="window.deletarServico('${servico.id}')"><i class="fas fa-trash-alt"></i></button>
-                    </td>
-                `;
-
-                row.querySelectorAll('.editable').forEach(cell => {
-                    window.enableInlineEditing(cell, cell.dataset.field, servico.id);
-                });
-            });
-        }
-        
-        function renderizarEstatisticas() {
-            const totalServicos = servicos.length;
-            const servicosPagos = servicos.filter(s => s.status === 'Pago');
-            const totalPagos = servicosPagos.length;
-
-            const valorTotalSoma = servicos.reduce((soma, servico) => soma + (parseFloat(servico.valor) || 0), 0);
-            const valorTotalPagoSoma = servicosPagos.reduce((soma, servico) => soma + (parseFloat(servico.valor) || 0), 0);
-            const valorPendenteSoma = servicos.filter(s => s.status !== 'Pago').reduce((soma, servico) => soma + (parseFloat(servico.valor) || 0), 0);
-            
-            const mediaValor = totalServicos > 0 ? valorTotalSoma / totalServicos : 0;
-            const ticketMedioPago = totalPagos > 0 ? valorTotalPagoSoma / totalPagos : 0;
-            const taxaPagos = totalServicos > 0 ? ((totalPagos / totalServicos) * 100).toFixed(1) : 0;
-
-            const tipoStats = {};
-            const clienteStats = {};
-            const mesStats = {};
+            // Ordenar por data
+            servicos.sort((a,b) => new Date(b.data) - new Date(a.data));
 
             servicos.forEach(s => {
-                const valor = parseFloat(s.valor) || 0;
-                
-                // Estatísticas de Tipo
-                if (!tipoStats[s.tipo]) tipoStats[s.tipo] = { count: 0, totalValue: 0 };
-                tipoStats[s.tipo].count += 1;
-                tipoStats[s.tipo].totalValue += valor;
+                const val = parseFloat(s.valor) || 0;
+                total += val;
+                if(s.status === 'Pago') { faturamento += val; pagosCount++; } 
+                else { pendente += val; }
 
-                // Estatísticas de Cliente (Apenas Pagos para ranking)
-                if (s.status === 'Pago') {
-                    if (!clienteStats[s.cliente]) clienteStats[s.cliente] = 0;
-                    clienteStats[s.cliente] += valor;
-                }
+                if(busca && !s.cliente.toLowerCase().includes(busca)) return;
 
-                // Estatísticas de Mês
-                const [ano, mes] = s.data.split('-').slice(0, 2);
-                const keyMes = `${mes}/${ano}`;
-                if (!mesStats[keyMes]) mesStats[keyMes] = 0;
-                mesStats[keyMes] += valor;
+                const row = `<tr>
+                    <td>${s.data.split('-').reverse().join('/')}</td>
+                    <td>${s.cliente}</td>
+                    <td>${s.tipo}</td>
+                    <td>R$ ${val.toFixed(2)}</td>
+                    <td><span class="status-badge ${s.status === 'Pago' ? 'status-pago' : 'status-pendente'}" onclick="window.toggleStatus('${s.id}')">${s.status}</span></td>
+                    <td><button class="btn-delete" onclick="window.deletarServico('${s.id}')"><i class="fas fa-trash"></i></button></td>
+                </tr>`;
+
+                if(s.data.startsWith('2026')) t2026.innerHTML += row;
+                else if(s.data.startsWith('2025')) t2025.innerHTML += row;
             });
 
-            // Encontrando o mais...
-            let maisComum = { tipo: '---', count: 0 };
-            let maisRentavel = { tipo: '---', totalValue: 0 };
-            let melhorCliente = { cliente: '---', totalValue: 0 };
-            let melhorMes = { mes: '---', totalValue: 0 };
-
-            Object.keys(tipoStats).forEach(tipo => {
-                if (tipoStats[tipo].count > maisComum.count) maisComum = { tipo: tipo, count: tipoStats[tipo].count };
-                if (tipoStats[tipo].totalValue > maisRentavel.totalValue) maisRentavel = { tipo: tipo, totalValue: tipoStats[tipo].totalValue };
-            });
-
-            Object.keys(clienteStats).forEach(cliente => {
-                if (clienteStats[cliente] > melhorCliente.totalValue) melhorCliente = { cliente: cliente, totalValue: clienteStats[cliente] };
-            });
-
-            Object.keys(mesStats).forEach(mes => {
-                if (mesStats[mes] > melhorMes.totalValue) melhorMes = { mes: mes, totalValue: mesStats[mes] };
-            });
-
-            const valores = servicos.map(s => parseFloat(s.valor) || 0);
-            const valorMax = valores.length > 0 ? Math.max(...valores) : 0;
-            const valorMin = valores.length > 0 ? Math.min(...valores) : 0;
-            
-            const dataAtual = new Date();
-            const mesAtual = dataAtual.getMonth();
-            const anoAtual = dataAtual.getFullYear();
-            const servicosMes = servicos.filter(s => {
-                const dataServico = new Date(s.data.replace(/-/g, '/'));
-                return dataServico.getMonth() === mesAtual && dataServico.getFullYear() === anoAtual;
-            }).length;
-
-            const stats = { 
-                totalServicos, valorTotalSoma, servicosMes, mediaValor, valorPendenteSoma, 
-                totalPagos, taxaPagos, maisComum: maisComum.tipo, maisRentavel: maisRentavel.tipo, 
-                valorMax, valorMin, ticketMedioPago, valorTotalPagoSoma, melhorCliente: melhorCliente.cliente,
-                melhorMes: melhorMes.mes
-            };
-            
-            // Renderização no Painel de Serviços
-            document.getElementById('totalServicos').textContent = stats.totalServicos;
-            document.getElementById('valorTotal').textContent = window.formatarMoeda(stats.valorTotalSoma);
-            document.getElementById('servicosMes').textContent = stats.servicosMes;
-            document.getElementById('valorPendente').textContent = window.formatarMoeda(stats.valorPendenteSoma);
-            
-            // Renderização no Resumo Financeiro (Novos e Atualizados)
-            document.getElementById('resumoValorTotalPago').textContent = window.formatarMoeda(stats.valorTotalPagoSoma);
-            document.getElementById('ticketMedioPago').textContent = window.formatarMoeda(stats.ticketMedioPago);
-            document.getElementById('taxaPagos').textContent = `${stats.taxaPagos}%`;
-            document.getElementById('resumoMelhorMes').textContent = stats.melhorMes;
-            
-            document.getElementById('statsMaisComum').textContent = stats.maisComum;
-            document.getElementById('statsMelhorCliente').textContent = stats.melhorCliente;
-            document.getElementById('statsValorMax').textContent = window.formatarMoeda(stats.valorMax);
-            document.getElementById('statsValorMin').textContent = window.formatarMoeda(stats.valorMin);
+            // Atualizar Cards
+            document.getElementById('totalServicos').innerText = servicos.length;
+            document.getElementById('valorTotal').innerText = `R$ ${faturamento.toFixed(2)}`;
+            document.getElementById('valorPendente').innerText = `R$ ${pendente.toFixed(2)}`;
+            document.getElementById('taxaPagos').innerText = servicos.length > 0 ? Math.round((pagosCount / servicos.length) * 100) + "%" : "0%";
         }
 
-        // CORREÇÃO: Adicionando um pequeno debounce para otimizar o filtro
-        let searchTimeout;
-        document.getElementById('searchInput').addEventListener('keyup', () => {
-            clearTimeout(searchTimeout);
-            searchTimeout = setTimeout(renderizarServicos, 300); // Espera 300ms após a última tecla
-        });
-        
-        document.getElementById('exportCsvBtn').addEventListener('click', () => {
-            if (servicos.length === 0) {
-                mostrarToast('Nenhum dado para exportar.', 'info');
-                return;
-            }
+        document.getElementById('searchInput').addEventListener('input', renderizar);
 
-            const headers = ['Data', 'Cliente', 'Local', 'Tipo', 'Contato', 'Valor', 'Status'];
-            const data = servicos.map(s => [
-                s.data, s.cliente, s.local, s.tipo, s.contato, s.valor.replace('.', ','), s.status
-            ]);
+        function toast(msg) {
+            const t = document.getElementById('toastContainer');
+            const div = document.createElement('div');
+            div.className = 'toast show';
+            div.innerText = msg;
+            t.appendChild(div);
+            setTimeout(() => div.remove(), 3000);
+        }
 
-            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
-            const link = document.createElement('a');
-            link.href = URL.createObjectURL(blob);
-            link.setAttribute('download', 'servicos_insect_control.csv');
-            link.click();
-            mostrarToast('Dados exportados para CSV!', 'success');
-        });
-
-        const navLinks = document.querySelectorAll('.nav-link');
-        const contentViews = document.querySelectorAll('.content-view');
-
-        navLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                const targetViewId = link.getAttribute('data-view');
-                
-                navLinks.forEach(l => l.classList.remove('active'));
-                contentViews.forEach(v => v.classList.remove('active'));
-                
-                link.classList.add('active');
-                document.getElementById(`view-${targetViewId}`).classList.add('active');
-
-                if (targetViewId === 'servicos' || targetViewId === 'resumo') {
-                    carregarServicos(); 
-                }
-            });
-        });
-
-        // --- INICIALIZAÇÃO E AUTENTICAÇÃO ---
-        onAuthStateChanged(auth, (user) => {
-            const dashboard = document.getElementById('mainDashboard');
-            const loginModal = document.getElementById('loginModal');
-            const cadastroModal = document.getElementById('cadastroModal');
-
-            if (user) {
-                userEmail = user.email;
-                dashboard.style.display = "grid";
-                loginModal.style.display = "none";
-                cadastroModal.style.display = "none";
-                carregarServicos(); 
-            } else {
-                userEmail = null;
-                dashboard.style.display = "none";
-                loginModal.style.display = "flex";
-                cadastroModal.style.display = "none";
-                servicos = [];
-            }
-        });
-
+        window.formatarMoeda = (v) => parseFloat(v).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
     </script>
 </body>
 </html>
-
-
