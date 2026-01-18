@@ -229,7 +229,15 @@
                 <h2>Insect Tupí</h2>
             </div>
             
-            <div class="nav-link active" data-view="servicos">
+            <div class="nav-link active" data-view="servicos" data-ano="2025">
+    <i class="fas fa-clipboard-list"></i>
+    <span>Serviços 2025</span>
+</div>
+
+<div class="nav-link" data-view="servicos" data-ano="2026">
+    <i class="fas fa-calendar"></i>
+    <span>Serviços 2026</span>
+</div>
                 <i class="fas fa-clipboard-list"></i>
                 <span>Serviços</span>
             </div>
@@ -408,6 +416,8 @@
 
         let userEmail = null;
         let servicos = []; 
+        let anoAtivo = 2025;
+
 
         // Funções globais de utilidade
         window.formatarMoeda = (valor) => parseFloat(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
@@ -606,14 +616,19 @@
             
             const termoBusca = document.getElementById('searchInput').value.toLowerCase();
 
-            const listaFiltrada = servicos.filter(servico => {
-                const matchesSearch = termoBusca === '' || 
-                                        servico.cliente.toLowerCase().includes(termoBusca) ||
-                                        servico.local.toLowerCase().includes(termoBusca) ||
-                                        servico.tipo.toLowerCase().includes(termoBusca) ||
-                                        servico.contato.toLowerCase().includes(termoBusca);
-                return matchesSearch;
-            });
+            cconst listaFiltrada = servicos.filter(servico => {
+    if (servico.ano !== anoAtivo) return false;
+
+    const matchesSearch =
+        termoBusca === '' ||
+        servico.cliente.toLowerCase().includes(termoBusca) ||
+        servico.local.toLowerCase().includes(termoBusca) ||
+        servico.tipo.toLowerCase().includes(termoBusca) ||
+        servico.contato.toLowerCase().includes(termoBusca);
+
+    return matchesSearch;
+});
+
 
             if (listaFiltrada.length === 0) {
                 list.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 20px; color: var(--text-light);">Nenhum serviço encontrado.</td></tr>`;
@@ -773,6 +788,11 @@
         navLinks.forEach(link => {
             link.addEventListener('click', () => {
                 const targetViewId = link.getAttribute('data-view');
+                const ano = link.getAttribute('data-ano');
+if (ano) {
+    anoAtivo = parseInt(ano);
+}
+
                 
                 navLinks.forEach(l => l.classList.remove('active'));
                 contentViews.forEach(v => v.classList.remove('active'));
@@ -810,4 +830,3 @@
     </script>
 </body>
 </html>
-
