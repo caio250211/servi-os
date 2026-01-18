@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Insect Control Tupy - Business Pro</title>
+    <title>Insect Control Tupy - Gestão Estratégica</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 
@@ -15,12 +15,12 @@
             --danger-color: #d32f2f; 
             --success-color: #66bb6a;
             --info-color: #29b6f6;
-            --background-body: #181A1D;
-            --card-background: #24272B;
+            --background-body: #141619;
+            --card-background: #1C1F23;
             --text-dark: #e0e0e0;
             --text-light: #a0a0a0;
-            --table-header-bg: #1f2225;
-            --shadow-light: 0 4px 12px rgba(0, 0, 0, 0.5);
+            --table-header-bg: #25282c;
+            --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.6);
             --border-radius: 8px;
             --sidebar-width: 260px;
         }
@@ -29,9 +29,10 @@
         .dashboard-layout { display: grid; grid-template-columns: var(--sidebar-width) 1fr; min-height: 100vh; }
         
         /* Sidebar */
-        .sidebar { background-color: var(--primary-color); color: white; padding: 30px 20px; position: sticky; top: 0; height: 100vh; box-shadow: 4px 0 15px rgba(0,0,0,0.3); }
+        .sidebar { background-color: var(--primary-color); color: white; padding: 30px 20px; position: sticky; top: 0; height: 100vh; box-shadow: 4px 0 15px rgba(0,0,0,0.3); z-index: 100; }
         .logo-box { text-align: center; margin-bottom: 40px; }
-        .logo-box img { width: 90px; height: 90px; border-radius: 50%; background: white; padding: 5px; border: 3px solid rgba(255,255,255,0.3); }
+        .logo-box img { width: 90px; height: 90px; border-radius: 50%; background: white; padding: 5px; border: 3px solid rgba(255,255,255,0.2); }
+        .logo-box h3 { margin-top: 15px; font-size: 18px; letter-spacing: 1px; }
         
         .nav-link {
             display: flex; align-items: center; padding: 12px 15px; margin-bottom: 8px;
@@ -41,56 +42,64 @@
         .nav-link i { margin-right: 12px; width: 20px; font-size: 18px; }
         .nav-link.active, .nav-link:hover { background: rgba(255,255,255,0.15); color: white; transform: translateX(5px); }
 
-        /* Main */
-        .main-content { padding: 30px 40px; }
+        /* Conteúdo Principal */
+        .main-content { padding: 30px 40px; max-width: 1400px; margin: 0 auto; width: 100%; box-sizing: border-box; }
         .content-view { display: none; animation: fadeIn 0.4s; }
         .content-view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Cards */
-        .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
-        .card { background: var(--card-background); padding: 20px; border-radius: var(--border-radius); box-shadow: var(--shadow-light); border-left: 5px solid var(--primary-color); }
-        .card h3 { color: var(--text-light); font-size: 12px; text-transform: uppercase; margin: 0 0 10px 0; }
-        .card p { font-size: 24px; font-weight: 700; margin: 0; color: white; }
+        /* Cards de Resumo */
+        .summary-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .card { background: var(--card-background); padding: 25px; border-radius: var(--border-radius); box-shadow: var(--shadow-light); border-bottom: 4px solid var(--primary-color); }
+        .card h3 { color: var(--text-light); font-size: 11px; text-transform: uppercase; margin: 0 0 10px 0; letter-spacing: 1px; }
+        .card p { font-size: 26px; font-weight: 700; margin: 0; color: white; }
 
         /* Tabelas */
-        .data-table-container { background: var(--card-background); border-radius: 10px; overflow: hidden; box-shadow: var(--shadow-light); }
-        .data-table { width: 100%; border-collapse: collapse; }
-        .data-table th { background: var(--table-header-bg); color: var(--primary-color); padding: 18px; text-align: left; font-size: 13px; }
-        .data-table td { padding: 15px; border-bottom: 1px solid #333; font-size: 14px; }
-        .data-table tr:hover { background: #2c3035; }
+        .data-table-container { background: var(--card-background); border-radius: 10px; overflow-x: auto; box-shadow: var(--shadow-light); }
+        .data-table { width: 100%; border-collapse: collapse; min-width: 800px; }
+        .data-table th { background: var(--table-header-bg); color: var(--primary-color); padding: 18px; text-align: left; font-size: 12px; text-transform: uppercase; }
+        .data-table td { padding: 15px; border-bottom: 1px solid #2a2e33; font-size: 14px; }
+        .data-table tr:hover { background: #25292e; }
 
         /* Formulário */
         .form-section { background: var(--card-background); padding: 25px; border-radius: 10px; margin-bottom: 30px; border: 1px solid #333; }
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
-        .form-grid input { background: #1a1c1f; border: 1px solid #444; color: white; padding: 12px; border-radius: 5px; width: 100%; box-sizing: border-box; }
-        .btn-submit { background: var(--success-color); color: white; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-submit:hover { filter: brightness(1.2); }
+        .form-grid input { background: #141619; border: 1px solid #444; color: white; padding: 12px; border-radius: 5px; width: 100%; box-sizing: border-box; }
+        .btn-submit { background: var(--success-color); color: white; border: none; padding: 12px; border-radius: 5px; font-weight: bold; cursor: pointer; }
 
-        /* Estatísticas */
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
-        .stats-box { background: var(--card-background); padding: 25px; border-radius: 12px; box-shadow: var(--shadow-light); }
-        .stats-box h2 { color: var(--secondary-color); font-size: 18px; margin-top: 0; border-bottom: 1px solid #444; padding-bottom: 10px; }
+        /* ABA ESTATÍSTICAS SEPARADA */
+        .stats-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 15px; }
+        .year-selector { background: #333; color: white; border: none; padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; }
         
-        .stat-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #333; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 25px; }
+        .stats-box { background: var(--card-background); padding: 25px; border-radius: 12px; box-shadow: var(--shadow-light); }
+        .stats-box h2 { color: var(--secondary-color); font-size: 18px; margin-top: 0; margin-bottom: 20px; }
+        
+        .stat-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #2a2e33; }
+        .stat-item:last-child { border: none; }
         .stat-item span:last-child { font-weight: bold; color: var(--success-color); }
 
-        .progress-container { background: #1a1c1f; height: 12px; border-radius: 10px; margin: 15px 0; overflow: hidden; }
-        .progress-bar { background: var(--success-color); height: 100%; width: 0%; transition: 1s ease-in-out; }
+        .progress-container { background: #141619; height: 15px; border-radius: 10px; margin: 15px 0; overflow: hidden; }
+        .progress-bar { background: var(--success-color); height: 100%; width: 0%; transition: 1.5s cubic-bezier(0.1, 0, 0.3, 1); }
 
-        .status-badge { padding: 5px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; cursor: pointer; }
-        .status-pendente { background: #5e4719; color: #ffab40; }
-        .status-pago { background: #385e3a; color: #a5d6a7; }
+        .status-badge { padding: 5px 12px; border-radius: 20px; font-size: 11px; font-weight: bold; cursor: pointer; }
+        .status-pendente { background: #4d3a10; color: #ffb74d; }
+        .status-pago { background: #1b3d1d; color: #81c784; }
 
-        /* Auth Modals */
-        .modal { display: flex; justify-content: center; align-items: center; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); }
-        .modal-content { background: var(--card-background); padding: 40px; border-radius: 15px; width: 100%; max-width: 350px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        .modal-content input { width: 100%; padding: 15px; margin-bottom: 15px; background: #1a1c1f; border: 1px solid #444; color: white; border-radius: 8px; box-sizing: border-box; }
-        .modal-content button { width: 100%; padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 10px; font-size: 16px; }
+        .btn-delete { background: none; color: #555; border: none; cursor: pointer; font-size: 16px; transition: 0.2s; }
+        .btn-delete:hover { color: var(--danger-color); }
 
-        @media (max-width: 768px) {
+        /* Login */
+        .modal { display: flex; justify-content: center; align-items: center; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); }
+        .modal-content { background: var(--card-background); padding: 40px; border-radius: 15px; width: 100%; max-width: 350px; text-align: center; }
+        .modal-content input { width: 100%; padding: 15px; margin-bottom: 12px; background: #141619; border: 1px solid #444; color: white; border-radius: 8px; box-sizing: border-box; }
+        .modal-content button { width: 100%; padding: 15px; border: none; border-radius: 8px; cursor: pointer; font-weight: bold; margin-bottom: 10px; }
+
+        @media (max-width: 900px) {
             .dashboard-layout { grid-template-columns: 1fr; }
-            .sidebar { height: auto; position: relative; padding: 15px; }
+            .sidebar { height: auto; position: relative; padding: 15px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+            .logo-box { width: 100%; margin-bottom: 15px; }
+            .nav-link { margin-bottom: 0; }
             .stats-grid { grid-template-columns: 1fr; }
         }
     </style>
@@ -100,12 +109,12 @@
     <div id="mainDashboard" class="dashboard-layout" style="display: none;">
         <div class="sidebar">
             <div class="logo-box">
-                <img src="logo.png.JPG" alt="Logo">
+                <img src="logo.png.JPG" alt="Insect Logo">
                 <h3>Insect Tupí</h3>
             </div>
             
             <div class="nav-link active" data-target="2026">
-                <i class="fas fa-calendar-alt"></i><span>Serviços 2026</span>
+                <i class="fas fa-calendar-check"></i><span>Serviços 2026</span>
             </div>
             
             <div class="nav-link" data-target="2025">
@@ -113,34 +122,34 @@
             </div>
 
             <div class="nav-link" data-target="stats">
-                <i class="fas fa-chart-line"></i><span>Estatísticas</span>
+                <i class="fas fa-chart-pie"></i><span>Estatísticas</span>
             </div>
             
-            <div class="nav-link" style="margin-top: 100px; border-top: 1px solid rgba(255,255,255,0.1);" onclick="window.logout()">
-                <i class="fas fa-power-off"></i><span>Sair do Sistema</span>
+            <div class="nav-link" style="margin-top: auto;" onclick="window.logout()">
+                <i class="fas fa-sign-out-alt"></i><span>Sair</span>
             </div>
         </div>
 
         <div class="main-content">
             
-            <div id="view-ano" class="content-view active">
-                <h1 id="tituloAno" style="margin-top: 0; color: white;">Serviços 2026</h1>
+            <div id="view-servicos" class="content-view active">
+                <h1 id="tituloAno" style="margin: 0 0 25px 0; font-size: 28px;">Serviços 2026</h1>
                 
                 <div class="summary-cards">
                     <div class="card"><h3>Total de Ordens</h3><p id="cardQtd">0</p></div>
-                    <div class="card" style="border-left-color: var(--success-color);"><h3>Faturamento Recebido</h3><p id="cardRecebido">R$ 0,00</p></div>
-                    <div class="card" style="border-left-color: var(--secondary-color);"><h3>Aguardando Pagamento</h3><p id="cardPendente">R$ 0,00</p></div>
+                    <div class="card" style="border-bottom-color: var(--success-color);"><h3>Faturamento Pago</h3><p id="cardRecebido">R$ 0,00</p></div>
+                    <div class="card" style="border-bottom-color: var(--secondary-color);"><h3>Aguardando</h3><p id="cardPendente">R$ 0,00</p></div>
                 </div>
 
                 <div class="form-section">
                     <form id="formServico">
                         <div class="form-grid">
                             <input type="date" id="data" required>
-                            <input type="text" id="cliente" placeholder="Cliente" required>
-                            <input type="text" id="local" placeholder="Local/Endereço" required>
+                            <input type="text" id="cliente" placeholder="Nome do Cliente" required>
+                            <input type="text" id="local" placeholder="Bairro/Cidade" required>
                             <input type="text" id="tipo" placeholder="Tipo de Serviço" required>
                             <input type="number" id="valor" placeholder="Valor R$" step="0.01" required>
-                            <button type="submit" class="btn-submit">CADASTRAR</button>
+                            <button type="submit" class="btn-submit">ADICIONAR</button>
                         </div>
                     </form>
                 </div>
@@ -156,31 +165,40 @@
             </div>
 
             <div id="view-stats" class="content-view">
-                <h1 style="margin-top: 0; color: white;">Análise Geral do Negócio</h1>
+                <div class="stats-header">
+                    <h1 style="margin: 0;">Análise de Desempenho</h1>
+                    <div>
+                        <span style="margin-right: 10px; color: var(--text-light);">Filtrar Ano:</span>
+                        <select id="statYearFilter" class="year-selector">
+                            <option value="2026">2026</option>
+                            <option value="2025">2025</option>
+                        </select>
+                    </div>
+                </div>
                 
                 <div class="stats-grid">
                     <div class="stats-box">
-                        <h2><i class="fas fa-crown"></i> Melhores Clientes (Faturamento)</h2>
+                        <h2><i class="fas fa-medal"></i> Maiores Clientes do Ano</h2>
                         <div id="topClientesList"></div>
                     </div>
 
                     <div class="stats-box">
-                        <h2><i class="fas fa-hand-holding-usd"></i> Saúde Financeira</h2>
-                        <p style="font-size: 14px; color: var(--text-light);">Percentual de pagamentos recebidos:</p>
+                        <h2><i class="fas fa-wallet"></i> Saúde Financeira (<span id="txtAnoStat">2026</span>)</h2>
+                        <p style="font-size: 14px; color: var(--text-light); margin-bottom: 5px;">Aproveitamento de Faturamento:</p>
                         <div class="progress-container"><div id="statsBarra" class="progress-bar"></div></div>
-                        <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                        <div style="display: flex; justify-content: space-between; font-weight: 700;">
                             <span id="statsPercent">0%</span>
-                            <span id="statsTotalGeral">Total: R$ 0,00</span>
+                            <span id="statsTotalGeral">Previsto: R$ 0,00</span>
                         </div>
-                        <div style="margin-top: 25px; padding-top: 15px; border-top: 1px solid #444;">
-                            <p style="color: var(--text-light); font-size: 13px;">TICKET MÉDIO (Valor médio por serviço)</p>
-                            <p id="statsTicket" style="font-size: 22px; color: white; margin-top: 5px;">R$ 0,00</p>
+                        <div style="margin-top: 30px; border-top: 1px solid #333; padding-top: 20px;">
+                            <p style="color: var(--text-light); font-size: 12px; text-transform: uppercase;">Ticket Médio por Atendimento</p>
+                            <p id="statsTicket" style="font-size: 24px; color: white; margin: 5px 0 0 0;">R$ 0,00</p>
                         </div>
                     </div>
 
                     <div class="stats-box" style="grid-column: span 2;">
-                        <h2><i class="fas fa-bug"></i> Tipos de Serviços mais Realizados</h2>
-                        <div id="topServicosList" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;"></div>
+                        <h2><i class="fas fa-list-ul"></i> Ranking de Serviços Mais Vendidos</h2>
+                        <div id="topServicosList" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;"></div>
                     </div>
                 </div>
             </div>
@@ -190,22 +208,21 @@
 
     <div id="loginModal" class="modal">
         <div class="modal-content">
-            <h2 style="color:white; margin-top: 0;">Insect Tupí Control</h2>
-            <p style="color: var(--text-light); font-size: 14px; margin-bottom: 25px;">Entre com suas credenciais</p>
-            <input type="email" id="email" placeholder="Email de acesso">
-            <input type="password" id="senha" placeholder="Sua Senha">
-            <button onclick="window.login()" style="background: var(--primary-color); color:white">ENTRAR NO SISTEMA</button>
-            <button onclick="window.showCadastro()" style="background: transparent; color: #888; border: 1px solid #444;">Criar Nova Conta</button>
+            <h2 style="color:white; margin-top: 0;">Acesso Interno</h2>
+            <input type="email" id="email" placeholder="Email">
+            <input type="password" id="senha" placeholder="Senha">
+            <button onclick="window.login()" style="background: var(--primary-color); color:white">ENTRAR</button>
+            <button onclick="window.showCadastro()" style="background: transparent; color: #666; border: 1px solid #333;">Novo Usuário</button>
         </div>
     </div>
 
     <div id="cadastroModal" class="modal" style="display: none;">
         <div class="modal-content">
-            <h2 style="color:white">Nova Conta</h2>
-            <input type="email" id="emailCadastro" placeholder="Escolha um Email">
-            <input type="password" id="senhaCadastro" placeholder="Crie uma Senha">
-            <button onclick="window.cadastrar()" style="background: var(--success-color); color:white">FINALIZAR CADASTRO</button>
-            <button onclick="window.showLogin()" style="background: transparent; color: #888;">Voltar</button>
+            <h2 style="color:white">Criar Conta</h2>
+            <input type="email" id="emailCadastro" placeholder="Email">
+            <input type="password" id="senhaCadastro" placeholder="Senha">
+            <button onclick="window.cadastrar()" style="background: var(--success-color); color:white">CADASTRAR</button>
+            <button onclick="window.showLogin()" style="background: transparent; color: #666;">Voltar</button>
         </div>
     </div>
 
@@ -230,7 +247,7 @@
 
         let userEmail = null;
         let servicos = [];
-        let abaAtiva = "2026";
+        let anoAtivo = "2026";
 
         // --- NAVEGAÇÃO ---
         document.querySelectorAll('.nav-link').forEach(link => {
@@ -242,14 +259,19 @@
                 link.classList.add('active');
                 if(target === 'stats') {
                     document.getElementById('view-stats').classList.add('active');
-                    gerarEstatisticas();
+                    gerarEstatisticas(document.getElementById('statYearFilter').value);
                 } else {
-                    abaAtiva = target;
-                    document.getElementById('view-ano').classList.add('active');
-                    document.getElementById('tituloAno').innerText = `Serviços ${abaAtiva}`;
+                    anoAtivo = target;
+                    document.getElementById('view-servicos').classList.add('active');
+                    document.getElementById('tituloAno').innerText = `Serviços ${anoAtivo}`;
                     renderizar();
                 }
             });
+        });
+
+        // Filtro de ano na aba de estatísticas
+        document.getElementById('statYearFilter').addEventListener('change', (e) => {
+            gerarEstatisticas(e.target.value);
         });
 
         // --- AUTH ---
@@ -268,20 +290,20 @@
         window.login = () => {
             const e = document.getElementById('email').value;
             const s = document.getElementById('senha').value;
-            signInWithEmailAndPassword(auth, e, s).catch(err => alert("Email ou senha incorretos."));
+            signInWithEmailAndPassword(auth, e, s).catch(() => alert("Credenciais Inválidas"));
         };
 
         window.cadastrar = () => {
             const e = document.getElementById('emailCadastro').value;
             const s = document.getElementById('senhaCadastro').value;
-            createUserWithEmailAndPassword(auth, e, s).then(() => window.showLogin()).catch(err => alert(err.message));
+            createUserWithEmailAndPassword(auth, e, s).then(() => window.showLogin());
         };
 
         window.logout = () => signOut(auth);
         window.showCadastro = () => { document.getElementById('loginModal').style.display='none'; document.getElementById('cadastroModal').style.display='flex'; };
         window.showLogin = () => { document.getElementById('cadastroModal').style.display='none'; document.getElementById('loginModal').style.display='flex'; };
 
-        // --- DADOS ---
+        // --- BANCO DE DADOS ---
         async function carregarDados() {
             if(!userEmail) return;
             const q = query(collection(db, colName), where("usuario", "==", userEmail));
@@ -313,21 +335,20 @@
         };
 
         window.deletarServico = async (id) => {
-            if(confirm("Deseja remover este serviço permanentemente?")) {
+            if(confirm("Confirmar exclusão?")) {
                 await deleteDoc(doc(db, colName, id));
                 carregarDados();
             }
         };
 
-        // --- RENDERIZAÇÃO ABAS ---
+        // --- RENDERIZAÇÃO ---
         function renderizar() {
             const tbody = document.getElementById('listaServicos');
             tbody.innerHTML = '';
-            
             let faturamento = 0, pendente = 0, qtd = 0;
 
             const filtrados = servicos
-                .filter(s => s.data.startsWith(abaAtiva))
+                .filter(s => s.data.startsWith(anoAtivo))
                 .sort((a,b) => new Date(b.data) - new Date(a.data));
 
             filtrados.forEach(s => {
@@ -338,12 +359,12 @@
 
                 const row = `<tr>
                     <td>${s.data.split('-').reverse().join('/')}</td>
-                    <td><b>${s.cliente}</b></td>
+                    <td><b>${s.cliente.toUpperCase()}</b></td>
                     <td>${s.local}</td>
                     <td>${s.tipo}</td>
                     <td>R$ ${v.toFixed(2)}</td>
                     <td><span class="status-badge ${s.status === 'Pago' ? 'status-pago' : 'status-pendente'}" onclick="window.toggleStatus('${s.id}')">${s.status}</span></td>
-                    <td><button class="btn-delete" onclick="window.deletarServico('${s.id}')"><i class="fas fa-trash-alt"></i></button></td>
+                    <td><button class="btn-delete" onclick="window.deletarServico('${s.id}')"><i class="fas fa-trash"></i></button></td>
                 </tr>`;
                 tbody.innerHTML += row;
             });
@@ -353,49 +374,45 @@
             document.getElementById('cardPendente').innerText = `R$ ${pendente.toFixed(2)}`;
         }
 
-        // --- LÓGICA DE ESTATÍSTICAS ---
-        function gerarEstatisticas() {
+        // --- ESTATÍSTICAS SEPARADAS POR ANO ---
+        function gerarEstatisticas(ano) {
             const topC = document.getElementById('topClientesList');
             const topS = document.getElementById('topServicosList');
+            document.getElementById('txtAnoStat').innerText = ano;
+            
             topC.innerHTML = ''; topS.innerHTML = '';
 
-            let faturamentoGeral = 0, recebidoGeral = 0;
-            const mapaClientes = {}, mapaServicos = {};
+            const servicosAno = servicos.filter(s => s.data.startsWith(ano));
+            
+            let fatTotal = 0, recTotal = 0;
+            const mapaC = {}, mapaS = {};
 
-            servicos.forEach(s => {
+            servicosAno.forEach(s => {
                 const v = parseFloat(s.valor) || 0;
-                faturamentoGeral += v;
-                if(s.status === 'Pago') recebidoGeral += v;
+                fatTotal += v;
+                if(s.status === 'Pago') recTotal += v;
 
-                // Agrupar por Cliente
-                mapaClientes[s.cliente] = (mapaClientes[s.cliente] || 0) + v;
-                // Agrupar por Tipo de Serviço
-                mapaServicos[s.tipo] = (mapaServicos[s.tipo] || 0) + 1;
+                mapaC[s.cliente] = (mapaC[s.cliente] || 0) + v;
+                mapaS[s.tipo] = (mapaS[s.tipo] || 0) + 1;
             });
 
-            // Renderizar Clientes
-            Object.entries(mapaClientes)
-                .sort((a,b) => b[1] - a[1])
-                .slice(0, 5)
-                .forEach(([nome, valor]) => {
-                    topC.innerHTML += `<div class="stat-item"><span>${nome}</span><span>R$ ${valor.toFixed(2)}</span></div>`;
-                });
+            // Ranking Clientes
+            Object.entries(mapaC).sort((a,b) => b[1] - a[1]).slice(0, 5).forEach(([n, v]) => {
+                topC.innerHTML += `<div class="stat-item"><span>${n}</span><span>R$ ${v.toFixed(2)}</span></div>`;
+            });
 
-            // Renderizar Serviços Frequentes
-            Object.entries(mapaServicos)
-                .sort((a,b) => b[1] - a[1])
-                .slice(0, 6)
-                .forEach(([tipo, total]) => {
-                    topS.innerHTML += `<div class="stat-item" style="border: 1px solid #444; padding: 10px; border-radius: 5px; margin: 2px;"><span>${tipo}</span><span style="color:var(--info-color)">${total}x</span></div>`;
-                });
+            // Ranking Serviços
+            Object.entries(mapaS).sort((a,b) => b[1] - a[1]).slice(0, 8).forEach(([t, q]) => {
+                topS.innerHTML += `<div class="stat-item" style="background:#141619; padding:10px; border-radius:5px;"><span>${t}</span><span style="color:var(--info-color)">${q}x</span></div>`;
+            });
 
             // Saúde Financeira
-            const percent = faturamentoGeral > 0 ? (recebidoGeral / faturamentoGeral) * 100 : 0;
+            const percent = fatTotal > 0 ? (recTotal / fatTotal) * 100 : 0;
             document.getElementById('statsBarra').style.width = percent + '%';
             document.getElementById('statsPercent').innerText = percent.toFixed(1) + '%';
-            document.getElementById('statsTotalGeral').innerText = `Previsão Total: R$ ${faturamentoGeral.toFixed(2)}`;
+            document.getElementById('statsTotalGeral').innerText = `Faturado: R$ ${fatTotal.toFixed(2)}`;
             
-            const ticket = servicos.length > 0 ? faturamentoGeral / servicos.length : 0;
+            const ticket = servicosAno.length > 0 ? fatTotal / servicosAno.length : 0;
             document.getElementById('statsTicket').innerText = `R$ ${ticket.toFixed(2)}`;
         }
     </script>
