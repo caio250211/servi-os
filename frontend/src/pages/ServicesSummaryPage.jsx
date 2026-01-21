@@ -24,11 +24,7 @@ function parseMoney(valor) {
   return Number(String(valor || "0").replace(",", ".")) || 0;
 }
 
-function monthKeyFromDateStr(d) {
-  const s = String(d || "");
-  // YYYY-MM-DD => YYYY-MM
-  return s.length >= 7 ? s.slice(0, 7) : "";
-}
+// (removido) agora usamos monthKeyFromDateValue, que normaliza Timestamp/ISO/string
 
 export default function ServicesSummaryPage() {
   const { user } = useAuth();
