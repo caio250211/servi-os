@@ -121,7 +121,7 @@ export default function LoginPage() {
                 data-testid="login-feature-4"
                 className="rounded-2xl border border-white/10 bg-black/25 p-4"
               >
-                <div className="text-sm font-medium">Dashboard</div>
+                <div className="text-sm font-medium">Menu principal</div>
                 <div className="mt-1 text-xs text-zinc-200/70">Resumo do mês: pendências e receita.</div>
               </div>
             </div>

@@ -88,13 +88,13 @@ export default function AgendaPage() {
                   <div className="flex items-center justify-between">
                     <div
                       data-testid={`agenda-day-title-${g.dateKey}`}
-                      className="text-sm font-semibold"
+                      className="text-sm font-semibold text-white"
                     >
                       {format(new Date(g.dateKey), "EEEE, dd/MM", { locale: ptBR })}
                     </div>
                     <div
                       data-testid={`agenda-day-count-${g.dateKey}`}
-                      className="text-xs text-zinc-200/70"
+                      className="text-xs text-white/80"
                     >
                       {g.items.length} serviço(s)
                     </div>

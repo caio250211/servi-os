@@ -130,18 +130,18 @@ export default function DashboardPage() {
         className="mt-6 rounded-2xl border-white/10 bg-white/5 backdrop-blur-md"
       >
         <CardHeader>
-          <CardTitle data-testid="dashboard-recent-services-title">Últimos serviços</CardTitle>
+          <CardTitle data-testid="dashboard-recent-services-title" className="text-white">Últimos serviços</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="overflow-hidden rounded-xl border border-white/10">
             <Table data-testid="dashboard-services-table">
               <TableHeader>
                 <TableRow>
-                  <TableHead>Data</TableHead>
-                  <TableHead>Cliente</TableHead>
-                  <TableHead>Tipo</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Valor</TableHead>
+                  <TableHead className="text-white/90">Data</TableHead>
+                  <TableHead className="text-white/90">Cliente</TableHead>
+                  <TableHead className="text-white/90">Tipo</TableHead>
+                  <TableHead className="text-white/90">Status</TableHead>
+                  <TableHead className="text-right text-white/90">Valor</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -150,7 +150,7 @@ export default function DashboardPage() {
                     <TableCell
                       data-testid="dashboard-services-empty"
                       colSpan={5}
-                      className="p-6 text-sm text-zinc-200/60"
+                      className="p-6 text-sm text-white/80"
                     >
                       Nenhum serviço encontrado.
                     </TableCell>
@@ -158,12 +158,12 @@ export default function DashboardPage() {
                 ) : (
                   recent.map((s) => (
                     <TableRow key={s.id} data-testid={`dashboard-service-row-${s.id}`}>
-                      <TableCell data-testid={`dashboard-service-date-${s.id}`}>
+                      <TableCell data-testid={`dashboard-service-date-${s.id}`} className="text-white">
                         {s.data
                           ? format(new Date(s.data), "dd/MM/yyyy", { locale: ptBR })
                           : "—"}
                       </TableCell>
-                      <TableCell data-testid={`dashboard-service-client-${s.id}`}>
+                      <TableCell data-testid={`dashboard-service-client-${s.id}`} className="text-white/90">
                         {s.cliente || "—"}
                       </TableCell>
                       <TableCell data-testid={`dashboard-service-type-${s.id}`}>{s.tipo || "—"}</TableCell>

@@ -54,7 +54,7 @@ export default function AppShell() {
         <div className="absolute -bottom-40 right-1/4 h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle_at_center,rgba(244,63,94,0.22),transparent_55%)]" />
       </div>
 
-      <div className="relative mx-auto grid max-w-7xl grid-cols-1 gap-6 px-4 py-5 md:grid-cols-[280px_1fr] md:px-6">
+      <div className="relative mx-auto grid w-full max-w-none grid-cols-1 gap-6 px-3 py-4 md:grid-cols-[280px_1fr] md:px-6">
         <aside
           data-testid="app-sidebar"
           className={cn(
