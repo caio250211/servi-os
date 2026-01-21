@@ -34,8 +34,7 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     refreshMe();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [refreshMe]);
 
   const login = async ({ username, password }) => {
     const { data } = await api.post("/auth/login", { username, password });
