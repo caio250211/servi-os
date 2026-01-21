@@ -16,6 +16,7 @@ import { toast } from "@/hooks/use-toast";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
+import { monthKeyFromDateValue, normalizeDateToYMD } from "@/lib/firestoreDate";
 
 const SERVICES_COLLECTION = "servicos";
 
@@ -68,7 +69,7 @@ export default function ServicesSummaryPage() {
     all.forEach((s) => {
       const status = String(s.status || "");
       const tipo = String(s.tipo || "Sem tipo");
-      const month = monthKeyFromDateStr(s.data);
+      const month = monthKeyFromDateValue(s.data);
       const money = parseMoney(s.valor);
 
       countByTipo.set(tipo, (countByTipo.get(tipo) || 0) + 1);
@@ -106,7 +107,7 @@ export default function ServicesSummaryPage() {
     const monthsRanking = Array.from(revenueByMonth.entries())
       .map(([month, value]) => ({ month, value }))
       .sort((a, b) => b.value - a.value)
-      .slice(0, 12);
+      .slice(0, 24);
 
     return {
       totalServices: all.length,
@@ -257,6 +258,9 @@ export default function ServicesSummaryPage() {
       <div className="mt-6" data-testid="summary-status-box">
         <div className="text-xs text-zinc-200/70">
           Status encontrados: {Array.from(insights.countByStatus.keys()).filter(Boolean).join(", ") || "—"}
+        </div>
+        <div data-testid="summary-date-note" className="mt-1 text-xs text-zinc-200/60">
+          Observação: a data é normalizada (Timestamp / ISO / dd/mm/aaaa → yyyy-mm-dd) para calcular ano e mês.
         </div>
       </div>
     </div>

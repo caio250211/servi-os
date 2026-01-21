@@ -32,6 +32,7 @@ import { toast } from "@/hooks/use-toast";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { normalizeDateToYMD, yearFromDateValue } from "@/lib/firestoreDate";
 
 import { addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
@@ -103,13 +104,13 @@ export default function ServicesPage() {
       const items = snap.docs
         .map((d) => ({ id: d.id, ...d.data() }))
         .filter((s) => {
-          const dt = String(s.data || "");
+          const dt = normalizeDateToYMD(s.data);
           if (from && dt && dt < from) return false;
           if (to && dt && dt > to) return false;
           if (statusFilter !== "ALL" && String(s.status || "") !== statusFilter) return false;
           return true;
         })
-        .sort((a, b) => String(b.data || "").localeCompare(String(a.data || "")));
+        .sort((a, b) => normalizeDateToYMD(b.data).localeCompare(normalizeDateToYMD(a.data)));
 
       setServices(items);
     } catch (err) {
@@ -130,8 +131,8 @@ export default function ServicesPage() {
 
   const servicesByYear = useMemo(() => {
     const all = services;
-    const y2026 = all.filter((s) => yearFromService(s) === "2026");
-    const y2025 = all.filter((s) => yearFromService(s) === "2025");
+    const y2026 = all.filter((s) => yearFromDateValue(s.data) === "2026");
+    const y2025 = all.filter((s) => yearFromDateValue(s.data) === "2025");
     return { all, y2026, y2025 };
   }, [services]);
 
@@ -200,7 +201,9 @@ export default function ServicesPage() {
   };
 
   const onDelete = async (s) => {
-    const ok = window.confirm(`Excluir o serviço de ${s.data ? format(new Date(s.data), "dd/MM/yyyy") : "—"}?`);
+    const ok = window.confirm(
+      `Excluir o serviço de ${normalizeDateToYMD(s.data) ? format(new Date(normalizeDateToYMD(s.data)), "dd/MM/yyyy") : "—"}?`
+    );
     if (!ok) return;
 
     try {
@@ -345,7 +348,9 @@ export default function ServicesPage() {
                       services.map((s) => (
                         <TableRow key={s.id} data-testid={`service-row-${s.id}`} className="border-white/10 hover:bg-white/5">
                           <TableCell data-testid={`service-date-${s.id}`} className="text-white font-medium">
-                            {s.data ? format(new Date(s.data), "dd/MM/yyyy", { locale: ptBR }) : "—"}
+                            {normalizeDateToYMD(s.data)
+                              ? format(new Date(normalizeDateToYMD(s.data)), "dd/MM/yyyy", { locale: ptBR })
+                              : "—"}
                           </TableCell>
                           <TableCell data-testid={`service-client-${s.id}`} className="text-zinc-100">
                             {s.cliente || "—"}
