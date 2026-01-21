@@ -14,14 +14,12 @@ import AgendaPage from "@/pages/AgendaPage";
 import { Toaster } from "@/components/ui/toaster";
 
 function Protected({ children }) {
-  const { user, loading } = useAuth();
+  const { user, loading, initialized } = useAuth();
 
-  if (loading) {
+  // IMPORTANT: não redirecionar antes do Firebase terminar a inicialização
+  if (loading || !initialized) {
     return (
-      <div
-        data-testid="auth-loading"
-        className="min-h-screen bg-[#07070b] text-zinc-50"
-      >
+      <div data-testid="auth-loading" className="min-h-screen bg-[#050509] text-zinc-50">
         <div className="mx-auto max-w-3xl px-6 py-16">
           <div
             data-testid="auth-loading-text"

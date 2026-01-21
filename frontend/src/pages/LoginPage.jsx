@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
-import { LogIn, AlertTriangle } from "lucide-react";
+import { LogIn, AlertTriangle, RefreshCw } from "lucide-react";
 
 const LOGO_URL =
   "https://customer-assets.emergentagent.com/job_2460b93f-9170-44ea-8a4c-717f4e4be696/artifacts/6cc67isd_logo.png.JPG.png";
@@ -13,7 +13,16 @@ const THIS_DOMAIN = window.location.host;
 
 export default function LoginPage() {
   const nav = useNavigate();
-  const { user, loading, loginWithGoogle, authError, clearAuthError, debug } = useAuth();
+  const {
+    user,
+    loading,
+    initialized,
+    loginWithGoogle,
+    authError,
+    clearAuthError,
+    refreshSession,
+    debug,
+  } = useAuth();
 
   useEffect(() => {
     if (!loading && user) nav("/");
@@ -43,11 +52,11 @@ export default function LoginPage() {
       const u = await loginWithGoogle();
       // Se for popup e deu certo, navega na hora
       if (u) nav("/");
-      // Se for redirect, o Firebase vai retornar logado.
     } catch (err) {
       toast({
         title: "Não foi possível entrar",
-        description: "Se não aparecer erro, tente novamente e veja a seção de diagnóstico abaixo.",
+        description:
+          "Se você seleciona o Gmail e volta pra login, normalmente é persistência/cookies. Use o botão ‘Atualizar sessão’.",
         variant: "destructive",
       });
     }
@@ -144,6 +153,20 @@ export default function LoginPage() {
                 Entrar com Google
               </Button>
 
+              <Button
+                data-testid="login-refresh-session"
+                variant="outline"
+                className="mt-3 w-full rounded-xl border-white/15 bg-white/5 text-zinc-50 hover:bg-white/10"
+                onClick={async () => {
+                  await refreshSession();
+                  // se o Firebase tiver currentUser, isso resolve e navega
+                  if (debug?.currentUserEmail) nav("/");
+                }}
+              >
+                <RefreshCw className="mr-2 h-4 w-4" />
+                Atualizar sessão
+              </Button>
+
               <div data-testid="login-domain-hint" className="mt-3 text-xs text-zinc-200/60">
                 Domínio atual: <b>{THIS_DOMAIN}</b>
               </div>
@@ -153,11 +176,12 @@ export default function LoginPage() {
                 className="mt-3 rounded-xl border border-white/10 bg-black/25 p-3 text-xs text-zinc-200/70"
               >
                 <div><b>Diagnóstico</b></div>
+                <div>initialized: {String(initialized)}</div>
                 <div>loading: {String(loading)}</div>
                 <div>user no contexto: {user?.email || "(vazio)"}</div>
                 <div>auth.currentUser: {debug?.currentUserEmail || "(vazio)"}</div>
                 <div className="mt-2 text-zinc-200/60">
-                  Se você escolhe o Gmail e volta pra login, geralmente é persistência/cookies.
+                  Se você escolhe o Gmail e volta pra login, pode ser bloqueio de cookies/armazenamento.
                 </div>
               </div>
 
