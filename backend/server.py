@@ -257,19 +257,16 @@ async def auth_bootstrap_status():
 
 
 @api_router.post("/auth/register", response_model=UserPublic)
-async def register_first_user(payload: UserCreate):
-    existing_users = await db.users.count_documents({})
-    if existing_users > 0:
-        # MVP: cadastro liberado somente para o primeiro usuário
-        raise HTTPException(
-            status_code=403,
-            detail="Cadastro desabilitado: já existe usuário no sistema",
-        )
+async def register_user(payload: UserCreate):
+    username = payload.username.strip().lower()
+    exists = await db.users.find_one({"username": username}, {"_id": 1})
+    if exists:
+        raise HTTPException(status_code=400, detail="Esse usuário já existe")
 
     doc = {
         "id": _uuid(),
         "name": payload.name.strip(),
-        "username": payload.username.strip().lower(),
+        "username": username,
         "password_hash": hash_password(payload.password),
         "created_at": _dt_to_iso(_now_utc()),
     }

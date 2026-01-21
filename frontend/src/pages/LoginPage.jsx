@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
@@ -12,10 +12,9 @@ const LOGO_URL =
 
 export default function LoginPage() {
   const nav = useNavigate();
-  const { login, bootstrapStatus, registerFirstUser, user } = useAuth();
+  const { login, registerFirstUser, user } = useAuth();
 
-  const [hasUser, setHasUser] = useState(true);
-  const [loading, setLoading] = useState(true);
+  const [tab, setTab] = useState("login");
 
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -25,27 +24,8 @@ export default function LoginPage() {
   const [passwordReg, setPasswordReg] = useState("");
 
   useEffect(() => {
-    (async () => {
-      try {
-        const s = await bootstrapStatus();
-        setHasUser(Boolean(s.has_user));
-      } catch (e) {
-        setHasUser(true);
-      } finally {
-        setLoading(false);
-      }
-    })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
     if (user) nav("/");
   }, [user, nav]);
-
-  const defaultTab = useMemo(() => {
-    if (!hasUser) return "register";
-    return "login";
-  }, [hasUser]);
 
   const onLogin = async (e) => {
     e.preventDefault();
@@ -168,11 +148,11 @@ export default function LoginPage() {
           >
             <CardHeader>
               <CardTitle data-testid="login-card-title" className="text-xl">
-                {loading ? "Carregando…" : hasUser ? "Entrar" : "Criar primeiro usuário"}
+                Entrar
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue={defaultTab} value={defaultTab}>
+              <Tabs value={tab} onValueChange={setTab}>
                 <TabsList
                   data-testid="login-tabs"
                   className="grid w-full grid-cols-2 bg-black/20"
@@ -180,12 +160,8 @@ export default function LoginPage() {
                   <TabsTrigger data-testid="tab-login" value="login">
                     Login
                   </TabsTrigger>
-                  <TabsTrigger
-                    data-testid="tab-register"
-                    value="register"
-                    disabled={hasUser}
-                  >
-                    Primeiro usuário
+                  <TabsTrigger data-testid="tab-register" value="register">
+                    Criar usuário
                   </TabsTrigger>
                 </TabsList>
 
@@ -227,7 +203,7 @@ export default function LoginPage() {
                     data-testid="register-info"
                     className="mb-4 rounded-xl border border-white/10 bg-black/20 p-3 text-xs text-zinc-200/70"
                   >
-                    Esse cadastro aparece só quando o sistema ainda não tem nenhum usuário.
+                    Crie um novo usuário para acessar o sistema.
                   </div>
 
                   <form onSubmit={onRegister} className="space-y-3">
@@ -266,7 +242,6 @@ export default function LoginPage() {
                       data-testid="register-submit-button"
                       type="submit"
                       className="w-full rounded-xl bg-gradient-to-r from-red-600 to-rose-500 text-white hover:from-red-600/90 hover:to-rose-500/90"
-                      disabled={hasUser}
                     >
                       Criar usuário
                     </Button>
