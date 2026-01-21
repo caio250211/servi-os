@@ -1,110 +1,43 @@
-# InsectControl Tupy — Gestão de Clientes e Serviços (MVP)
+# InsectControl Tupy — Gestão (Firebase)
 
 ## Objetivo
-Criar um sistema web simples (tipo CRM + Ordem de Serviço) para a InsectControl Tupy anotar **clientes** e **serviços**, com **login** (usuário/senha). Foco em uso no dia a dia (celular e PC).
+Sistema web para **gestão de clientes e serviços** da InsectControl Tupy, reutilizando os dados já cadastrados no **Firebase/Firestore** e fazendo **login via Gmail**.
 
-## Stack
-- Frontend: React + Tailwind + componentes shadcn/ui
-- Backend: FastAPI
-- Banco: MongoDB (Motor)
+## Stack (atual)
+- Frontend: React + Tailwind + shadcn/ui
+- Dados e login: **Firebase Auth (Google)** + **Firestore**
+- Backend (FastAPI + MongoDB): permanece no projeto, mas **não é mais necessário para o uso principal** (MVP atual está direto no Firebase).
 
-## Arquitetura
-- Frontend consome API via `process.env.REACT_APP_BACKEND_URL` e prefixo `/api`.
-- Backend expõe rotas em `/api/*`.
-- Autenticação: **JWT** (login por usuário/senha)
-  - Access token curto (ex: 24h)
-  - Enviado no header `Authorization: Bearer <token>`
+## Como funciona
+- O usuário entra com Google.
+- O sistema filtra documentos pelo campo **`usuario`** igual ao e-mail do Google logado.
+- Collections:
+  - **`servicos`** (confirmada por você)
+  - **`clientes`** (opcional: se não existir, a tela de clientes vai aparecer vazia até você criar ou ajustar o nome)
 
-## Módulos (MVP)
-1) **Login**
-2) **Dashboard**
-   - Cards: Clientes cadastrados, Serviços no mês, Pendentes, Receita no mês
-   - Lista rápida: próximos serviços (opcional, por data)
-3) **Clientes**
-   - CRUD (criar, editar, excluir, listar)
-   - Busca por nome/telefone
-4) **Serviços**
-   - CRUD
-   - Campos: data, cliente, tipo de praga/serviço, valor, status (PENDENTE/CONCLUIDO)
-   - Filtros: por status e por período (mês atual)
-5) **Agenda (visão simples)**
-   - Lista por data (hoje/semana/mês) — sem calendário complexo no MVP
+## Modelo de dados (Firestore)
+### servicos
+Campos esperados (com base no print que você enviou):
+- `cliente` (string)
+- `contato` (string)
+- `criado` (string ISO)
+- `data` (string `YYYY-MM-DD`)
+- `local` (string)
+- `status` (ex: `Pendente` / `Pago`)
+- `tipo` (string)
+- `usuario` (string email)
+- `valor` (string, ex: `450.00`)
 
-## Esquema de Banco (MongoDB)
-### users
-- _id (mongo)
-- id (uuid string)
-- name
-- username (único)
-- password_hash
-- created_at
+### clientes (opcional)
+- `nome`, `telefone`, `endereco`, `cidade`, `bairro`, `email`, `usuario`
 
-### clients
-- id (uuid)
-- name
-- phone
-- address
-- city
-- neighborhood
-- email (opcional)
-- created_at
-- updated_at
+## Telas
+- Login (Google)
+- Dashboard (resumo do mês a partir dos serviços do Firestore)
+- Clientes (CRUD no Firestore, se a collection existir)
+- Serviços (CRUD no Firestore)
+- Agenda (próximos 14 dias a partir de `servicos`)
 
-### services
-- id (uuid)
-- client_id
-- date (ISO string)
-- service_type (texto)
-- value (number)
-- status ("PENDENTE" | "CONCLUIDO")
-- notes (opcional — reservado)
-- created_at
-- updated_at
-
-## APIs (backend)
-### Auth
-- POST `/api/auth/register` (criar primeiro usuário admin)
-- POST `/api/auth/login`
-- GET `/api/auth/me`
-
-### Clients
-- GET `/api/clients` (query: `q` para busca)
-- POST `/api/clients`
-- GET `/api/clients/{id}`
-- PUT `/api/clients/{id}`
-- DELETE `/api/clients/{id}`
-
-### Services
-- GET `/api/services` (query: `status`, `from`, `to`, `client_id`)
-- POST `/api/services`
-- GET `/api/services/{id}`
-- PUT `/api/services/{id}`
-- DELETE `/api/services/{id}`
-
-### Dashboard
-- GET `/api/dashboard/summary` (cards do mês)
-
-## Fluxos de Frontend
-- Tela de Login
-- Layout com sidebar/topbar
-  - Dashboard
-  - Clientes
-  - Serviços
-  - Agenda
-- Modais para criar/editar (Clientes e Serviços)
-- Tabelas com ações (editar/excluir)
-- Toasts de sucesso/erro
-
-## UI/Identidade
-- Tema escuro elegante com detalhes em vermelho (baseado no logo)
-- Botões modernos (pill / sharp)
-- Sem centralização global de texto
-
-## Testes
-- Backend: testar login, CRUD de clientes e serviços, dashboard summary
-- Frontend: fluxo completo
-  - Registrar admin (uma vez), logar
-  - Criar cliente
-  - Criar serviço para cliente
-  - Ver dashboard atualizando
-  - Filtrar serviços por status
+## Observações importantes (Firebase)
+1) **Authorized domains**: no Firebase Console → Authentication → Settings → Authorized domains, adicione o domínio do seu site (exibido na tela de login).
+2) **Regras do Firestore**: para segurança, o ideal é permitir leitura/escrita somente do que tiver `usuario == request.auth.token.email`.
