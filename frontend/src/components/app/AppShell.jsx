@@ -87,7 +87,7 @@ export default function AppShell() {
           </div>
 
           <div className="mt-5 space-y-1">
-            <SidebarItem to="/" icon={LayoutGrid} label="Dashboard" testid="nav-dashboard" />
+            <SidebarItem to="/" icon={LayoutGrid} label="Menu principal" testid="nav-dashboard" />
             <SidebarItem to="/clientes" icon={Users} label="Clientes" testid="nav-clients" />
             <SidebarItem to="/servicos" icon={ClipboardList} label="Serviços" testid="nav-services" />
             <SidebarItem to="/agenda" icon={CalendarDays} label="Agenda" testid="nav-agenda" />

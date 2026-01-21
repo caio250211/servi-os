@@ -70,11 +70,11 @@ export default function AgendaPage() {
       >
         <CardContent className="p-4">
           {loading ? (
-            <div data-testid="agenda-loading" className="p-4 text-sm text-zinc-200/70">
+            <div data-testid="agenda-loading" className="p-4 text-sm text-white/85">
               Carregando…
             </div>
           ) : grouped.length === 0 ? (
-            <div data-testid="agenda-empty" className="p-4 text-sm text-zinc-200/60">
+            <div data-testid="agenda-empty" className="p-4 text-sm text-white/80">
               Nenhum serviço agendado nesse período.
             </div>
           ) : (

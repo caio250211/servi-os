@@ -12,7 +12,7 @@ export default function PageHeader({ title, subtitle, right }) {
           data-testid="page-header-title"
           className={cn(
             "text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight",
-            "text-zinc-50"
+            "text-white"
           )}
         >
           {title}
@@ -20,7 +20,7 @@ export default function PageHeader({ title, subtitle, right }) {
         {subtitle ? (
           <p
             data-testid="page-header-subtitle"
-            className="mt-2 max-w-2xl text-base md:text-lg text-zinc-200/70"
+            className="mt-2 max-w-2xl text-base md:text-lg text-white/85"
           >
             {subtitle}
           </p>

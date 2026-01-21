@@ -96,7 +96,7 @@ export default function DashboardPage() {
 
   return (
     <div data-testid="dashboard-page" className="pb-10">
-      <PageHeader title="Dashboard" subtitle="Resumo do Firebase (seus serviços por Gmail)." />
+      <PageHeader title="Menu principal" subtitle="Resumo do Firebase (seus serviços por Gmail)." />
 
       <div data-testid="dashboard-stats" className="grid grid-cols-1 gap-4 md:grid-cols-4">
         <StatCard

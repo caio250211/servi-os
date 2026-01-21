@@ -10,7 +10,7 @@ export default function StatCard({ title, value, hint, testid }) {
       <CardHeader className="pb-2">
         <CardTitle
           data-testid={`${testid}-title`}
-          className="text-sm font-medium text-zinc-200/70"
+          className="text-sm font-medium text-white"
         >
           {title}
         </CardTitle>
@@ -18,14 +18,14 @@ export default function StatCard({ title, value, hint, testid }) {
       <CardContent>
         <div
           data-testid={`${testid}-value`}
-          className="text-2xl font-semibold tracking-tight"
+          className="text-2xl font-semibold tracking-tight text-white"
         >
           {value}
         </div>
         {hint ? (
           <div
             data-testid={`${testid}-hint`}
-            className="mt-1 text-xs text-zinc-200/60"
+            className="mt-1 text-xs text-white/85"
           >
             {hint}
           </div>
