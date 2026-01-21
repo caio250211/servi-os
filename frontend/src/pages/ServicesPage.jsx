@@ -32,11 +32,11 @@ import { toast } from "@/hooks/use-toast";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { normalizeDateToYMD, yearFromDateValue } from "@/lib/firestoreDate";
 
 import { addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
+import { normalizeDateToYMD, yearFromDateValue } from "@/lib/firestoreDate";
 
 const COLLECTION_NAME = "servicos";
 
@@ -55,41 +55,21 @@ function currencyBR(v) {
   return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
-function yearFromService(s) {
-  return yearFromDateValue(s?.data);
-}
-
 export default function ServicesPage() {
   const { user } = useAuth();
 
-  const [services, setServices] = useState([]);
+  const [allServices, setAllServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const [statusFilter, setStatusFilter] = useState("ALL");
   const [from, setFrom] = useState("");
   const [to, setTo] = useState("");
-
   const [yearTab, setYearTab] = useState("ALL");
 
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState("create");
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(emptyForm);
-
-  // Ajuste principal: quando selecionar 2025/2026, o período vira o ano inteiro
-  useEffect(() => {
-    if (yearTab === "2025") {
-      setFrom("2025-01-01");
-      setTo("2025-12-31");
-    } else if (yearTab === "2026") {
-      setFrom("2026-01-01");
-      setTo("2026-12-31");
-    } else {
-      // ALL: mostra tudo (sem travar no mês atual)
-      setFrom("");
-      setTo("");
-    }
-  }, [yearTab]);
 
   const load = async () => {
     if (!user?.email) return;
@@ -99,18 +79,14 @@ export default function ServicesPage() {
       const qy = query(collection(db, COLLECTION_NAME), where("usuario", "==", user.email));
       const snap = await getDocs(qy);
 
-      const items = snap.docs
-        .map((d) => ({ id: d.id, ...d.data() }))
-        .filter((s) => {
-          const dt = normalizeDateToYMD(s.data);
-          if (from && dt && dt < from) return false;
-          if (to && dt && dt > to) return false;
-          if (statusFilter !== "ALL" && String(s.status || "") !== statusFilter) return false;
-          return true;
-        })
-        .sort((a, b) => normalizeDateToYMD(b.data).localeCompare(normalizeDateToYMD(a.data)));
+      const items = snap.docs.map((d) => {
+        const data = d.data();
+        const ymd = normalizeDateToYMD(data?.data);
+        const year = yearFromDateValue(data?.data);
+        return { id: d.id, ...data, _ymd: ymd, _year: year };
+      });
 
-      setServices(items);
+      setAllServices(items);
     } catch (err) {
       toast({
         title: "Erro ao carregar serviços",
@@ -125,14 +101,44 @@ export default function ServicesPage() {
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.email, statusFilter, from, to]);
+  }, [user?.email]);
 
-  const servicesByYear = useMemo(() => {
-    const all = services;
-    const y2026 = all.filter((s) => yearFromDateValue(s.data) === "2026");
-    const y2025 = all.filter((s) => yearFromDateValue(s.data) === "2025");
-    return { all, y2026, y2025 };
-  }, [services]);
+  const countsByYear = useMemo(() => {
+    const c2026 = allServices.filter((s) => s._year === "2026").length;
+    const c2025 = allServices.filter((s) => s._year === "2025").length;
+    return { c2026, c2025, all: allServices.length };
+  }, [allServices]);
+
+  // Quando escolher 2025/2026, preenche o período automaticamente (para ajudar o filtro)
+  useEffect(() => {
+    if (yearTab === "2025") {
+      setFrom("2025-01-01");
+      setTo("2025-12-31");
+    } else if (yearTab === "2026") {
+      setFrom("2026-01-01");
+      setTo("2026-12-31");
+    } else {
+      // ALL: não filtra por período
+      setFrom("");
+      setTo("");
+    }
+  }, [yearTab]);
+
+  const visibleServices = useMemo(() => {
+    const yearFilter = yearTab === "ALL" ? null : yearTab;
+
+    return allServices
+      .filter((s) => {
+        if (yearFilter && s._year !== yearFilter) return false;
+        if (statusFilter !== "ALL" && String(s.status || "") !== statusFilter) return false;
+
+        // Filtra por datas usando _ymd normalizado (Timestamp/ISO/dd-mm)
+        if (from && s._ymd && s._ymd < from) return false;
+        if (to && s._ymd && s._ymd > to) return false;
+        return true;
+      })
+      .sort((a, b) => String(b._ymd || "").localeCompare(String(a._ymd || "")));
+  }, [allServices, yearTab, statusFilter, from, to]);
 
   const title = useMemo(() => (mode === "edit" ? "Editar serviço" : "Novo serviço"), [mode]);
 
@@ -150,7 +156,7 @@ export default function ServicesPage() {
       cliente: s.cliente || "",
       contato: s.contato || "",
       local: s.local || "",
-      data: s.data || format(new Date(), "yyyy-MM-dd"),
+      data: s._ymd || format(new Date(), "yyyy-MM-dd"),
       tipo: s.tipo || "",
       valor: String(s.valor ?? "0"),
       status: s.status || "Pendente",
@@ -171,6 +177,8 @@ export default function ServicesPage() {
         ...form,
         usuario: user.email,
         criado: new Date().toISOString(),
+        // Garantimos que a data salva seja YYYY-MM-DD (para 2025/2026 aparecer certinho)
+        data: normalizeDateToYMD(form.data) || form.data,
         valor: String(form.valor ?? "0"),
       };
 
@@ -194,13 +202,17 @@ export default function ServicesPage() {
       setOpen(false);
       await load();
     } catch (err) {
-      toast({ title: "Erro ao salvar", description: err?.message || "Tente novamente.", variant: "destructive" });
+      toast({
+        title: "Erro ao salvar",
+        description: err?.message || "Tente novamente.",
+        variant: "destructive",
+      });
     }
   };
 
   const onDelete = async (s) => {
     const ok = window.confirm(
-      `Excluir o serviço de ${normalizeDateToYMD(s.data) ? format(new Date(normalizeDateToYMD(s.data)), "dd/MM/yyyy") : "—"}?`
+      `Excluir o serviço de ${s._ymd ? format(new Date(s._ymd), "dd/MM/yyyy") : "—"}?`
     );
     if (!ok) return;
 
@@ -209,7 +221,11 @@ export default function ServicesPage() {
       toast({ title: "Serviço excluído" });
       await load();
     } catch (err) {
-      toast({ title: "Não foi possível excluir", description: err?.message || "Tente novamente.", variant: "destructive" });
+      toast({
+        title: "Não foi possível excluir",
+        description: err?.message || "Tente novamente.",
+        variant: "destructive",
+      });
     }
   };
 
@@ -236,18 +252,18 @@ export default function ServicesPage() {
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
               <TabsList data-testid="services-year-tabs" className="bg-black/25">
                 <TabsTrigger data-testid="services-year-all" value="ALL">
-                  Todos
+                  Todos ({countsByYear.all})
                 </TabsTrigger>
                 <TabsTrigger data-testid="services-year-2026" value="2026">
-                  2026 ({servicesByYear.y2026.length})
+                  2026 ({countsByYear.c2026})
                 </TabsTrigger>
                 <TabsTrigger data-testid="services-year-2025" value="2025">
-                  2025 ({servicesByYear.y2025.length})
+                  2025 ({countsByYear.c2025})
                 </TabsTrigger>
               </TabsList>
 
               <div data-testid="services-year-hint" className="text-xs text-zinc-200/70">
-                2025/2026 mostram o ano inteiro automaticamente.
+                Se 2025 não aparece, normalmente é porque o campo <b>data</b> não está no formato correto — agora o sistema normaliza.
               </div>
             </div>
 
@@ -336,19 +352,17 @@ export default function ServicesPage() {
                           Faça login com Google para ver seus serviços.
                         </TableCell>
                       </TableRow>
-                    ) : services.length === 0 ? (
+                    ) : visibleServices.length === 0 ? (
                       <TableRow className="border-white/10">
                         <TableCell data-testid="services-empty" colSpan={8} className="p-6 text-sm text-zinc-200/70">
                           Nenhum serviço encontrado.
                         </TableCell>
                       </TableRow>
                     ) : (
-                      services.map((s) => (
+                      visibleServices.map((s) => (
                         <TableRow key={s.id} data-testid={`service-row-${s.id}`} className="border-white/10 hover:bg-white/5">
                           <TableCell data-testid={`service-date-${s.id}`} className="text-white font-medium">
-                            {normalizeDateToYMD(s.data)
-                              ? format(new Date(normalizeDateToYMD(s.data)), "dd/MM/yyyy", { locale: ptBR })
-                              : "—"}
+                            {s._ymd ? format(new Date(s._ymd), "dd/MM/yyyy", { locale: ptBR }) : "—"}
                           </TableCell>
                           <TableCell data-testid={`service-client-${s.id}`} className="text-zinc-100">
                             {s.cliente || "—"}
@@ -363,7 +377,13 @@ export default function ServicesPage() {
                             {s.tipo || "—"}
                           </TableCell>
                           <TableCell data-testid={`service-status-${s.id}`}>
-                            <Badge className={String(s.status).toLowerCase() === "pago" ? "bg-emerald-500/15 text-emerald-200 border border-emerald-400/20" : "bg-amber-500/15 text-amber-200 border border-amber-400/20"}>
+                            <Badge
+                              className={
+                                String(s.status).toLowerCase() === "pago"
+                                  ? "bg-emerald-500/15 text-emerald-200 border border-emerald-400/20"
+                                  : "bg-amber-500/15 text-amber-200 border border-amber-400/20"
+                              }
+                            >
                               {s.status || "—"}
                             </Badge>
                           </TableCell>
