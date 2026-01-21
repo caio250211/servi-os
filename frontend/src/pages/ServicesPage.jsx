@@ -56,9 +56,7 @@ function currencyBR(v) {
 }
 
 function yearFromService(s) {
-  const dt = String(s?.data || "");
-  const y = dt.slice(0, 4);
-  return /^\d{4}$/.test(y) ? y : "";
+  return yearFromDateValue(s?.data);
 }
 
 export default function ServicesPage() {
