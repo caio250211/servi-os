@@ -16,7 +16,7 @@ import { toast } from "@/hooks/use-toast";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
-import { monthKeyFromDateValue, normalizeDateToYMD } from "@/lib/firestoreDate";
+import { monthKeyFromDateValue } from "@/lib/firestoreDate";
 
 const SERVICES_COLLECTION = "servicos";
 
