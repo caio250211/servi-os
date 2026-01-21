@@ -19,58 +19,107 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { api } from "@/lib/api";
 import { toast } from "@/hooks/use-toast";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  orderBy,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { useAuth } from "@/context/AuthContext";
+
+const COLLECTION_NAME = "servicos";
+
 const emptyForm = {
-  client_id: "",
-  date: format(new Date(), "yyyy-MM-dd"),
-  service_type: "",
-  value: "0",
-  status: "PENDENTE",
+  cliente: "",
+  contato: "",
+  local: "",
+  data: format(new Date(), "yyyy-MM-dd"),
+  tipo: "",
+  valor: "0",
+  status: "Pendente",
 };
 
 function currencyBR(v) {
-  const n = Number(v || 0);
+  const n = Number(String(v || "0").replace(",", "."));
   return n.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
 
 export default function ServicesPage() {
-  const [clients, setClients] = useState([]);
+  const { user } = useAuth();
+
   const [services, setServices] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const [statusFilter, setStatusFilter] = useState("ALL");
-  const [from, setFrom] = useState(format(new Date(new Date().getFullYear(), new Date().getMonth(), 1), "yyyy-MM-dd"));
-  const [to, setTo] = useState(format(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0), "yyyy-MM-dd"));
+  const [from, setFrom] = useState(
+    format(new Date(new Date().getFullYear(), new Date().getMonth(), 1), "yyyy-MM-dd")
+  );
+  const [to, setTo] = useState(
+    format(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0), "yyyy-MM-dd")
+  );
 
   const [open, setOpen] = useState(false);
   const [mode, setMode] = useState("create");
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(emptyForm);
 
-  const clientNameById = useMemo(() => {
-    const map = new Map();
-    clients.forEach((c) => map.set(c.id, c.name));
-    return map;
-  }, [clients]);
-
   const load = async () => {
+    if (!user?.email) return;
     setLoading(true);
+
     try {
-      const params = {
-        from,
-        to,
-      };
-      if (statusFilter !== "ALL") params.status = statusFilter;
-      const [c, s] = await Promise.all([api.get("/clients"), api.get("/services", { params })]);
-      setClients(c.data);
-      setServices(s.data);
+      const base = [
+        where("usuario", "==", user.email),
+        orderBy("data", "desc"),
+      ];
+
+      // filtro por status (se existir no documento)
+      if (statusFilter !== "ALL") {
+        base.unshift(where("status", "==", statusFilter));
+      }
+
+      // Observação: para combinar where + orderBy no Firestore pode precisar de index.
+      const q = query(collection(db, COLLECTION_NAME), ...base);
+      const snap = await getDocs(q);
+
+      const items = snap.docs
+        .map((d) => ({ id: d.id, ...d.data() }))
+        .filter((s) => {
+          // filtro por período local (sem depender de índices)
+          const dt = String(s.data || "");
+          if (from && dt < from) return false;
+          if (to && dt > to) return false;
+          return true;
+        });
+
+      setServices(items);
+    } catch (err) {
+      toast({
+        title: "Erro ao carregar serviços",
+        description:
+          err?.message ||
+          "Verifique as regras do Firestore/índices. (Pode ser necessário criar índice composto)",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -79,12 +128,17 @@ export default function ServicesPage() {
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user?.email]);
+
+  const title = useMemo(
+    () => (mode === "edit" ? "Editar serviço" : "Novo serviço"),
+    [mode]
+  );
 
   const openCreate = () => {
     setMode("create");
     setEditingId(null);
-    setForm({ ...emptyForm, client_id: clients?.[0]?.id || "" });
+    setForm(emptyForm);
     setOpen(true);
   };
 
@@ -92,61 +146,75 @@ export default function ServicesPage() {
     setMode("edit");
     setEditingId(s.id);
     setForm({
-      client_id: s.client_id,
-      date: format(new Date(s.date), "yyyy-MM-dd"),
-      service_type: s.service_type || "",
-      value: String(s.value ?? 0),
-      status: s.status,
+      cliente: s.cliente || "",
+      contato: s.contato || "",
+      local: s.local || "",
+      data: s.data || format(new Date(), "yyyy-MM-dd"),
+      tipo: s.tipo || "",
+      valor: String(s.valor ?? "0"),
+      status: s.status || "Pendente",
     });
     setOpen(true);
   };
 
   const onSave = async (e) => {
     e.preventDefault();
+
+    if (!user?.email) {
+      toast({ title: "Faça login", variant: "destructive" });
+      return;
+    }
+
     try {
       const payload = {
-        client_id: form.client_id,
-        date: form.date,
-        service_type: form.service_type,
-        value: Number(form.value || 0),
-        status: form.status,
+        ...form,
+        usuario: user.email,
+        criado: new Date().toISOString(),
+        valor: String(form.valor ?? "0"),
       };
 
-      if (!payload.client_id) {
-        toast({ title: "Selecione um cliente", variant: "destructive" });
+      if (!payload.cliente?.trim()) {
+        toast({ title: "Informe o cliente", variant: "destructive" });
+        return;
+      }
+      if (!payload.data) {
+        toast({ title: "Informe a data", variant: "destructive" });
         return;
       }
 
       if (mode === "create") {
-        await api.post("/services", payload);
+        await addDoc(collection(db, COLLECTION_NAME), payload);
         toast({ title: "Serviço criado", description: "Serviço registrado com sucesso." });
       } else {
-        await api.put(`/services/${editingId}`, payload);
+        await updateDoc(doc(db, COLLECTION_NAME, editingId), payload);
         toast({ title: "Serviço atualizado", description: "Alterações salvas." });
       }
+
       setOpen(false);
       await load();
     } catch (err) {
       toast({
         title: "Erro ao salvar",
-        description: err?.response?.data?.detail || "Tente novamente.",
+        description: err?.message || "Tente novamente.",
         variant: "destructive",
       });
     }
   };
 
   const onDelete = async (s) => {
-    const ok = window.confirm(`Excluir o serviço de ${format(new Date(s.date), "dd/MM/yyyy")}?`);
+    const ok = window.confirm(
+      `Excluir o serviço de ${format(new Date(s.data), "dd/MM/yyyy")}?`
+    );
     if (!ok) return;
 
     try {
-      await api.delete(`/services/${s.id}`);
+      await deleteDoc(doc(db, COLLECTION_NAME, s.id));
       toast({ title: "Serviço excluído" });
       await load();
     } catch (err) {
       toast({
         title: "Não foi possível excluir",
-        description: err?.response?.data?.detail || "Tente novamente.",
+        description: err?.message || "Tente novamente.",
         variant: "destructive",
       });
     }
@@ -156,7 +224,7 @@ export default function ServicesPage() {
     <div data-testid="services-page" className="pb-10">
       <PageHeader
         title="Serviços"
-        subtitle="Registre serviços realizados e acompanhe pendências."
+        subtitle={`Fonte: Firebase / Firestore (collection: ${COLLECTION_NAME}).`}
         right={
           <Button
             data-testid="services-new-button"
@@ -208,11 +276,11 @@ export default function ServicesPage() {
                   <SelectItem data-testid="services-filter-status-all" value="ALL">
                     Todos
                   </SelectItem>
-                  <SelectItem data-testid="services-filter-status-pendente" value="PENDENTE">
-                    PENDENTE
+                  <SelectItem data-testid="services-filter-status-pendente" value="Pendente">
+                    Pendente
                   </SelectItem>
-                  <SelectItem data-testid="services-filter-status-concluido" value="CONCLUIDO">
-                    CONCLUIDO
+                  <SelectItem data-testid="services-filter-status-pago" value="Pago">
+                    Pago
                   </SelectItem>
                 </SelectContent>
               </Select>
@@ -235,7 +303,6 @@ export default function ServicesPage() {
                   const now = new Date();
                   setFrom(format(new Date(now.getFullYear(), now.getMonth(), 1), "yyyy-MM-dd"));
                   setTo(format(new Date(now.getFullYear(), now.getMonth() + 1, 0), "yyyy-MM-dd"));
-                  setTimeout(load, 0);
                 }}
               >
                 Reset
@@ -249,6 +316,8 @@ export default function ServicesPage() {
                 <TableRow>
                   <TableHead>Data</TableHead>
                   <TableHead>Cliente</TableHead>
+                  <TableHead>Contato</TableHead>
+                  <TableHead>Local</TableHead>
                   <TableHead>Tipo</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Valor</TableHead>
@@ -260,7 +329,7 @@ export default function ServicesPage() {
                   <TableRow>
                     <TableCell
                       data-testid="services-loading"
-                      colSpan={6}
+                      colSpan={8}
                       className="p-6 text-sm text-zinc-200/70"
                     >
                       Carregando…
@@ -270,7 +339,7 @@ export default function ServicesPage() {
                   <TableRow>
                     <TableCell
                       data-testid="services-empty"
-                      colSpan={6}
+                      colSpan={8}
                       className="p-6 text-sm text-zinc-200/60"
                     >
                       Nenhum serviço encontrado.
@@ -280,25 +349,29 @@ export default function ServicesPage() {
                   services.map((s) => (
                     <TableRow key={s.id} data-testid={`service-row-${s.id}`}>
                       <TableCell data-testid={`service-date-${s.id}`}>
-                        {format(new Date(s.date), "dd/MM/yyyy", { locale: ptBR })}
+                        {s.data
+                          ? format(new Date(s.data), "dd/MM/yyyy", { locale: ptBR })
+                          : "—"}
                       </TableCell>
-                      <TableCell data-testid={`service-client-${s.id}`}>
-                        {clientNameById.get(s.client_id) || s.client_id}
+                      <TableCell data-testid={`service-client-${s.id}`}>{s.cliente || "—"}</TableCell>
+                      <TableCell data-testid={`service-contact-${s.id}`}>{s.contato || "—"}</TableCell>
+                      <TableCell data-testid={`service-local-${s.id}`} className="max-w-[320px] truncate">
+                        {s.local || "—"}
                       </TableCell>
-                      <TableCell data-testid={`service-type-${s.id}`}>{s.service_type}</TableCell>
+                      <TableCell data-testid={`service-type-${s.id}`}>{s.tipo || "—"}</TableCell>
                       <TableCell data-testid={`service-status-${s.id}`}>
                         <Badge
                           className={
-                            s.status === "CONCLUIDO"
+                            String(s.status).toLowerCase() === "pago"
                               ? "bg-emerald-500/15 text-emerald-200 border border-emerald-400/20"
                               : "bg-amber-500/15 text-amber-200 border border-amber-400/20"
                           }
                         >
-                          {s.status}
+                          {s.status || "—"}
                         </Badge>
                       </TableCell>
                       <TableCell data-testid={`service-value-${s.id}`} className="text-right">
-                        {currencyBR(s.value)}
+                        {currencyBR(s.valor)}
                       </TableCell>
                       <TableCell className="text-right">
                         <div className="inline-flex items-center gap-2">
@@ -335,11 +408,9 @@ export default function ServicesPage() {
           className="rounded-2xl border-white/10 bg-[#0b0b10] text-zinc-50"
         >
           <DialogHeader>
-            <DialogTitle data-testid="services-dialog-title">
-              {mode === "edit" ? "Editar serviço" : "Novo serviço"}
-            </DialogTitle>
+            <DialogTitle data-testid="services-dialog-title">{title}</DialogTitle>
             <DialogDescription data-testid="services-dialog-desc">
-              Informe data, cliente, tipo, valor e status.
+              Campos iguais aos do seu Firestore (cliente, contato, local, data, tipo, status, valor).
             </DialogDescription>
           </DialogHeader>
 
@@ -347,34 +418,36 @@ export default function ServicesPage() {
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <div className="space-y-1">
                 <div className="text-xs text-zinc-200/70">Cliente *</div>
-                <Select
-                  value={form.client_id}
-                  onValueChange={(v) => setForm((p) => ({ ...p, client_id: v }))}
-                >
-                  <SelectTrigger
-                    data-testid="service-form-client"
-                    className="rounded-xl border-white/10 bg-black/30"
-                  >
-                    <SelectValue placeholder="Selecione" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {clients.length === 0 ? (
-                      <SelectItem data-testid="service-form-client-empty" value="__empty" disabled>
-                        Cadastre um cliente primeiro
-                      </SelectItem>
-                    ) : (
-                      clients.map((c) => (
-                        <SelectItem
-                          key={c.id}
-                          data-testid={`service-form-client-${c.id}`}
-                          value={c.id}
-                        >
-                          {c.name}
-                        </SelectItem>
-                      ))
-                    )}
-                  </SelectContent>
-                </Select>
+                <Input
+                  data-testid="service-form-client"
+                  value={form.cliente}
+                  onChange={(e) => setForm((p) => ({ ...p, cliente: e.target.value }))}
+                  className="rounded-xl border-white/10 bg-black/30"
+                  placeholder="Ex: Dona Marizia Ipanema"
+                  required
+                />
+              </div>
+
+              <div className="space-y-1">
+                <div className="text-xs text-zinc-200/70">Contato</div>
+                <Input
+                  data-testid="service-form-contact"
+                  value={form.contato}
+                  onChange={(e) => setForm((p) => ({ ...p, contato: e.target.value }))}
+                  className="rounded-xl border-white/10 bg-black/30"
+                  placeholder="(21) 00000-0000"
+                />
+              </div>
+
+              <div className="space-y-1 md:col-span-2">
+                <div className="text-xs text-zinc-200/70">Local</div>
+                <Input
+                  data-testid="service-form-local"
+                  value={form.local}
+                  onChange={(e) => setForm((p) => ({ ...p, local: e.target.value }))}
+                  className="rounded-xl border-white/10 bg-black/30"
+                  placeholder="Endereço do serviço"
+                />
               </div>
 
               <div className="space-y-1">
@@ -382,43 +455,16 @@ export default function ServicesPage() {
                 <Input
                   data-testid="service-form-date"
                   type="date"
-                  value={form.date}
-                  onChange={(e) => setForm((p) => ({ ...p, date: e.target.value }))}
+                  value={form.data}
+                  onChange={(e) => setForm((p) => ({ ...p, data: e.target.value }))}
                   className="rounded-xl border-white/10 bg-black/30"
                   required
-                />
-              </div>
-
-              <div className="space-y-1 md:col-span-2">
-                <div className="text-xs text-zinc-200/70">Tipo de serviço *</div>
-                <Input
-                  data-testid="service-form-type"
-                  value={form.service_type}
-                  onChange={(e) => setForm((p) => ({ ...p, service_type: e.target.value }))}
-                  className="rounded-xl border-white/10 bg-black/30"
-                  placeholder="Ex: Desinsetização (baratas)"
-                  required
-                />
-              </div>
-
-              <div className="space-y-1">
-                <div className="text-xs text-zinc-200/70">Valor</div>
-                <Input
-                  data-testid="service-form-value"
-                  type="number"
-                  step="0.01"
-                  value={form.value}
-                  onChange={(e) => setForm((p) => ({ ...p, value: e.target.value }))}
-                  className="rounded-xl border-white/10 bg-black/30"
                 />
               </div>
 
               <div className="space-y-1">
                 <div className="text-xs text-zinc-200/70">Status</div>
-                <Select
-                  value={form.status}
-                  onValueChange={(v) => setForm((p) => ({ ...p, status: v }))}
-                >
+                <Select value={form.status} onValueChange={(v) => setForm((p) => ({ ...p, status: v }))}>
                   <SelectTrigger
                     data-testid="service-form-status"
                     className="rounded-xl border-white/10 bg-black/30"
@@ -426,14 +472,37 @@ export default function ServicesPage() {
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem data-testid="service-form-status-pendente" value="PENDENTE">
-                      PENDENTE
+                    <SelectItem data-testid="service-form-status-pendente" value="Pendente">
+                      Pendente
                     </SelectItem>
-                    <SelectItem data-testid="service-form-status-concluido" value="CONCLUIDO">
-                      CONCLUIDO
+                    <SelectItem data-testid="service-form-status-pago" value="Pago">
+                      Pago
                     </SelectItem>
                   </SelectContent>
                 </Select>
+              </div>
+
+              <div className="space-y-1 md:col-span-2">
+                <div className="text-xs text-zinc-200/70">Tipo</div>
+                <Input
+                  data-testid="service-form-type"
+                  value={form.tipo}
+                  onChange={(e) => setForm((p) => ({ ...p, tipo: e.target.value }))}
+                  className="rounded-xl border-white/10 bg-black/30"
+                  placeholder="Ex: dedetização baratas e formigas"
+                />
+              </div>
+
+              <div className="space-y-1 md:col-span-2">
+                <div className="text-xs text-zinc-200/70">Valor</div>
+                <Input
+                  data-testid="service-form-value"
+                  type="number"
+                  step="0.01"
+                  value={form.valor}
+                  onChange={(e) => setForm((p) => ({ ...p, valor: e.target.value }))}
+                  className="rounded-xl border-white/10 bg-black/30"
+                />
               </div>
             </div>
 

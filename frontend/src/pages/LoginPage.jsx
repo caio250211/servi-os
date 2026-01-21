@@ -1,74 +1,37 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
+import { useAuth } from "@/context/AuthContext";
+import { LogIn } from "lucide-react";
 
 const LOGO_URL =
   "https://customer-assets.emergentagent.com/job_2460b93f-9170-44ea-8a4c-717f4e4be696/artifacts/6cc67isd_logo.png.JPG.png";
 
 export default function LoginPage() {
   const nav = useNavigate();
-  const { login, registerFirstUser, user } = useAuth();
-
-  const [tab, setTab] = useState("login");
-
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-
-  const [nameReg, setNameReg] = useState("");
-  const [usernameReg, setUsernameReg] = useState("");
-  const [passwordReg, setPasswordReg] = useState("");
+  const { user, loading, loginWithGoogle } = useAuth();
 
   useEffect(() => {
-    if (user) nav("/");
-  }, [user, nav]);
+    if (!loading && user) nav("/");
+  }, [user, loading, nav]);
 
-  const onLogin = async (e) => {
-    e.preventDefault();
+  const onGoogle = async () => {
     try {
-      await login({ username, password });
-      nav("/");
+      await loginWithGoogle();
+      // se for redirect, o firebase vai voltar logado
     } catch (err) {
       toast({
         title: "Não foi possível entrar",
-        description:
-          err?.response?.data?.detail || "Verifique usuário e senha e tente novamente.",
-        variant: "destructive",
-      });
-    }
-  };
-
-  const onRegister = async (e) => {
-    e.preventDefault();
-    try {
-      await registerFirstUser({
-        name: nameReg,
-        username: usernameReg,
-        password: passwordReg,
-      });
-      toast({
-        title: "Usuário criado",
-        description: "Agora você já pode entrar com usuário e senha.",
-      });
-      setTab("login");
-    } catch (err) {
-      toast({
-        title: "Não foi possível criar",
-        description: err?.response?.data?.detail || "Tente novamente.",
+        description: "Tente novamente. Se o popup for bloqueado, permita popups.",
         variant: "destructive",
       });
     }
   };
 
   return (
-    <div
-      data-testid="login-page"
-      className="min-h-screen bg-[#07070b] text-zinc-50"
-    >
+    <div data-testid="login-page" className="min-h-screen bg-[#07070b] text-zinc-50">
       <div className="pointer-events-none fixed inset-0 opacity-60">
         <div className="absolute -top-40 left-1/3 h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle_at_center,rgba(220,38,38,0.38),transparent_55%)]" />
         <div className="absolute -bottom-40 right-1/3 h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle_at_center,rgba(244,63,94,0.22),transparent_55%)]" />
@@ -87,10 +50,7 @@ export default function LoginPage() {
                 />
               </div>
               <div className="min-w-0">
-                <div
-                  data-testid="login-title"
-                  className="text-2xl font-semibold tracking-tight"
-                >
+                <div data-testid="login-title" className="text-2xl font-semibold tracking-tight">
                   InsectControl Tupy
                 </div>
                 <div
@@ -109,7 +69,7 @@ export default function LoginPage() {
               >
                 <div className="text-sm font-medium">Clientes</div>
                 <div className="mt-1 text-xs text-zinc-200/70">
-                  Cadastre contatos, endereço e informações básicas.
+                  Cadastre e organize seus clientes.
                 </div>
               </div>
               <div
@@ -118,7 +78,7 @@ export default function LoginPage() {
               >
                 <div className="text-sm font-medium">Serviços</div>
                 <div className="mt-1 text-xs text-zinc-200/70">
-                  Registre data, tipo de serviço, valor e status.
+                  Seus serviços do Firebase aparecem automaticamente.
                 </div>
               </div>
               <div
@@ -148,106 +108,32 @@ export default function LoginPage() {
           >
             <CardHeader>
               <CardTitle data-testid="login-card-title" className="text-xl">
-                Entrar
+                Entrar com Google
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <Tabs value={tab} onValueChange={setTab}>
-                <TabsList
-                  data-testid="login-tabs"
-                  className="grid w-full grid-cols-2 bg-black/20"
-                >
-                  <TabsTrigger data-testid="tab-login" value="login">
-                    Login
-                  </TabsTrigger>
-                  <TabsTrigger data-testid="tab-register" value="register">
-                    Criar usuário
-                  </TabsTrigger>
-                </TabsList>
+              <div
+                data-testid="login-google-info"
+                className="mb-4 rounded-xl border border-white/10 bg-black/20 p-3 text-xs text-zinc-200/70"
+              >
+                Use o seu Gmail para acessar e ver apenas seus serviços (campo <b>usuario</b>).
+              </div>
 
-                <TabsContent value="login" className="mt-4">
-                  <form onSubmit={onLogin} className="space-y-3">
-                    <div className="space-y-1">
-                      <div className="text-xs text-zinc-200/70">Usuário</div>
-                      <Input
-                        data-testid="login-username-input"
-                        value={username}
-                        onChange={(e) => setUsername(e.target.value)}
-                        placeholder="ex: admin"
-                        className="rounded-xl border-white/10 bg-black/30"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <div className="text-xs text-zinc-200/70">Senha</div>
-                      <Input
-                        data-testid="login-password-input"
-                        type="password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        placeholder="••••••••"
-                        className="rounded-xl border-white/10 bg-black/30"
-                      />
-                    </div>
-                    <Button
-                      data-testid="login-submit-button"
-                      type="submit"
-                      className="w-full rounded-xl bg-gradient-to-r from-red-600 to-rose-500 text-white hover:from-red-600/90 hover:to-rose-500/90"
-                    >
-                      Entrar
-                    </Button>
-                  </form>
-                </TabsContent>
+              <Button
+                data-testid="login-google-button"
+                onClick={onGoogle}
+                className="w-full rounded-xl bg-gradient-to-r from-red-600 to-rose-500 text-white hover:from-red-600/90 hover:to-rose-500/90"
+              >
+                <LogIn className="mr-2 h-4 w-4" />
+                Entrar com Google
+              </Button>
 
-                <TabsContent value="register" className="mt-4">
-                  <div
-                    data-testid="register-info"
-                    className="mb-4 rounded-xl border border-white/10 bg-black/20 p-3 text-xs text-zinc-200/70"
-                  >
-                    Crie um novo usuário para acessar o sistema.
-                  </div>
-
-                  <form onSubmit={onRegister} className="space-y-3">
-                    <div className="space-y-1">
-                      <div className="text-xs text-zinc-200/70">Nome</div>
-                      <Input
-                        data-testid="register-name-input"
-                        value={nameReg}
-                        onChange={(e) => setNameReg(e.target.value)}
-                        placeholder="Seu nome"
-                        className="rounded-xl border-white/10 bg-black/30"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <div className="text-xs text-zinc-200/70">Usuário</div>
-                      <Input
-                        data-testid="register-username-input"
-                        value={usernameReg}
-                        onChange={(e) => setUsernameReg(e.target.value)}
-                        placeholder="ex: admin"
-                        className="rounded-xl border-white/10 bg-black/30"
-                      />
-                    </div>
-                    <div className="space-y-1">
-                      <div className="text-xs text-zinc-200/70">Senha</div>
-                      <Input
-                        data-testid="register-password-input"
-                        type="password"
-                        value={passwordReg}
-                        onChange={(e) => setPasswordReg(e.target.value)}
-                        placeholder="mínimo 6 caracteres"
-                        className="rounded-xl border-white/10 bg-black/30"
-                      />
-                    </div>
-                    <Button
-                      data-testid="register-submit-button"
-                      type="submit"
-                      className="w-full rounded-xl bg-gradient-to-r from-red-600 to-rose-500 text-white hover:from-red-600/90 hover:to-rose-500/90"
-                    >
-                      Criar usuário
-                    </Button>
-                  </form>
-                </TabsContent>
-              </Tabs>
+              <div
+                data-testid="login-google-note"
+                className="mt-3 text-xs text-zinc-200/60"
+              >
+                Se nada acontecer, pode ser bloqueio de popup. Nesse caso, permita popups e tente novamente.
+              </div>
             </CardContent>
           </Card>
         </div>

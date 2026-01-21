@@ -41,10 +41,7 @@ export default function AppShell() {
   const location = useLocation();
 
   return (
-    <div
-      data-testid="app-shell"
-      className="min-h-screen bg-[#07070b] text-zinc-50"
-    >
+    <div data-testid="app-shell" className="min-h-screen bg-[#07070b] text-zinc-50">
       <div className="pointer-events-none fixed inset-0 opacity-60">
         <div className="absolute -top-40 left-1/4 h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle_at_center,rgba(220,38,38,0.35),transparent_55%)]" />
         <div className="absolute -bottom-40 right-1/4 h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle_at_center,rgba(244,63,94,0.22),transparent_55%)]" />
@@ -65,10 +62,7 @@ export default function AppShell() {
               />
             </div>
             <div className="min-w-0">
-              <div
-                data-testid="sidebar-title"
-                className="truncate text-sm font-semibold"
-              >
+              <div data-testid="sidebar-title" className="truncate text-sm font-semibold">
                 InsectControl Tupy
               </div>
               <div
@@ -81,30 +75,10 @@ export default function AppShell() {
           </div>
 
           <div className="mt-5 space-y-1">
-            <SidebarItem
-              to="/"
-              icon={LayoutGrid}
-              label="Dashboard"
-              testid="nav-dashboard"
-            />
-            <SidebarItem
-              to="/clientes"
-              icon={Users}
-              label="Clientes"
-              testid="nav-clients"
-            />
-            <SidebarItem
-              to="/servicos"
-              icon={ClipboardList}
-              label="Serviços"
-              testid="nav-services"
-            />
-            <SidebarItem
-              to="/agenda"
-              icon={CalendarDays}
-              label="Agenda"
-              testid="nav-agenda"
-            />
+            <SidebarItem to="/" icon={LayoutGrid} label="Dashboard" testid="nav-dashboard" />
+            <SidebarItem to="/clientes" icon={Users} label="Clientes" testid="nav-clients" />
+            <SidebarItem to="/servicos" icon={ClipboardList} label="Serviços" testid="nav-services" />
+            <SidebarItem to="/agenda" icon={CalendarDays} label="Agenda" testid="nav-agenda" />
           </div>
 
           <div className="mt-auto space-y-3 pt-4">
@@ -114,13 +88,10 @@ export default function AppShell() {
             >
               <div className="text-xs text-zinc-200/70">Logado como</div>
               <div data-testid="sidebar-user-name" className="truncate text-sm">
-                {user?.name || "—"}
+                {user?.displayName || user?.email || "—"}
               </div>
-              <div
-                data-testid="sidebar-user-username"
-                className="truncate text-xs text-zinc-200/70"
-              >
-                @{user?.username || ""}
+              <div data-testid="sidebar-user-username" className="truncate text-xs text-zinc-200/70">
+                {user?.email || ""}
               </div>
             </div>
 
@@ -134,10 +105,7 @@ export default function AppShell() {
               Sair
             </Button>
 
-            <div
-              data-testid="sidebar-route-indicator"
-              className="text-[11px] text-zinc-200/50"
-            >
+            <div data-testid="sidebar-route-indicator" className="text-[11px] text-zinc-200/50">
               {location.pathname}
             </div>
           </div>

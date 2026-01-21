@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import PageHeader from "@/components/app/PageHeader";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -19,20 +19,37 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { api } from "@/lib/api";
 import { toast } from "@/hooks/use-toast";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  orderBy,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
+import { db } from "@/lib/firebase";
+import { useAuth } from "@/context/AuthContext";
+
+const COLLECTION_NAME = "clientes";
+
 const emptyForm = {
-  name: "",
-  phone: "",
-  address: "",
-  city: "",
-  neighborhood: "",
+  nome: "",
+  telefone: "",
+  endereco: "",
+  cidade: "",
+  bairro: "",
   email: "",
 };
 
 export default function ClientsPage() {
+  const { user } = useAuth();
+
   const [q, setQ] = useState("");
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -42,13 +59,36 @@ export default function ClientsPage() {
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(emptyForm);
 
-  const title = useMemo(() => (mode === "edit" ? "Editar cliente" : "Novo cliente"), [mode]);
-
   const load = async () => {
+    if (!user?.email) return;
     setLoading(true);
+
     try {
-      const { data } = await api.get("/clients", { params: q ? { q } : {} });
-      setClients(data);
+      const qy = query(
+        collection(db, COLLECTION_NAME),
+        where("usuario", "==", user.email),
+        orderBy("nome", "asc")
+      );
+      const snap = await getDocs(qy);
+      const items = snap.docs
+        .map((d) => ({ id: d.id, ...d.data() }))
+        .filter((c) => {
+          if (!q.trim()) return true;
+          const s = q.trim().toLowerCase();
+          return (
+            String(c.nome || "").toLowerCase().includes(s) ||
+            String(c.telefone || "").toLowerCase().includes(s)
+          );
+        });
+      setClients(items);
+    } catch (err) {
+      toast({
+        title: "Erro ao carregar clientes",
+        description:
+          err?.message ||
+          "Verifique se a collection 'clientes' existe e as regras do Firestore permitem leitura.",
+        variant: "destructive",
+      });
     } finally {
       setLoading(false);
     }
@@ -57,7 +97,7 @@ export default function ClientsPage() {
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [user?.email]);
 
   const openCreate = () => {
     setMode("create");
@@ -70,11 +110,11 @@ export default function ClientsPage() {
     setMode("edit");
     setEditingId(c.id);
     setForm({
-      name: c.name || "",
-      phone: c.phone || "",
-      address: c.address || "",
-      city: c.city || "",
-      neighborhood: c.neighborhood || "",
+      nome: c.nome || "",
+      telefone: c.telefone || "",
+      endereco: c.endereco || "",
+      cidade: c.cidade || "",
+      bairro: c.bairro || "",
       email: c.email || "",
     });
     setOpen(true);
@@ -82,40 +122,56 @@ export default function ClientsPage() {
 
   const onSave = async (e) => {
     e.preventDefault();
+
+    if (!user?.email) {
+      toast({ title: "Faça login", variant: "destructive" });
+      return;
+    }
+
     try {
+      const payload = {
+        ...form,
+        nome: String(form.nome || "").trim(),
+        usuario: user.email,
+        criado: new Date().toISOString(),
+      };
+
+      if (!payload.nome) {
+        toast({ title: "Nome é obrigatório", variant: "destructive" });
+        return;
+      }
+
       if (mode === "create") {
-        await api.post("/clients", {
-          ...form,
-          name: form.name,
-        });
+        await addDoc(collection(db, COLLECTION_NAME), payload);
         toast({ title: "Cliente criado", description: "Cliente cadastrado com sucesso." });
       } else {
-        await api.put(`/clients/${editingId}`, { ...form });
+        await updateDoc(doc(db, COLLECTION_NAME, editingId), payload);
         toast({ title: "Cliente atualizado", description: "Alterações salvas." });
       }
+
       setOpen(false);
       await load();
     } catch (err) {
       toast({
         title: "Erro ao salvar",
-        description: err?.response?.data?.detail || "Tente novamente.",
+        description: err?.message || "Tente novamente.",
         variant: "destructive",
       });
     }
   };
 
   const onDelete = async (c) => {
-    const ok = window.confirm(`Excluir o cliente "${c.name}"?`);
+    const ok = window.confirm(`Excluir o cliente "${c.nome}"?`);
     if (!ok) return;
 
     try {
-      await api.delete(`/clients/${c.id}`);
+      await deleteDoc(doc(db, COLLECTION_NAME, c.id));
       toast({ title: "Cliente excluído" });
       await load();
     } catch (err) {
       toast({
         title: "Não foi possível excluir",
-        description: err?.response?.data?.detail || "Tente novamente.",
+        description: err?.message || "Tente novamente.",
         variant: "destructive",
       });
     }
@@ -125,7 +181,7 @@ export default function ClientsPage() {
     <div data-testid="clients-page" className="pb-10">
       <PageHeader
         title="Clientes"
-        subtitle="Cadastre e encontre rapidamente seus clientes."
+        subtitle={`Fonte: Firebase / Firestore (collection: ${COLLECTION_NAME}).`}
         right={
           <Button
             data-testid="clients-new-button"
@@ -211,10 +267,10 @@ export default function ClientsPage() {
                 ) : (
                   clients.map((c) => (
                     <TableRow key={c.id} data-testid={`client-row-${c.id}`}>
-                      <TableCell data-testid={`client-name-${c.id}`}>{c.name}</TableCell>
-                      <TableCell data-testid={`client-phone-${c.id}`}>{c.phone || "—"}</TableCell>
+                      <TableCell data-testid={`client-name-${c.id}`}>{c.nome}</TableCell>
+                      <TableCell data-testid={`client-phone-${c.id}`}>{c.telefone || "—"}</TableCell>
                       <TableCell data-testid={`client-city-${c.id}`}>
-                        {c.city || "—"}{c.neighborhood ? ` / ${c.neighborhood}` : ""}
+                        {c.cidade || "—"}{c.bairro ? ` / ${c.bairro}` : ""}
                       </TableCell>
                       <TableCell data-testid={`client-email-${c.id}`}>{c.email || "—"}</TableCell>
                       <TableCell className="text-right">
@@ -252,9 +308,11 @@ export default function ClientsPage() {
           className="rounded-2xl border-white/10 bg-[#0b0b10] text-zinc-50"
         >
           <DialogHeader>
-            <DialogTitle data-testid="clients-dialog-title">{title}</DialogTitle>
+            <DialogTitle data-testid="clients-dialog-title">
+              {mode === "edit" ? "Editar cliente" : "Novo cliente"}
+            </DialogTitle>
             <DialogDescription data-testid="clients-dialog-desc">
-              Preencha os dados principais do cliente.
+              Campos básicos para cadastro no Firestore.
             </DialogDescription>
           </DialogHeader>
 
@@ -264,8 +322,8 @@ export default function ClientsPage() {
                 <div className="text-xs text-zinc-200/70">Nome *</div>
                 <Input
                   data-testid="client-form-name"
-                  value={form.name}
-                  onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
+                  value={form.nome}
+                  onChange={(e) => setForm((p) => ({ ...p, nome: e.target.value }))}
                   className="rounded-xl border-white/10 bg-black/30"
                   placeholder="Nome do cliente"
                   required
@@ -275,18 +333,18 @@ export default function ClientsPage() {
                 <div className="text-xs text-zinc-200/70">Telefone</div>
                 <Input
                   data-testid="client-form-phone"
-                  value={form.phone}
-                  onChange={(e) => setForm((p) => ({ ...p, phone: e.target.value }))}
+                  value={form.telefone}
+                  onChange={(e) => setForm((p) => ({ ...p, telefone: e.target.value }))}
                   className="rounded-xl border-white/10 bg-black/30"
                   placeholder="(21) 00000-0000"
                 />
               </div>
-              <div className="space-y-1">
+              <div className="space-y-1 md:col-span-2">
                 <div className="text-xs text-zinc-200/70">Endereço</div>
                 <Input
                   data-testid="client-form-address"
-                  value={form.address}
-                  onChange={(e) => setForm((p) => ({ ...p, address: e.target.value }))}
+                  value={form.endereco}
+                  onChange={(e) => setForm((p) => ({ ...p, endereco: e.target.value }))}
                   className="rounded-xl border-white/10 bg-black/30"
                   placeholder="Rua, número"
                 />
@@ -295,8 +353,8 @@ export default function ClientsPage() {
                 <div className="text-xs text-zinc-200/70">Cidade</div>
                 <Input
                   data-testid="client-form-city"
-                  value={form.city}
-                  onChange={(e) => setForm((p) => ({ ...p, city: e.target.value }))}
+                  value={form.cidade}
+                  onChange={(e) => setForm((p) => ({ ...p, cidade: e.target.value }))}
                   className="rounded-xl border-white/10 bg-black/30"
                   placeholder="Cidade"
                 />
@@ -305,13 +363,13 @@ export default function ClientsPage() {
                 <div className="text-xs text-zinc-200/70">Bairro</div>
                 <Input
                   data-testid="client-form-neighborhood"
-                  value={form.neighborhood}
-                  onChange={(e) => setForm((p) => ({ ...p, neighborhood: e.target.value }))}
+                  value={form.bairro}
+                  onChange={(e) => setForm((p) => ({ ...p, bairro: e.target.value }))}
                   className="rounded-xl border-white/10 bg-black/30"
                   placeholder="Bairro"
                 />
               </div>
-              <div className="space-y-1">
+              <div className="space-y-1 md:col-span-2">
                 <div className="text-xs text-zinc-200/70">E-mail</div>
                 <Input
                   data-testid="client-form-email"
