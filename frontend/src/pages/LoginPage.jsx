@@ -54,7 +54,7 @@ export default function LoginPage() {
         title: "Usuário criado",
         description: "Agora você já pode entrar com usuário e senha.",
       });
-      setHasUser(true);
+      setTab("login");
     } catch (err) {
       toast({
         title: "Não foi possível criar",
