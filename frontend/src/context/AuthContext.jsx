@@ -74,7 +74,7 @@ export function AuthProvider({ children }) {
       registerFirstUser,
       refreshMe,
     }),
-    [token, user, loading]
+    [token, user, loading, refreshMe]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
