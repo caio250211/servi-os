@@ -178,7 +178,7 @@ export default function DashboardPage() {
                           {s.status || "—"}
                         </Badge>
                       </TableCell>
-                      <TableCell data-testid={`dashboard-service-value-${s.id}`} className="text-right">
+                      <TableCell data-testid={`dashboard-service-value-${s.id}`} className="text-right text-white/90">
                         {currencyBR(s.valor)}
                       </TableCell>
                     </TableRow>
