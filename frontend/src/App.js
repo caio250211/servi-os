@@ -10,13 +10,13 @@ import DashboardPage from "@/pages/DashboardPage";
 import ClientsPage from "@/pages/ClientsPage";
 import ServicesPage from "@/pages/ServicesPage";
 import AgendaPage from "@/pages/AgendaPage";
+import ServicesSummaryPage from "@/pages/ServicesSummaryPage";
 
 import { Toaster } from "@/components/ui/toaster";
 
 function Protected({ children }) {
   const { user, loading, initialized } = useAuth();
 
-  // IMPORTANT: não redirecionar antes do Firebase terminar a inicialização
   if (loading || !initialized) {
     return (
       <div data-testid="auth-loading" className="min-h-screen bg-[#050509] text-zinc-50">
@@ -55,6 +55,7 @@ export default function App() {
             <Route path="clientes" element={<ClientsPage />} />
             <Route path="servicos" element={<ServicesPage />} />
             <Route path="agenda" element={<AgendaPage />} />
+            <Route path="resumo" element={<ServicesSummaryPage />} />
           </Route>
 
           <Route path="*" element={<Navigate to="/" replace />} />

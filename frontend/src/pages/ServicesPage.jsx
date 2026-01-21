@@ -67,12 +67,8 @@ export default function ServicesPage() {
   const [loading, setLoading] = useState(true);
 
   const [statusFilter, setStatusFilter] = useState("ALL");
-  const [from, setFrom] = useState(
-    format(new Date(new Date().getFullYear(), new Date().getMonth(), 1), "yyyy-MM-dd")
-  );
-  const [to, setTo] = useState(
-    format(new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0), "yyyy-MM-dd")
-  );
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
 
   const [yearTab, setYearTab] = useState("ALL");
 
@@ -80,6 +76,21 @@ export default function ServicesPage() {
   const [mode, setMode] = useState("create");
   const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(emptyForm);
+
+  // Ajuste principal: quando selecionar 2025/2026, o período vira o ano inteiro
+  useEffect(() => {
+    if (yearTab === "2025") {
+      setFrom("2025-01-01");
+      setTo("2025-12-31");
+    } else if (yearTab === "2026") {
+      setFrom("2026-01-01");
+      setTo("2026-12-31");
+    } else {
+      // ALL: mostra tudo (sem travar no mês atual)
+      setFrom("");
+      setTo("");
+    }
+  }, [yearTab]);
 
   const load = async () => {
     if (!user?.email) return;
@@ -93,26 +104,18 @@ export default function ServicesPage() {
         .map((d) => ({ id: d.id, ...d.data() }))
         .filter((s) => {
           const dt = String(s.data || "");
-          if (from && dt < from) return false;
-          if (to && dt > to) return false;
+          if (from && dt && dt < from) return false;
+          if (to && dt && dt > to) return false;
           if (statusFilter !== "ALL" && String(s.status || "") !== statusFilter) return false;
           return true;
         })
         .sort((a, b) => String(b.data || "").localeCompare(String(a.data || "")));
 
       setServices(items);
-
-      // Sugestão automática: se tiver 2026/2025, mantemos tabs
-      const years = Array.from(new Set(items.map(yearFromService).filter(Boolean))).sort().reverse();
-      if (yearTab === "ALL" && years.includes("2026")) {
-        // não muda automaticamente, só garante que as opções existam
-      }
     } catch (err) {
       toast({
         title: "Erro ao carregar serviços",
-        description:
-          err?.message ||
-          "Verifique as regras do Firestore (leitura) e se você está logado.",
+        description: err?.message || "Verifique as regras do Firestore e se você está logado.",
         variant: "destructive",
       });
     } finally {
@@ -123,7 +126,7 @@ export default function ServicesPage() {
   useEffect(() => {
     load();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user?.email]);
+  }, [user?.email, statusFilter, from, to]);
 
   const servicesByYear = useMemo(() => {
     const all = services;
@@ -131,12 +134,6 @@ export default function ServicesPage() {
     const y2025 = all.filter((s) => yearFromService(s) === "2025");
     return { all, y2026, y2025 };
   }, [services]);
-
-  const visibleServices = useMemo(() => {
-    if (yearTab === "2026") return servicesByYear.y2026;
-    if (yearTab === "2025") return servicesByYear.y2025;
-    return servicesByYear.all;
-  }, [yearTab, servicesByYear]);
 
   const title = useMemo(() => (mode === "edit" ? "Editar serviço" : "Novo serviço"), [mode]);
 
@@ -198,18 +195,12 @@ export default function ServicesPage() {
       setOpen(false);
       await load();
     } catch (err) {
-      toast({
-        title: "Erro ao salvar",
-        description: err?.message || "Tente novamente.",
-        variant: "destructive",
-      });
+      toast({ title: "Erro ao salvar", description: err?.message || "Tente novamente.", variant: "destructive" });
     }
   };
 
   const onDelete = async (s) => {
-    const ok = window.confirm(
-      `Excluir o serviço de ${s.data ? format(new Date(s.data), "dd/MM/yyyy") : "—"}?`
-    );
+    const ok = window.confirm(`Excluir o serviço de ${s.data ? format(new Date(s.data), "dd/MM/yyyy") : "—"}?`);
     if (!ok) return;
 
     try {
@@ -217,11 +208,7 @@ export default function ServicesPage() {
       toast({ title: "Serviço excluído" });
       await load();
     } catch (err) {
-      toast({
-        title: "Não foi possível excluir",
-        description: err?.message || "Tente novamente.",
-        variant: "destructive",
-      });
+      toast({ title: "Não foi possível excluir", description: err?.message || "Tente novamente.", variant: "destructive" });
     }
   };
 
@@ -242,19 +229,13 @@ export default function ServicesPage() {
         }
       />
 
-      <Card
-        data-testid="services-card"
-        className="rounded-2xl border-white/10 bg-white/5 backdrop-blur-md"
-      >
+      <Card data-testid="services-card" className="rounded-2xl border-white/10 bg-white/5 backdrop-blur-md">
         <CardContent className="p-4">
           <Tabs value={yearTab} onValueChange={setYearTab}>
             <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-              <TabsList
-                data-testid="services-year-tabs"
-                className="bg-black/25"
-              >
+              <TabsList data-testid="services-year-tabs" className="bg-black/25">
                 <TabsTrigger data-testid="services-year-all" value="ALL">
-                  Todos ({servicesByYear.all.length})
+                  Todos
                 </TabsTrigger>
                 <TabsTrigger data-testid="services-year-2026" value="2026">
                   2026 ({servicesByYear.y2026.length})
@@ -264,40 +245,37 @@ export default function ServicesPage() {
                 </TabsTrigger>
               </TabsList>
 
-              <div className="text-xs text-zinc-200/60" data-testid="services-year-hint">
-                Separação automática por ano usando o campo <b>data</b>.
+              <div data-testid="services-year-hint" className="text-xs text-zinc-200/70">
+                2025/2026 mostram o ano inteiro automaticamente.
               </div>
             </div>
 
             <TabsContent value={yearTab}>
               <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-[1fr_1fr_1fr_auto] md:items-end">
                 <div className="space-y-1">
-                  <div className="text-xs text-zinc-200/70">De</div>
+                  <div className="text-xs text-zinc-200/80">De</div>
                   <Input
                     data-testid="services-filter-from"
                     type="date"
                     value={from}
                     onChange={(e) => setFrom(e.target.value)}
-                    className="rounded-xl border-white/10 bg-black/30"
+                    className="rounded-xl border-white/10 bg-black/30 text-zinc-50 placeholder:text-zinc-200/40"
                   />
                 </div>
                 <div className="space-y-1">
-                  <div className="text-xs text-zinc-200/70">Até</div>
+                  <div className="text-xs text-zinc-200/80">Até</div>
                   <Input
                     data-testid="services-filter-to"
                     type="date"
                     value={to}
                     onChange={(e) => setTo(e.target.value)}
-                    className="rounded-xl border-white/10 bg-black/30"
+                    className="rounded-xl border-white/10 bg-black/30 text-zinc-50 placeholder:text-zinc-200/40"
                   />
                 </div>
                 <div className="space-y-1">
-                  <div className="text-xs text-zinc-200/70">Status</div>
+                  <div className="text-xs text-zinc-200/80">Status</div>
                   <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger
-                      data-testid="services-filter-status"
-                      className="rounded-xl border-white/10 bg-black/30"
-                    >
+                    <SelectTrigger data-testid="services-filter-status" className="rounded-xl border-white/10 bg-black/30 text-zinc-50">
                       <SelectValue placeholder="Todos" />
                     </SelectTrigger>
                     <SelectContent>
@@ -315,103 +293,78 @@ export default function ServicesPage() {
                 </div>
                 <div className="flex gap-2">
                   <Button
-                    data-testid="services-apply-filters"
-                    variant="outline"
-                    className="rounded-xl border-white/15 bg-white/5 text-zinc-50 hover:bg-white/10"
-                    onClick={() => load()}
-                  >
-                    Aplicar
-                  </Button>
-                  <Button
                     data-testid="services-reset-filters"
                     variant="outline"
-                    className="rounded-xl border-white/15 bg-white/5 text-zinc-50 hover:bg-white/10"
+                    className="rounded-xl border-white/15 bg-white/5 text-white hover:bg-white/10"
                     onClick={() => {
                       setStatusFilter("ALL");
-                      const now = new Date();
-                      setFrom(format(new Date(now.getFullYear(), now.getMonth(), 1), "yyyy-MM-dd"));
-                      setTo(format(new Date(now.getFullYear(), now.getMonth() + 1, 0), "yyyy-MM-dd"));
+                      setYearTab("ALL");
+                      setFrom("");
+                      setTo("");
                     }}
                   >
-                    Reset
+                    Limpar
                   </Button>
                 </div>
               </div>
 
-              <div className="mt-4 overflow-hidden rounded-xl border border-white/10">
+              <div className="mt-4 overflow-hidden rounded-xl border border-white/10 bg-black/20">
                 <Table data-testid="services-table">
                   <TableHeader>
-                    <TableRow>
-                      <TableHead>Data</TableHead>
-                      <TableHead>Cliente</TableHead>
-                      <TableHead>Contato</TableHead>
-                      <TableHead>Local</TableHead>
-                      <TableHead>Tipo</TableHead>
-                      <TableHead>Status</TableHead>
-                      <TableHead className="text-right">Valor</TableHead>
-                      <TableHead className="text-right">Ações</TableHead>
+                    <TableRow className="border-white/10">
+                      <TableHead className="text-zinc-200">Data</TableHead>
+                      <TableHead className="text-zinc-200">Cliente</TableHead>
+                      <TableHead className="text-zinc-200">Contato</TableHead>
+                      <TableHead className="text-zinc-200">Local</TableHead>
+                      <TableHead className="text-zinc-200">Tipo</TableHead>
+                      <TableHead className="text-zinc-200">Status</TableHead>
+                      <TableHead className="text-right text-zinc-200">Valor</TableHead>
+                      <TableHead className="text-right text-zinc-200">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {loading ? (
-                      <TableRow>
-                        <TableCell
-                          data-testid="services-loading"
-                          colSpan={8}
-                          className="p-6 text-sm text-zinc-200/70"
-                        >
+                      <TableRow className="border-white/10">
+                        <TableCell data-testid="services-loading" colSpan={8} className="p-6 text-sm text-zinc-200/80">
                           Carregando…
                         </TableCell>
                       </TableRow>
                     ) : !user?.email ? (
-                      <TableRow>
-                        <TableCell
-                          data-testid="services-not-logged"
-                          colSpan={8}
-                          className="p-6 text-sm text-zinc-200/60"
-                        >
+                      <TableRow className="border-white/10">
+                        <TableCell data-testid="services-not-logged" colSpan={8} className="p-6 text-sm text-zinc-200/70">
                           Faça login com Google para ver seus serviços.
                         </TableCell>
                       </TableRow>
-                    ) : visibleServices.length === 0 ? (
-                      <TableRow>
-                        <TableCell
-                          data-testid="services-empty"
-                          colSpan={8}
-                          className="p-6 text-sm text-zinc-200/60"
-                        >
-                          Nenhum serviço encontrado para esse filtro.
+                    ) : services.length === 0 ? (
+                      <TableRow className="border-white/10">
+                        <TableCell data-testid="services-empty" colSpan={8} className="p-6 text-sm text-zinc-200/70">
+                          Nenhum serviço encontrado.
                         </TableCell>
                       </TableRow>
                     ) : (
-                      visibleServices.map((s) => (
-                        <TableRow key={s.id} data-testid={`service-row-${s.id}`}>
-                          <TableCell data-testid={`service-date-${s.id}`}>
-                            {s.data
-                              ? format(new Date(s.data), "dd/MM/yyyy", { locale: ptBR })
-                              : "—"}
+                      services.map((s) => (
+                        <TableRow key={s.id} data-testid={`service-row-${s.id}`} className="border-white/10 hover:bg-white/5">
+                          <TableCell data-testid={`service-date-${s.id}`} className="text-white font-medium">
+                            {s.data ? format(new Date(s.data), "dd/MM/yyyy", { locale: ptBR }) : "—"}
                           </TableCell>
-                          <TableCell data-testid={`service-client-${s.id}`}>{s.cliente || "—"}</TableCell>
-                          <TableCell data-testid={`service-contact-${s.id}`}>{s.contato || "—"}</TableCell>
-                          <TableCell
-                            data-testid={`service-local-${s.id}`}
-                            className="max-w-[320px] truncate"
-                          >
+                          <TableCell data-testid={`service-client-${s.id}`} className="text-zinc-100">
+                            {s.cliente || "—"}
+                          </TableCell>
+                          <TableCell data-testid={`service-contact-${s.id}`} className="text-zinc-100">
+                            {s.contato || "—"}
+                          </TableCell>
+                          <TableCell data-testid={`service-local-${s.id}`} className="max-w-[320px] truncate text-zinc-100">
                             {s.local || "—"}
                           </TableCell>
-                          <TableCell data-testid={`service-type-${s.id}`}>{s.tipo || "—"}</TableCell>
+                          <TableCell data-testid={`service-type-${s.id}`} className="text-zinc-100">
+                            {s.tipo || "—"}
+                          </TableCell>
                           <TableCell data-testid={`service-status-${s.id}`}>
-                            <Badge
-                              className={
-                                String(s.status).toLowerCase() === "pago"
-                                  ? "bg-emerald-500/15 text-emerald-200 border border-emerald-400/20"
-                                  : "bg-amber-500/15 text-amber-200 border border-amber-400/20"
-                              }
-                            >
+                            <Badge className={String(s.status).toLowerCase() === "pago" ? "bg-emerald-500/15 text-emerald-200 border border-emerald-400/20" : "bg-amber-500/15 text-amber-200 border border-amber-400/20"}>
                               {s.status || "—"}
                             </Badge>
                           </TableCell>
-                          <TableCell data-testid={`service-value-${s.id}`} className="text-right">
+                          <TableCell data-testid={`service-value-${s.id}`} className="text-right text-zinc-100">
                             {currencyBR(s.valor)}
                           </TableCell>
                           <TableCell className="text-right">
@@ -419,7 +372,7 @@ export default function ServicesPage() {
                               <Button
                                 data-testid={`service-edit-${s.id}`}
                                 variant="outline"
-                                className="h-9 rounded-xl border-white/15 bg-white/5 text-zinc-50 hover:bg-white/10"
+                                className="h-9 rounded-xl border-white/15 bg-white/5 text-white hover:bg-white/10"
                                 onClick={() => openEdit(s)}
                               >
                                 <Pencil className="h-4 w-4" />
@@ -427,7 +380,7 @@ export default function ServicesPage() {
                               <Button
                                 data-testid={`service-delete-${s.id}`}
                                 variant="outline"
-                                className="h-9 rounded-xl border-white/15 bg-white/5 text-zinc-50 hover:bg-white/10"
+                                className="h-9 rounded-xl border-white/15 bg-white/5 text-white hover:bg-white/10"
                                 onClick={() => onDelete(s)}
                               >
                                 <Trash2 className="h-4 w-4" />
@@ -446,10 +399,7 @@ export default function ServicesPage() {
       </Card>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent
-          data-testid="services-dialog"
-          className="rounded-2xl border-white/10 bg-[#0b0b10] text-zinc-50"
-        >
+        <DialogContent data-testid="services-dialog" className="rounded-2xl border-white/10 bg-[#0b0b10] text-zinc-50">
           <DialogHeader>
             <DialogTitle data-testid="services-dialog-title">{title}</DialogTitle>
             <DialogDescription data-testid="services-dialog-desc">
@@ -460,61 +410,55 @@ export default function ServicesPage() {
           <form onSubmit={onSave} className="space-y-3">
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <div className="space-y-1">
-                <div className="text-xs text-zinc-200/70">Cliente *</div>
+                <div className="text-xs text-zinc-200/80">Cliente *</div>
                 <Input
                   data-testid="service-form-client"
                   value={form.cliente}
                   onChange={(e) => setForm((p) => ({ ...p, cliente: e.target.value }))}
-                  className="rounded-xl border-white/10 bg-black/30"
+                  className="rounded-xl border-white/10 bg-black/30 text-zinc-50 placeholder:text-zinc-200/40"
                   placeholder="Ex: Dona Marizia Ipanema"
                   required
                 />
               </div>
 
               <div className="space-y-1">
-                <div className="text-xs text-zinc-200/70">Contato</div>
+                <div className="text-xs text-zinc-200/80">Contato</div>
                 <Input
                   data-testid="service-form-contact"
                   value={form.contato}
                   onChange={(e) => setForm((p) => ({ ...p, contato: e.target.value }))}
-                  className="rounded-xl border-white/10 bg-black/30"
+                  className="rounded-xl border-white/10 bg-black/30 text-zinc-50 placeholder:text-zinc-200/40"
                   placeholder="(21) 00000-0000"
                 />
               </div>
 
               <div className="space-y-1 md:col-span-2">
-                <div className="text-xs text-zinc-200/70">Local</div>
+                <div className="text-xs text-zinc-200/80">Local</div>
                 <Input
                   data-testid="service-form-local"
                   value={form.local}
                   onChange={(e) => setForm((p) => ({ ...p, local: e.target.value }))}
-                  className="rounded-xl border-white/10 bg-black/30"
+                  className="rounded-xl border-white/10 bg-black/30 text-zinc-50 placeholder:text-zinc-200/40"
                   placeholder="Endereço do serviço"
                 />
               </div>
 
               <div className="space-y-1">
-                <div className="text-xs text-zinc-200/70">Data *</div>
+                <div className="text-xs text-zinc-200/80">Data *</div>
                 <Input
                   data-testid="service-form-date"
                   type="date"
                   value={form.data}
                   onChange={(e) => setForm((p) => ({ ...p, data: e.target.value }))}
-                  className="rounded-xl border-white/10 bg-black/30"
+                  className="rounded-xl border-white/10 bg-black/30 text-zinc-50 placeholder:text-zinc-200/40"
                   required
                 />
               </div>
 
               <div className="space-y-1">
-                <div className="text-xs text-zinc-200/70">Status</div>
-                <Select
-                  value={form.status}
-                  onValueChange={(v) => setForm((p) => ({ ...p, status: v }))}
-                >
-                  <SelectTrigger
-                    data-testid="service-form-status"
-                    className="rounded-xl border-white/10 bg-black/30"
-                  >
+                <div className="text-xs text-zinc-200/80">Status</div>
+                <Select value={form.status} onValueChange={(v) => setForm((p) => ({ ...p, status: v }))}>
+                  <SelectTrigger data-testid="service-form-status" className="rounded-xl border-white/10 bg-black/30 text-zinc-50">
                     <SelectValue placeholder="Selecione" />
                   </SelectTrigger>
                   <SelectContent>
@@ -529,25 +473,25 @@ export default function ServicesPage() {
               </div>
 
               <div className="space-y-1 md:col-span-2">
-                <div className="text-xs text-zinc-200/70">Tipo</div>
+                <div className="text-xs text-zinc-200/80">Tipo</div>
                 <Input
                   data-testid="service-form-type"
                   value={form.tipo}
                   onChange={(e) => setForm((p) => ({ ...p, tipo: e.target.value }))}
-                  className="rounded-xl border-white/10 bg-black/30"
+                  className="rounded-xl border-white/10 bg-black/30 text-zinc-50 placeholder:text-zinc-200/40"
                   placeholder="Ex: dedetização baratas e formigas"
                 />
               </div>
 
               <div className="space-y-1 md:col-span-2">
-                <div className="text-xs text-zinc-200/70">Valor</div>
+                <div className="text-xs text-zinc-200/80">Valor</div>
                 <Input
                   data-testid="service-form-value"
                   type="number"
                   step="0.01"
                   value={form.valor}
                   onChange={(e) => setForm((p) => ({ ...p, valor: e.target.value }))}
-                  className="rounded-xl border-white/10 bg-black/30"
+                  className="rounded-xl border-white/10 bg-black/30 text-zinc-50 placeholder:text-zinc-200/40"
                 />
               </div>
             </div>
@@ -557,7 +501,7 @@ export default function ServicesPage() {
                 data-testid="service-form-cancel"
                 type="button"
                 variant="outline"
-                className="rounded-xl border-white/15 bg-white/5 text-zinc-50 hover:bg-white/10"
+                className="rounded-xl border-white/15 bg-white/5 text-white hover:bg-white/10"
                 onClick={() => setOpen(false)}
               >
                 Cancelar

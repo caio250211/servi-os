@@ -22,7 +22,16 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 
-import { addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
+import {
+  addDoc,
+  collection,
+  deleteDoc,
+  doc,
+  getDocs,
+  query,
+  updateDoc,
+  where,
+} from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
 
@@ -148,7 +157,7 @@ export default function ClientsPage() {
   };
 
   const onDelete = async (c) => {
-    const ok = window.confirm(`Excluir o cliente "${c.nome}"?`);
+    const ok = window.confirm(`Excluir o cliente \"${c.nome}\"?`);
     if (!ok) return;
 
     try {
@@ -168,12 +177,12 @@ export default function ClientsPage() {
     <div data-testid="clients-page" className="pb-10">
       <PageHeader
         title="Clientes"
-        subtitle={`Fonte: Firebase / Firestore (collection: ${COLLECTION_NAME}).`}
+        subtitle={`Firebase / Firestore • collection: ${COLLECTION_NAME}`}
         right={
           <Button
             data-testid="clients-new-button"
             onClick={openCreate}
-            className="rounded-xl bg-gradient-to-r from-red-600 to-rose-500 text-white hover:from-red-600/90 hover:to-rose-500/90"
+            className="rounded-xl bg-gradient-to-r from-[#dc2626] via-[#e11d48] to-[#f43f5e] text-white hover:from-[#dc2626]/90 hover:via-[#e11d48]/90 hover:to-[#f43f5e]/90"
           >
             <Plus className="mr-2 h-4 w-4" />
             Novo cliente
@@ -181,10 +190,7 @@ export default function ClientsPage() {
         }
       />
 
-      <Card
-        data-testid="clients-card"
-        className="rounded-2xl border-white/10 bg-white/5 backdrop-blur-md"
-      >
+      <Card data-testid="clients-card" className="rounded-2xl border-white/10 bg-white/5 backdrop-blur-md">
         <CardContent className="p-4">
           <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
             <div className="max-w-xl flex-1">
@@ -193,14 +199,14 @@ export default function ClientsPage() {
                 value={qText}
                 onChange={(e) => setQText(e.target.value)}
                 placeholder="Buscar por nome ou telefone…"
-                className="rounded-xl border-white/10 bg-black/30"
+                className="rounded-xl border-white/10 bg-black/30 text-zinc-50 placeholder:text-zinc-200/40"
               />
             </div>
             <div className="flex gap-2">
               <Button
                 data-testid="clients-search-button"
                 variant="outline"
-                className="rounded-xl border-white/15 bg-white/5 text-zinc-50 hover:bg-white/10"
+                className="rounded-xl border-white/15 bg-white/5 text-white hover:bg-white/10"
                 onClick={() => load()}
               >
                 Buscar
@@ -208,7 +214,7 @@ export default function ClientsPage() {
               <Button
                 data-testid="clients-refresh-button"
                 variant="outline"
-                className="rounded-xl border-white/15 bg-white/5 text-zinc-50 hover:bg-white/10"
+                className="rounded-xl border-white/15 bg-white/5 text-white hover:bg-white/10"
                 onClick={() => {
                   setQText("");
                   setTimeout(load, 0);
@@ -219,53 +225,51 @@ export default function ClientsPage() {
             </div>
           </div>
 
-          <div className="mt-4 overflow-hidden rounded-xl border border-white/10">
+          <div className="mt-4 overflow-hidden rounded-xl border border-white/10 bg-black/20">
             <Table data-testid="clients-table">
               <TableHeader>
-                <TableRow>
-                  <TableHead>Nome</TableHead>
-                  <TableHead>Telefone</TableHead>
-                  <TableHead>Cidade/Bairro</TableHead>
-                  <TableHead>E-mail</TableHead>
-                  <TableHead className="text-right">Ações</TableHead>
+                <TableRow className="border-white/10">
+                  <TableHead className="text-zinc-200">Nome</TableHead>
+                  <TableHead className="text-zinc-200">Telefone</TableHead>
+                  <TableHead className="text-zinc-200">Cidade/Bairro</TableHead>
+                  <TableHead className="text-zinc-200">E-mail</TableHead>
+                  <TableHead className="text-right text-zinc-200">Ações</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {loading ? (
-                  <TableRow>
-                    <TableCell
-                      data-testid="clients-loading"
-                      colSpan={5}
-                      className="p-6 text-sm text-zinc-200/70"
-                    >
+                  <TableRow className="border-white/10">
+                    <TableCell data-testid="clients-loading" colSpan={5} className="p-6 text-sm text-zinc-200/80">
                       Carregando…
                     </TableCell>
                   </TableRow>
                 ) : clients.length === 0 ? (
-                  <TableRow>
-                    <TableCell
-                      data-testid="clients-empty"
-                      colSpan={5}
-                      className="p-6 text-sm text-zinc-200/60"
-                    >
+                  <TableRow className="border-white/10">
+                    <TableCell data-testid="clients-empty" colSpan={5} className="p-6 text-sm text-zinc-200/70">
                       Nenhum cliente encontrado.
                     </TableCell>
                   </TableRow>
                 ) : (
                   clients.map((c) => (
-                    <TableRow key={c.id} data-testid={`client-row-${c.id}`}>
-                      <TableCell data-testid={`client-name-${c.id}`}>{c.nome}</TableCell>
-                      <TableCell data-testid={`client-phone-${c.id}`}>{c.telefone || "—"}</TableCell>
-                      <TableCell data-testid={`client-city-${c.id}`}>
+                    <TableRow key={c.id} data-testid={`client-row-${c.id}`} className="border-white/10 hover:bg-white/5">
+                      <TableCell data-testid={`client-name-${c.id}`} className="text-white font-medium">
+                        {c.nome}
+                      </TableCell>
+                      <TableCell data-testid={`client-phone-${c.id}`} className="text-zinc-100">
+                        {c.telefone || "—"}
+                      </TableCell>
+                      <TableCell data-testid={`client-city-${c.id}`} className="text-zinc-100">
                         {c.cidade || "—"}{c.bairro ? ` / ${c.bairro}` : ""}
                       </TableCell>
-                      <TableCell data-testid={`client-email-${c.id}`}>{c.email || "—"}</TableCell>
+                      <TableCell data-testid={`client-email-${c.id}`} className="text-zinc-100">
+                        {c.email || "—"}
+                      </TableCell>
                       <TableCell className="text-right">
                         <div className="inline-flex items-center gap-2">
                           <Button
                             data-testid={`client-edit-${c.id}`}
                             variant="outline"
-                            className="h-9 rounded-xl border-white/15 bg-white/5 text-zinc-50 hover:bg-white/10"
+                            className="h-9 rounded-xl border-white/15 bg-white/5 text-white hover:bg-white/10"
                             onClick={() => openEdit(c)}
                           >
                             <Pencil className="h-4 w-4" />
@@ -273,7 +277,7 @@ export default function ClientsPage() {
                           <Button
                             data-testid={`client-delete-${c.id}`}
                             variant="outline"
-                            className="h-9 rounded-xl border-white/15 bg-white/5 text-zinc-50 hover:bg-white/10"
+                            className="h-9 rounded-xl border-white/15 bg-white/5 text-white hover:bg-white/10"
                             onClick={() => onDelete(c)}
                           >
                             <Trash2 className="h-4 w-4" />
@@ -290,79 +294,72 @@ export default function ClientsPage() {
       </Card>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent
-          data-testid="clients-dialog"
-          className="rounded-2xl border-white/10 bg-[#0b0b10] text-zinc-50"
-        >
+        <DialogContent data-testid="clients-dialog" className="rounded-2xl border-white/10 bg-[#0b0b10] text-zinc-50">
           <DialogHeader>
-            <DialogTitle data-testid="clients-dialog-title">
-              {mode === "edit" ? "Editar cliente" : "Novo cliente"}
-            </DialogTitle>
-            <DialogDescription data-testid="clients-dialog-desc">
-              Campos básicos para cadastro no Firestore.
-            </DialogDescription>
+            <DialogTitle data-testid="clients-dialog-title">{mode === "edit" ? "Editar cliente" : "Novo cliente"}</DialogTitle>
+            <DialogDescription data-testid="clients-dialog-desc">Campos básicos para cadastro no Firestore.</DialogDescription>
           </DialogHeader>
 
           <form onSubmit={onSave} className="space-y-3">
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
               <div className="space-y-1">
-                <div className="text-xs text-zinc-200/70">Nome *</div>
+                <div className="text-xs text-zinc-200/80">Nome *</div>
                 <Input
                   data-testid="client-form-name"
                   value={form.nome}
                   onChange={(e) => setForm((p) => ({ ...p, nome: e.target.value }))}
-                  className="rounded-xl border-white/10 bg-black/30"
+                  className="rounded-xl border-white/10 bg-black/30 text-zinc-50 placeholder:text-zinc-200/40"
                   placeholder="Nome do cliente"
                   required
                 />
               </div>
               <div className="space-y-1">
-                <div className="text-xs text-zinc-200/70">Telefone</div>
+                <div className="text-xs text-zinc-200/80">Telefone</div>
                 <Input
                   data-testid="client-form-phone"
                   value={form.telefone}
                   onChange={(e) => setForm((p) => ({ ...p, telefone: e.target.value }))}
-                  className="rounded-xl border-white/10 bg-black/30"
+                  className="rounded-xl border-white/10 bg-black/30 text-zinc-50 placeholder:text-zinc-200/40"
                   placeholder="(21) 00000-0000"
                 />
               </div>
               <div className="space-y-1 md:col-span-2">
-                <div className="text-xs text-zinc-200/70">Endereço</div>
+                <div className="text-xs text-zinc-200/80">Endereço</div>
                 <Input
                   data-testid="client-form-address"
                   value={form.endereco}
                   onChange={(e) => setForm((p) => ({ ...p, endereco: e.target.value }))}
-                  className="rounded-xl border-white/10 bg-black/30"
+                  className="rounded-xl border-white/10 bg-black/30 text-zinc-50 placeholder:text-zinc-200/40"
                   placeholder="Rua, número"
                 />
               </div>
               <div className="space-y-1">
-                <div className="text-xs text-zinc-200/70">Cidade</div>
+                <div className="text-xs text-zinc-200/80">Cidade</div>
                 <Input
                   data-testid="client-form-city"
                   value={form.cidade}
                   onChange={(e) => setForm((p) => ({ ...p, cidade: e.target.value }))}
-                  className="rounded-xl border-white/10 bg-black/30"
+                  className="rounded-xl border-white/10 bg-black/30 text-zinc-50 placeholder:text-zinc-200/40"
                   placeholder="Cidade"
                 />
               </div>
               <div className="space-y-1">
-                <div className="text-xs text-zinc-200/70">Bairro</div>
+                <div className="text-xs text-zinc-200/80">Bairro</div>
                 <Input
                   data-testid="client-form-neighborhood"
                   value={form.bairro}
                   onChange={(e) => setForm((p) => ({ ...p, bairro: e.target.value }))}
-                  className="rounded-xl border-white/10 bg-black/30"
+                  className="rounded-xl border-white/10 bg-black/30 text-zinc-50 placeholder:text-zinc-200/40"
                   placeholder="Bairro"
                 />
               </div>
               <div className="space-y-1 md:col-span-2">
-                <div className="text-xs text-zinc-200/70">E-mail</div>
+                <div className="text-xs text-zinc-200/80">E-mail</div>
                 <Input
                   data-testid="client-form-email"
                   value={form.email}
                   onChange={(e) => setForm((p) => ({ ...p, email: e.target.value }))}
-                  className="rounded-xl border-white/10 bg-black/30"
+                  className="rounded-xl border-white/10 bg-black/30 text-zinc-50 placeholder:text-zinc-200/40"
                   placeholder="email@exemplo.com"
                 />
               </div>
@@ -373,7 +370,7 @@ export default function ClientsPage() {
                 data-testid="client-form-cancel"
                 type="button"
                 variant="outline"
-                className="rounded-xl border-white/15 bg-white/5 text-zinc-50 hover:bg-white/10"
+                className="rounded-xl border-white/15 bg-white/5 text-white hover:bg-white/10"
                 onClick={() => setOpen(false)}
               >
                 Cancelar
@@ -381,7 +378,7 @@ export default function ClientsPage() {
               <Button
                 data-testid="client-form-submit"
                 type="submit"
-                className="rounded-xl bg-gradient-to-r from-red-600 to-rose-500 text-white hover:from-red-600/90 hover:to-rose-500/90"
+                className="rounded-xl bg-gradient-to-r from-[#dc2626] via-[#e11d48] to-[#f43f5e] text-white hover:from-[#dc2626]/90 hover:via-[#e11d48]/90 hover:to-[#f43f5e]/90"
               >
                 Salvar
               </Button>
