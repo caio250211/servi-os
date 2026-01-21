@@ -136,7 +136,6 @@ export default function ServicesPage() {
   };
 
   const onDelete = async (s) => {
-    // eslint-disable-next-line no-alert
     const ok = window.confirm(`Excluir o serviço de ${format(new Date(s.date), "dd/MM/yyyy")}?`);
     if (!ok) return;
 
