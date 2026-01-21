@@ -14,7 +14,7 @@ export function AuthProvider({ children }) {
     setAuthToken(token);
   }, [token]);
 
-  const refreshMe = async () => {
+  const refreshMe = React.useCallback(async () => {
     if (!token) {
       setUser(null);
       setLoading(false);
@@ -30,7 +30,7 @@ export function AuthProvider({ children }) {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     refreshMe();
