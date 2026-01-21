@@ -13,7 +13,7 @@ const THIS_DOMAIN = window.location.host;
 
 export default function LoginPage() {
   const nav = useNavigate();
-  const { user, loading, loginWithGoogle, authError, clearAuthError } = useAuth();
+  const { user, loading, loginWithGoogle, authError, clearAuthError, debug } = useAuth();
 
   useEffect(() => {
     if (!loading && user) nav("/");
@@ -26,13 +26,13 @@ export default function LoginPage() {
 
     let help = "";
     if (code.includes("auth/unauthorized-domain")) {
-      help = `No Firebase Console → Authentication → Settings → Authorized domains, adicione: ${THIS_DOMAIN}`;
+      help = `Firebase Console → Authentication → Settings → Authorized domains: adicione ${THIS_DOMAIN}`;
     } else if (code.includes("auth/operation-not-allowed")) {
-      help = "No Firebase Console → Authentication → Sign-in method, ative o provedor Google.";
+      help = "Firebase Console → Authentication → Sign-in method: ative o provedor Google.";
     } else if (code.includes("auth/popup-blocked") || code.includes("auth/popup-closed-by-user")) {
-      help = "Permita popups ou tente novamente (o sistema também usa redirect).";
+      help = "Permita popups. Se continuar, o sistema tentará redirect automaticamente.";
     } else if (code.includes("auth/network-request-failed")) {
-      help = "Verifique sua internet e se seu navegador está bloqueando cookies/terceiros.";
+      help = "Verifique internet e se o navegador bloqueia cookies/terceiros.";
     }
 
     return { code, msg, help };
@@ -40,12 +40,14 @@ export default function LoginPage() {
 
   const onGoogle = async () => {
     try {
-      await loginWithGoogle();
-      // Em redirect, o Firebase volta logado automaticamente.
+      const u = await loginWithGoogle();
+      // Se for popup e deu certo, navega na hora
+      if (u) nav("/");
+      // Se for redirect, o Firebase vai retornar logado.
     } catch (err) {
       toast({
         title: "Não foi possível entrar",
-        description: "Veja os detalhes do erro abaixo e siga as instruções.",
+        description: "Se não aparecer erro, tente novamente e veja a seção de diagnóstico abaixo.",
         variant: "destructive",
       });
     }
@@ -90,36 +92,28 @@ export default function LoginPage() {
                 className="rounded-2xl border border-white/10 bg-black/25 p-4"
               >
                 <div className="text-sm font-medium">Clientes</div>
-                <div className="mt-1 text-xs text-zinc-200/70">
-                  Cadastre e organize seus clientes.
-                </div>
+                <div className="mt-1 text-xs text-zinc-200/70">Cadastre e organize seus clientes.</div>
               </div>
               <div
                 data-testid="login-feature-2"
                 className="rounded-2xl border border-white/10 bg-black/25 p-4"
               >
                 <div className="text-sm font-medium">Serviços</div>
-                <div className="mt-1 text-xs text-zinc-200/70">
-                  Seus serviços do Firestore aparecem automaticamente.
-                </div>
+                <div className="mt-1 text-xs text-zinc-200/70">Serviços do Firestore aparecem automaticamente.</div>
               </div>
               <div
                 data-testid="login-feature-3"
                 className="rounded-2xl border border-white/10 bg-black/25 p-4"
               >
                 <div className="text-sm font-medium">Agenda</div>
-                <div className="mt-1 text-xs text-zinc-200/70">
-                  Visualize próximos serviços por data.
-                </div>
+                <div className="mt-1 text-xs text-zinc-200/70">Visualize próximos serviços por data.</div>
               </div>
               <div
                 data-testid="login-feature-4"
                 className="rounded-2xl border border-white/10 bg-black/25 p-4"
               >
                 <div className="text-sm font-medium">Dashboard</div>
-                <div className="mt-1 text-xs text-zinc-200/70">
-                  Resumo do mês: pendências e receita.
-                </div>
+                <div className="mt-1 text-xs text-zinc-200/70">Resumo do mês: pendências e receita.</div>
               </div>
             </div>
           </div>
@@ -151,7 +145,20 @@ export default function LoginPage() {
               </Button>
 
               <div data-testid="login-domain-hint" className="mt-3 text-xs text-zinc-200/60">
-                Domínio atual: <b>{THIS_DOMAIN}</b> (precisa estar em Authorized domains).
+                Domínio atual: <b>{THIS_DOMAIN}</b>
+              </div>
+
+              <div
+                data-testid="login-auth-debug"
+                className="mt-3 rounded-xl border border-white/10 bg-black/25 p-3 text-xs text-zinc-200/70"
+              >
+                <div><b>Diagnóstico</b></div>
+                <div>loading: {String(loading)}</div>
+                <div>user no contexto: {user?.email || "(vazio)"}</div>
+                <div>auth.currentUser: {debug?.currentUserEmail || "(vazio)"}</div>
+                <div className="mt-2 text-zinc-200/60">
+                  Se você escolhe o Gmail e volta pra login, geralmente é persistência/cookies.
+                </div>
               </div>
 
               {errorInfo ? (
@@ -165,10 +172,7 @@ export default function LoginPage() {
                       <div data-testid="login-auth-error-title" className="text-sm font-semibold">
                         Erro no login
                       </div>
-                      <div
-                        data-testid="login-auth-error-code"
-                        className="mt-1 text-xs text-zinc-100/80"
-                      >
+                      <div data-testid="login-auth-error-code" className="mt-1 text-xs text-zinc-100/80">
                         {errorInfo.code || "(sem código)"}
                       </div>
                       <div
