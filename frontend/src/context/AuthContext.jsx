@@ -21,14 +21,14 @@ export function AuthProvider({ children }) {
     return () => unsub();
   }, []);
 
+  // Preferimos redirect (mais confiável). Se der erro, tentamos popup.
   const loginWithGoogle = async () => {
     try {
-      const res = await signInWithPopup(auth, googleProvider);
-      return res.user;
-    } catch (err) {
-      // fallback para ambientes onde popup é bloqueado
       await signInWithRedirect(auth, googleProvider);
       return null;
+    } catch (err) {
+      const res = await signInWithPopup(auth, googleProvider);
+      return res.user;
     }
   };
 

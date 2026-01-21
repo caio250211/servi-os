@@ -9,6 +9,8 @@ import { LogIn } from "lucide-react";
 const LOGO_URL =
   "https://customer-assets.emergentagent.com/job_2460b93f-9170-44ea-8a4c-717f4e4be696/artifacts/6cc67isd_logo.png.JPG.png";
 
+const THIS_DOMAIN = window.location.host;
+
 export default function LoginPage() {
   const nav = useNavigate();
   const { user, loading, loginWithGoogle } = useAuth();
@@ -20,11 +22,22 @@ export default function LoginPage() {
   const onGoogle = async () => {
     try {
       await loginWithGoogle();
-      // se for redirect, o firebase vai voltar logado
+      // Em redirect, o Firebase volta logado automaticamente.
     } catch (err) {
+      // Firebase costuma retornar err.code
+      const code = err?.code ? String(err.code) : "";
+      console.error("Firebase login error:", err);
+
+      const maybeDomainHint =
+        code.includes("auth/unauthorized-domain") || code.includes("unauthorized")
+          ? `\n\nDica: no Firebase Console → Authentication → Settings → Authorized domains, adicione: ${THIS_DOMAIN}`
+          : "";
+
       toast({
         title: "Não foi possível entrar",
-        description: "Tente novamente. Se o popup for bloqueado, permita popups.",
+        description:
+          (err?.message ||
+            "Tente novamente. Se o popup/redirect for bloqueado, permita popups.") + maybeDomainHint,
         variant: "destructive",
       });
     }
@@ -128,11 +141,8 @@ export default function LoginPage() {
                 Entrar com Google
               </Button>
 
-              <div
-                data-testid="login-google-note"
-                className="mt-3 text-xs text-zinc-200/60"
-              >
-                Se nada acontecer, pode ser bloqueio de popup. Nesse caso, permita popups e tente novamente.
+              <div data-testid="login-domain-hint" className="mt-3 text-xs text-zinc-200/60">
+                Se der erro de domínio, adicione <b>{THIS_DOMAIN}</b> em Authorized domains no Firebase.
               </div>
             </CardContent>
           </Card>

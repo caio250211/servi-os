@@ -14,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
 
@@ -54,14 +54,11 @@ export default function DashboardPage() {
       if (!user?.email) return;
       setLoading(true);
       try {
-        // Serviços do usuário
-        const sq = query(
-          collection(db, SERVICES_COLLECTION),
-          where("usuario", "==", user.email),
-          orderBy("data", "desc")
-        );
+        const sq = query(collection(db, SERVICES_COLLECTION), where("usuario", "==", user.email));
         const servicesSnap = await getDocs(sq);
-        const services = servicesSnap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        const services = servicesSnap.docs
+          .map((d) => ({ id: d.id, ...d.data() }))
+          .sort((a, b) => String(b.data || "").localeCompare(String(a.data || "")));
 
         const inMonth = services.filter((s) => {
           const dt = String(s.data || "");
@@ -74,7 +71,6 @@ export default function DashboardPage() {
 
         const pending = inMonth.filter((s) => String(s.status).toLowerCase() !== "pago");
 
-        // Clientes do usuário (se existir no Firestore)
         let clientsTotal = 0;
         try {
           const cq = query(collection(db, CLIENTS_COLLECTION), where("usuario", "==", user.email));

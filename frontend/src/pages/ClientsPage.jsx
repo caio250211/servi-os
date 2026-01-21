@@ -22,17 +22,7 @@ import {
 import { toast } from "@/hooks/use-toast";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 
-import {
-  addDoc,
-  collection,
-  deleteDoc,
-  doc,
-  getDocs,
-  orderBy,
-  query,
-  updateDoc,
-  where,
-} from "firebase/firestore";
+import { addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
 
@@ -50,7 +40,7 @@ const emptyForm = {
 export default function ClientsPage() {
   const { user } = useAuth();
 
-  const [q, setQ] = useState("");
+  const [qText, setQText] = useState("");
   const [clients, setClients] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -64,22 +54,19 @@ export default function ClientsPage() {
     setLoading(true);
 
     try {
-      const qy = query(
-        collection(db, COLLECTION_NAME),
-        where("usuario", "==", user.email),
-        orderBy("nome", "asc")
-      );
+      const qy = query(collection(db, COLLECTION_NAME), where("usuario", "==", user.email));
       const snap = await getDocs(qy);
       const items = snap.docs
         .map((d) => ({ id: d.id, ...d.data() }))
         .filter((c) => {
-          if (!q.trim()) return true;
-          const s = q.trim().toLowerCase();
+          if (!qText.trim()) return true;
+          const s = qText.trim().toLowerCase();
           return (
             String(c.nome || "").toLowerCase().includes(s) ||
             String(c.telefone || "").toLowerCase().includes(s)
           );
-        });
+        })
+        .sort((a, b) => String(a.nome || "").localeCompare(String(b.nome || "")));
       setClients(items);
     } catch (err) {
       toast({
@@ -203,8 +190,8 @@ export default function ClientsPage() {
             <div className="max-w-xl flex-1">
               <Input
                 data-testid="clients-search-input"
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
+                value={qText}
+                onChange={(e) => setQText(e.target.value)}
                 placeholder="Buscar por nome ou telefone…"
                 className="rounded-xl border-white/10 bg-black/30"
               />
@@ -223,7 +210,7 @@ export default function ClientsPage() {
                 variant="outline"
                 className="rounded-xl border-white/15 bg-white/5 text-zinc-50 hover:bg-white/10"
                 onClick={() => {
-                  setQ("");
+                  setQText("");
                   setTimeout(load, 0);
                 }}
               >

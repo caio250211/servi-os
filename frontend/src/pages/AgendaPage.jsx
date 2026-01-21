@@ -5,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { format, addDays } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
-import { collection, getDocs, orderBy, query, where } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useAuth } from "@/context/AuthContext";
 
@@ -41,19 +41,16 @@ export default function AgendaPage() {
       if (!user?.email) return;
       setLoading(true);
       try {
-        const q = query(
-          collection(db, COLLECTION_NAME),
-          where("usuario", "==", user.email),
-          orderBy("data", "asc")
-        );
-        const snap = await getDocs(q);
+        const qy = query(collection(db, COLLECTION_NAME), where("usuario", "==", user.email));
+        const snap = await getDocs(qy);
         const items = snap.docs
           .map((d) => ({ id: d.id, ...d.data() }))
           .filter((s) => {
             const dt = String(s.data || "");
             if (!dt) return false;
             return dt >= range.from && dt <= range.to;
-          });
+          })
+          .sort((a, b) => String(a.data || "").localeCompare(String(b.data || "")));
         setServices(items);
       } finally {
         setLoading(false);

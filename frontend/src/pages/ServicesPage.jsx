@@ -38,7 +38,6 @@ import {
   deleteDoc,
   doc,
   getDocs,
-  orderBy,
   query,
   updateDoc,
   where,
@@ -87,29 +86,20 @@ export default function ServicesPage() {
     setLoading(true);
 
     try {
-      const base = [
-        where("usuario", "==", user.email),
-        orderBy("data", "desc"),
-      ];
-
-      // filtro por status (se existir no documento)
-      if (statusFilter !== "ALL") {
-        base.unshift(where("status", "==", statusFilter));
-      }
-
-      // Observação: para combinar where + orderBy no Firestore pode precisar de index.
-      const q = query(collection(db, COLLECTION_NAME), ...base);
-      const snap = await getDocs(q);
+      // Query simples (evita necessidade de índice composto)
+      const qy = query(collection(db, COLLECTION_NAME), where("usuario", "==", user.email));
+      const snap = await getDocs(qy);
 
       const items = snap.docs
         .map((d) => ({ id: d.id, ...d.data() }))
         .filter((s) => {
-          // filtro por período local (sem depender de índices)
           const dt = String(s.data || "");
           if (from && dt < from) return false;
           if (to && dt > to) return false;
+          if (statusFilter !== "ALL" && String(s.status || "") !== statusFilter) return false;
           return true;
-        });
+        })
+        .sort((a, b) => String(b.data || "").localeCompare(String(a.data || "")));
 
       setServices(items);
     } catch (err) {
@@ -117,7 +107,7 @@ export default function ServicesPage() {
         title: "Erro ao carregar serviços",
         description:
           err?.message ||
-          "Verifique as regras do Firestore/índices. (Pode ser necessário criar índice composto)",
+          "Verifique as regras do Firestore (leitura) e se você está logado.",
         variant: "destructive",
       });
     } finally {
@@ -130,10 +120,7 @@ export default function ServicesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.email]);
 
-  const title = useMemo(
-    () => (mode === "edit" ? "Editar serviço" : "Novo serviço"),
-    [mode]
-  );
+  const title = useMemo(() => (mode === "edit" ? "Editar serviço" : "Novo serviço"), [mode]);
 
   const openCreate = () => {
     setMode("create");
@@ -203,7 +190,7 @@ export default function ServicesPage() {
 
   const onDelete = async (s) => {
     const ok = window.confirm(
-      `Excluir o serviço de ${format(new Date(s.data), "dd/MM/yyyy")}?`
+      `Excluir o serviço de ${s.data ? format(new Date(s.data), "dd/MM/yyyy") : "—"}?`
     );
     if (!ok) return;
 
@@ -355,7 +342,10 @@ export default function ServicesPage() {
                       </TableCell>
                       <TableCell data-testid={`service-client-${s.id}`}>{s.cliente || "—"}</TableCell>
                       <TableCell data-testid={`service-contact-${s.id}`}>{s.contato || "—"}</TableCell>
-                      <TableCell data-testid={`service-local-${s.id}`} className="max-w-[320px] truncate">
+                      <TableCell
+                        data-testid={`service-local-${s.id}`}
+                        className="max-w-[320px] truncate"
+                      >
                         {s.local || "—"}
                       </TableCell>
                       <TableCell data-testid={`service-type-${s.id}`}>{s.tipo || "—"}</TableCell>
@@ -464,7 +454,10 @@ export default function ServicesPage() {
 
               <div className="space-y-1">
                 <div className="text-xs text-zinc-200/70">Status</div>
-                <Select value={form.status} onValueChange={(v) => setForm((p) => ({ ...p, status: v }))}>
+                <Select
+                  value={form.status}
+                  onValueChange={(v) => setForm((p) => ({ ...p, status: v }))}
+                >
                   <SelectTrigger
                     data-testid="service-form-status"
                     className="rounded-xl border-white/10 bg-black/30"
