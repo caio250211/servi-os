@@ -1,54 +1,68 @@
-import { useEffect } from "react";
+import React from "react";
 import "@/App.css";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import axios from "axios";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
-const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
-const API = `${BACKEND_URL}/api`;
+import { AuthProvider, useAuth } from "@/context/AuthContext";
+import AppShell from "@/components/app/AppShell";
 
-const Home = () => {
-  const helloWorldApi = async () => {
-    try {
-      const response = await axios.get(`${API}/`);
-      console.log(response.data.message);
-    } catch (e) {
-      console.error(e, `errored out requesting / api`);
-    }
-  };
+import LoginPage from "@/pages/LoginPage";
+import DashboardPage from "@/pages/DashboardPage";
+import ClientsPage from "@/pages/ClientsPage";
+import ServicesPage from "@/pages/ServicesPage";
+import AgendaPage from "@/pages/AgendaPage";
 
-  useEffect(() => {
-    helloWorldApi();
-  }, []);
+import { Toaster } from "@/components/ui/toaster";
 
-  return (
-    <div>
-      <header className="App-header">
-        <a
-          className="App-link"
-          href="https://emergent.sh"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img src="https://avatars.githubusercontent.com/in/1201222?s=120&u=2686cf91179bbafbc7a71bfbc43004cf9ae1acea&v=4" />
-        </a>
-        <p className="mt-5">Building something incredible ~!</p>
-      </header>
-    </div>
-  );
-};
+function Protected({ children }) {
+  const { user, loading } = useAuth();
 
-function App() {
-  return (
-    <div className="App">
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />}>
-            <Route index element={<Home />} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
-    </div>
-  );
+  if (loading) {
+    return (
+      <div
+        data-testid="auth-loading"
+        className="min-h-screen bg-[#07070b] text-zinc-50"
+      >
+        <div className="mx-auto max-w-3xl px-6 py-16">
+          <div
+            data-testid="auth-loading-text"
+            className="rounded-2xl border border-white/10 bg-white/5 p-6 text-sm text-zinc-200/70"
+          >
+            Carregando sessão…
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user) return <Navigate to="/login" replace />;
+  return children;
 }
 
-export default App;
+export default function App() {
+  return (
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+
+          <Route
+            path="/"
+            element={
+              <Protected>
+                <AppShell />
+              </Protected>
+            }
+          >
+            <Route index element={<DashboardPage />} />
+            <Route path="clientes" element={<ClientsPage />} />
+            <Route path="servicos" element={<ServicesPage />} />
+            <Route path="agenda" element={<AgendaPage />} />
+          </Route>
+
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </BrowserRouter>
+      <Toaster />
+    </AuthProvider>
+  );
+}
