@@ -166,7 +166,7 @@ export default function DashboardPage() {
                       <TableCell data-testid={`dashboard-service-client-${s.id}`} className="text-white/90">
                         {s.cliente || "—"}
                       </TableCell>
-                      <TableCell data-testid={`dashboard-service-type-${s.id}`}>{s.tipo || "—"}</TableCell>
+                      <TableCell data-testid={`dashboard-service-type-${s.id}`} className="text-white/90">{s.tipo || "—"}</TableCell>
                       <TableCell data-testid={`dashboard-service-status-${s.id}`}>
                         <Badge
                           className={
