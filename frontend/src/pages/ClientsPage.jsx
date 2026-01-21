@@ -105,7 +105,6 @@ export default function ClientsPage() {
   };
 
   const onDelete = async (c) => {
-    // eslint-disable-next-line no-alert
     const ok = window.confirm(`Excluir o cliente "${c.name}"?`);
     if (!ok) return;
 
