@@ -1,7 +1,9 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import {
+  browserLocalPersistence,
   getRedirectResult,
   onAuthStateChanged,
+  setPersistence,
   signInWithPopup,
   signInWithRedirect,
   signOut,
@@ -16,37 +18,64 @@ export function AuthProvider({ children }) {
   const [authError, setAuthError] = useState(null);
 
   useEffect(() => {
-    // Finaliza login via redirect e captura erros
+    let unsub = null;
+
     (async () => {
       try {
-        const res = await getRedirectResult(auth);
-        if (res?.user) setUser(res.user);
+        // Garante persistência ANTES de qualquer tentativa de login/restore
+        await setPersistence(auth, browserLocalPersistence);
+
+        // Se estiver voltando de um redirect, isso conclui o login
+        try {
+          const res = await getRedirectResult(auth);
+          if (res?.user) setUser(res.user);
+        } catch (e) {
+          setAuthError(e);
+        }
+
+        unsub = onAuthStateChanged(auth, (u) => {
+          setUser(u || null);
+          setLoading(false);
+        });
+
+        // fallback extra: às vezes currentUser já existe
+        if (auth.currentUser) {
+          setUser(auth.currentUser);
+          setLoading(false);
+        }
       } catch (e) {
         setAuthError(e);
+        setLoading(false);
       }
     })();
 
-    const unsub = onAuthStateChanged(auth, (u) => {
-      setUser(u || null);
-      setLoading(false);
-    });
-    return () => unsub();
+    return () => {
+      if (unsub) unsub();
+    };
   }, []);
 
-  // Preferimos redirect (mais confiável). Se der erro imediato, tentamos popup.
+  // Tenta popup (melhor UX). Se popup for bloqueado, usa redirect.
   const loginWithGoogle = async () => {
     setAuthError(null);
     try {
-      await signInWithRedirect(auth, googleProvider);
-      return null;
+      await setPersistence(auth, browserLocalPersistence);
+    } catch (e) {
+      // ignorar, mas registrar
+      setAuthError(e);
+    }
+
+    try {
+      const res = await signInWithPopup(auth, googleProvider);
+      return res.user;
     } catch (err) {
-      try {
-        const res = await signInWithPopup(auth, googleProvider);
-        return res.user;
-      } catch (e2) {
-        setAuthError(e2);
-        throw e2;
+      const code = err?.code ? String(err.code) : "";
+      if (code.includes("popup") || code.includes("auth/cancelled-popup-request")) {
+        // fallback
+        await signInWithRedirect(auth, googleProvider);
+        return null;
       }
+      setAuthError(err);
+      throw err;
     }
   };
 
