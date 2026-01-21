@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import {
+  getRedirectResult,
   onAuthStateChanged,
   signInWithPopup,
   signInWithRedirect,
@@ -12,8 +13,19 @@ const AuthContext = createContext(null);
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState(null);
 
   useEffect(() => {
+    // Finaliza login via redirect e captura erros
+    (async () => {
+      try {
+        const res = await getRedirectResult(auth);
+        if (res?.user) setUser(res.user);
+      } catch (e) {
+        setAuthError(e);
+      }
+    })();
+
     const unsub = onAuthStateChanged(auth, (u) => {
       setUser(u || null);
       setLoading(false);
@@ -21,14 +33,20 @@ export function AuthProvider({ children }) {
     return () => unsub();
   }, []);
 
-  // Preferimos redirect (mais confiável). Se der erro, tentamos popup.
+  // Preferimos redirect (mais confiável). Se der erro imediato, tentamos popup.
   const loginWithGoogle = async () => {
+    setAuthError(null);
     try {
       await signInWithRedirect(auth, googleProvider);
       return null;
     } catch (err) {
-      const res = await signInWithPopup(auth, googleProvider);
-      return res.user;
+      try {
+        const res = await signInWithPopup(auth, googleProvider);
+        return res.user;
+      } catch (e2) {
+        setAuthError(e2);
+        throw e2;
+      }
     }
   };
 
@@ -40,10 +58,12 @@ export function AuthProvider({ children }) {
     () => ({
       user,
       loading,
+      authError,
       loginWithGoogle,
       logout,
+      clearAuthError: () => setAuthError(null),
     }),
-    [user, loading]
+    [user, loading, authError]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -1,10 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/hooks/use-toast";
 import { useAuth } from "@/context/AuthContext";
-import { LogIn } from "lucide-react";
+import { LogIn, AlertTriangle } from "lucide-react";
 
 const LOGO_URL =
   "https://customer-assets.emergentagent.com/job_2460b93f-9170-44ea-8a4c-717f4e4be696/artifacts/6cc67isd_logo.png.JPG.png";
@@ -13,41 +13,50 @@ const THIS_DOMAIN = window.location.host;
 
 export default function LoginPage() {
   const nav = useNavigate();
-  const { user, loading, loginWithGoogle } = useAuth();
+  const { user, loading, loginWithGoogle, authError, clearAuthError } = useAuth();
 
   useEffect(() => {
     if (!loading && user) nav("/");
   }, [user, loading, nav]);
+
+  const errorInfo = useMemo(() => {
+    if (!authError) return null;
+    const code = authError?.code ? String(authError.code) : "";
+    const msg = authError?.message ? String(authError.message) : "";
+
+    let help = "";
+    if (code.includes("auth/unauthorized-domain")) {
+      help = `No Firebase Console → Authentication → Settings → Authorized domains, adicione: ${THIS_DOMAIN}`;
+    } else if (code.includes("auth/operation-not-allowed")) {
+      help = "No Firebase Console → Authentication → Sign-in method, ative o provedor Google.";
+    } else if (code.includes("auth/popup-blocked") || code.includes("auth/popup-closed-by-user")) {
+      help = "Permita popups ou tente novamente (o sistema também usa redirect).";
+    } else if (code.includes("auth/network-request-failed")) {
+      help = "Verifique sua internet e se seu navegador está bloqueando cookies/terceiros.";
+    }
+
+    return { code, msg, help };
+  }, [authError]);
 
   const onGoogle = async () => {
     try {
       await loginWithGoogle();
       // Em redirect, o Firebase volta logado automaticamente.
     } catch (err) {
-      // Firebase costuma retornar err.code
-      const code = err?.code ? String(err.code) : "";
-      console.error("Firebase login error:", err);
-
-      const maybeDomainHint =
-        code.includes("auth/unauthorized-domain") || code.includes("unauthorized")
-          ? `\n\nDica: no Firebase Console → Authentication → Settings → Authorized domains, adicione: ${THIS_DOMAIN}`
-          : "";
-
       toast({
         title: "Não foi possível entrar",
-        description:
-          (err?.message ||
-            "Tente novamente. Se o popup/redirect for bloqueado, permita popups.") + maybeDomainHint,
+        description: "Veja os detalhes do erro abaixo e siga as instruções.",
         variant: "destructive",
       });
     }
   };
 
   return (
-    <div data-testid="login-page" className="min-h-screen bg-[#07070b] text-zinc-50">
-      <div className="pointer-events-none fixed inset-0 opacity-60">
-        <div className="absolute -top-40 left-1/3 h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle_at_center,rgba(220,38,38,0.38),transparent_55%)]" />
-        <div className="absolute -bottom-40 right-1/3 h-[520px] w-[520px] rounded-full bg-[radial-gradient(circle_at_center,rgba(244,63,94,0.22),transparent_55%)]" />
+    <div data-testid="login-page" className="min-h-screen bg-[#050509] text-zinc-50">
+      <div className="pointer-events-none fixed inset-0 opacity-70">
+        <div className="absolute -top-40 left-1/3 h-[560px] w-[560px] rounded-full bg-[radial-gradient(circle_at_center,rgba(220,38,38,0.45),transparent_55%)]" />
+        <div className="absolute -bottom-48 right-1/3 h-[560px] w-[560px] rounded-full bg-[radial-gradient(circle_at_center,rgba(244,63,94,0.28),transparent_55%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(120deg,rgba(255,255,255,0.02),transparent_35%,rgba(255,255,255,0.02))]" />
       </div>
 
       <div className="relative mx-auto flex min-h-screen max-w-6xl items-center px-4 py-10 md:px-6">
@@ -70,7 +79,7 @@ export default function LoginPage() {
                   data-testid="login-subtitle"
                   className="mt-1 text-base md:text-lg text-zinc-200/70"
                 >
-                  Gestão de clientes e serviços
+                  Gestão de clientes e serviços (Firebase)
                 </div>
               </div>
             </div>
@@ -78,7 +87,7 @@ export default function LoginPage() {
             <div className="mt-7 grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div
                 data-testid="login-feature-1"
-                className="rounded-2xl border border-white/10 bg-black/20 p-4"
+                className="rounded-2xl border border-white/10 bg-black/25 p-4"
               >
                 <div className="text-sm font-medium">Clientes</div>
                 <div className="mt-1 text-xs text-zinc-200/70">
@@ -87,25 +96,25 @@ export default function LoginPage() {
               </div>
               <div
                 data-testid="login-feature-2"
-                className="rounded-2xl border border-white/10 bg-black/20 p-4"
+                className="rounded-2xl border border-white/10 bg-black/25 p-4"
               >
                 <div className="text-sm font-medium">Serviços</div>
                 <div className="mt-1 text-xs text-zinc-200/70">
-                  Seus serviços do Firebase aparecem automaticamente.
+                  Seus serviços do Firestore aparecem automaticamente.
                 </div>
               </div>
               <div
                 data-testid="login-feature-3"
-                className="rounded-2xl border border-white/10 bg-black/20 p-4"
+                className="rounded-2xl border border-white/10 bg-black/25 p-4"
               >
                 <div className="text-sm font-medium">Agenda</div>
                 <div className="mt-1 text-xs text-zinc-200/70">
-                  Visualize serviços por dia (sem complicação).
+                  Visualize próximos serviços por data.
                 </div>
               </div>
               <div
                 data-testid="login-feature-4"
-                className="rounded-2xl border border-white/10 bg-black/20 p-4"
+                className="rounded-2xl border border-white/10 bg-black/25 p-4"
               >
                 <div className="text-sm font-medium">Dashboard</div>
                 <div className="mt-1 text-xs text-zinc-200/70">
@@ -127,23 +136,70 @@ export default function LoginPage() {
             <CardContent>
               <div
                 data-testid="login-google-info"
-                className="mb-4 rounded-xl border border-white/10 bg-black/20 p-3 text-xs text-zinc-200/70"
+                className="mb-4 rounded-xl border border-white/10 bg-black/25 p-3 text-xs text-zinc-200/70"
               >
-                Use o seu Gmail para acessar e ver apenas seus serviços (campo <b>usuario</b>).
+                Você verá apenas os registros onde <b>usuario</b> = seu e-mail.
               </div>
 
               <Button
                 data-testid="login-google-button"
                 onClick={onGoogle}
-                className="w-full rounded-xl bg-gradient-to-r from-red-600 to-rose-500 text-white hover:from-red-600/90 hover:to-rose-500/90"
+                className="w-full rounded-xl bg-gradient-to-r from-[#dc2626] via-[#e11d48] to-[#f43f5e] text-white hover:from-[#dc2626]/90 hover:via-[#e11d48]/90 hover:to-[#f43f5e]/90"
               >
                 <LogIn className="mr-2 h-4 w-4" />
                 Entrar com Google
               </Button>
 
               <div data-testid="login-domain-hint" className="mt-3 text-xs text-zinc-200/60">
-                Se der erro de domínio, adicione <b>{THIS_DOMAIN}</b> em Authorized domains no Firebase.
+                Domínio atual: <b>{THIS_DOMAIN}</b> (precisa estar em Authorized domains).
               </div>
+
+              {errorInfo ? (
+                <div
+                  data-testid="login-auth-error"
+                  className="mt-4 rounded-xl border border-red-500/20 bg-red-500/10 p-3"
+                >
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="mt-0.5 h-4 w-4 text-red-200" />
+                    <div className="min-w-0">
+                      <div data-testid="login-auth-error-title" className="text-sm font-semibold">
+                        Erro no login
+                      </div>
+                      <div
+                        data-testid="login-auth-error-code"
+                        className="mt-1 text-xs text-zinc-100/80"
+                      >
+                        {errorInfo.code || "(sem código)"}
+                      </div>
+                      <div
+                        data-testid="login-auth-error-message"
+                        className="mt-1 text-xs text-zinc-100/70"
+                      >
+                        {errorInfo.msg}
+                      </div>
+                      {errorInfo.help ? (
+                        <div
+                          data-testid="login-auth-error-help"
+                          className="mt-2 text-xs text-zinc-100/80"
+                        >
+                          {errorInfo.help}
+                        </div>
+                      ) : null}
+
+                      <div className="mt-3">
+                        <Button
+                          data-testid="login-auth-error-clear"
+                          variant="outline"
+                          className="h-8 rounded-lg border-white/15 bg-white/5 text-zinc-50 hover:bg-white/10"
+                          onClick={() => clearAuthError()}
+                        >
+                          Limpar erro
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ) : null}
             </CardContent>
           </Card>
         </div>
